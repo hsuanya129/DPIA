@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>文章區</title>
+</head>
+<body>
+    <h1>文章列表</h1>
+    <a href="/blog/add">新增文章</a><br><br><br>
+    {% for post in last_post_list %}       
+    <a href="/blog/edit?q={{ post.pk }}">修改本文</a>
+        <form action="" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="pk" value="{{ post.pk }}">
+            <input type="submit" value="刪除本文">
+        </form>
+        <h2>標題:</h2>{{ post.title }}
+        <br>
+        <h2>內容:</h2>{{ post.content }}
+        <br><br><hr>
+    {% endfor %}
+</body>
+</html>

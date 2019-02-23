@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>母親節卡片</title>
+	<meta charset='utf-8'>
+</head>
+<body style="background-color:lightyellow">
+
+<h1>母親節卡片</h1>
+{% if latest_cards_list %}
+{% for cards in latest_cards_list %}
+<h2 style="color:lightcoral">{{ cards.title }}</h2>
+<h5 style="color:grey">{{ cards.pub_date }}</h5>
+<h4 style="color:lightsteelblue"><i>{{ cards.content }}</i></h4>
+<h4 style="color:slategrey">{{ cards.user_name }}</h4
+<br><br>
+{% endfor %}
+{% else %}
+<p>No cards are available.</p>
+{% endif %}
+<br><br><h1>我要投稿:</h1>
+
+<form action="/mothers_day/write/" method="POST" novalidate="novalidate">
+<h5><label for="user_name">留言者:</label></h5>
+<input id="user_name" type="text" name="user_name">
+
+<h5><label for="title">標題:</label></h5>
+<input id="title" type="text" name="title">
+
+<h5><label for="content">內容:</label></h5>
+<input id="content" type="textarea" name="content">
+
+<input type="hidden" name="ok" value="yes">
+<input class="btn btn-success" type="submit" value="留言"/>
+</form>
+</body>
+</html>
+
+
+
+
