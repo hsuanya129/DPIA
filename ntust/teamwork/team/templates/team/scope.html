@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		範圍
+	</title>
+</head>
+<body>
+	<h1>描述PIA簡介</h1>
+	<form action="." method="post">
+		{{% csrf_token %}}
+		1.PIA將涵蓋哪些內容？
+		<input type="textarea" name="q1"><br>
+		2.哪些部分超出範圍？
+		<input type="textarea" name="q2"><br>
+		3.這是相當方便能取得的資料，還是需要從多方蒐集？
+		<input type="textarea" name="q3"><br>
+		4.誰需要參與，何段時間可以參與？
+		<input type="textarea" name="q4"><br>
+		5.誰將就PIA後做出決定？ 他們需要什麼訊息？他們需要多長時間做出決策？
+		<input type="textarea" name="q5"><br>
+		6.我是否需要諮詢任何人（例如項目涉及的個人信息的個人）？ 何時會發生這種情況？當發生時流程是什麼？
+		<input type="textarea" name="q6"><br>
+		7.是否有任何第三方參與？他們需要參與多長的時間？
+		<input type="textarea" name="q7"><br>
+		
+		<input type="submit" vaule="送出">
+	</form>
+</body>
+</html>
