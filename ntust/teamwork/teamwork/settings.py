@@ -80,7 +80,7 @@ DATABASES = {
     'NAME': 'dpia',    # 資料庫名稱
     'USER': 'root',
     'PASSWORD': 'root',    # 安裝 MYSQL 資料庫時，root 用戶的密碼
-    'HOST': '127.0.0.1',
+    'HOST': '140.118.9.135',
     }
 }
 
