@@ -6,30 +6,20 @@
 	</title>
 </head>
 <body>
+	
 	<h1>描述PIA範圍</h1>
-	<form action="." method="post">
-		{{% csrf_token %}}
-		1.流程簡介：
-		<input type="textarea" name="q1"><br>
-		2.專案的範圍是什麼？
-		<input type="textarea" name="q2"><br>
-		3.利益相關者是誰？
-		<input type="textarea" name="q3"><br>
-		4.這個專案是否與現有系統或其他專案有關？若有請說明。
-		<input type="textarea" name="q4"><br>
-		5.該專案/系統的目標？
-		<input type="textarea" name="q5"><br>
-		6.為甚麼做這個專案(專案目的)？
-		<input type="textarea" name="q6"><br>
-		7.完成這個專案對組織及現有數據的益處？
-		<input type="textarea" name="q7"><br>
-		8.專案/系統需求規格？
-		<input type="textarea" name="q8"><br>
-		9.專案/系統設計規範？
-		<input type="textarea" name="q9"><br>
-		10.任何相關文件？
-		<input type="textarea" name="q10"><br>
+	位置 {{ path }}
+	<form action="" method="post">
+		
+		{% csrf_token %}
+		{% for qn1list in qn1_list %}
+		{{ qn1list.questionary_description }}
+		<input type="textarea"><br>
+		
+		{% endfor %}
 		<input type="submit" vaule="送出">
 	</form>
+	<br><br>
+	
 </body>
 </html>
