@@ -6,7 +6,7 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-from django_mysql.models import Bit1BooleanField
+
 
 class Activity(models.Model):
     activity_id = models.AutoField(primary_key=True)
@@ -18,84 +18,39 @@ class Activity(models.Model):
     date = models.DateTimeField()
     description = models.CharField(max_length=512)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         db_table = 'activity'
 
 
-class Questionary1Answer(models.Model):
+class QuestionaryAnswer(models.Model):
     answer_id = models.AutoField(primary_key=True)
     questionary_id = models.IntegerField()
     questionary_ans = models.CharField(max_length=512)
     activity_id = models.CharField(max_length=512)
+    questionary_type = models.IntegerField()
+    questionary_type_id = models.IntegerField()
+
+    def __str__(self):
+        return self.answer_id
 
     class Meta:
-        db_table = 'questionary1_answer'
+        db_table = 'questionary_answer'
 
 
-class Questionary1Template(models.Model):
-    questionary_id = models.IntegerField(primary_key=True)
+class QuestionaryTemplate(models.Model):
+    questionary_id = models.AutoField(primary_key=True)
     questionary_description = models.CharField(max_length=512)
+    questionary_type = models.IntegerField()
+    questionary_type_id = models.IntegerField()
+
+    def __str__(self):
+        return self.questionary_description
 
     class Meta:
-        db_table = 'questionary1_template'
-
-
-class Questionary2Answer(models.Model):
-    questionary_id = models.IntegerField()
-    answer_id = models.AutoField(primary_key=True)
-    questionary_ans = models.CharField(max_length=512)
-    activity_id = models.CharField(max_length=512)
-
-    class Meta:
-        db_table = 'questionary2_answer'
-
-
-class Questionary2Template(models.Model):
-    questionary_id = models.IntegerField(primary_key=True)
-    questionary_description = models.CharField(max_length=512)
-
-    class Meta:
-        db_table = 'questionary2_template'
-
-
-class Questionary3Answer(models.Model):
-    answer_id = models.AutoField(primary_key=True)
-    questionary_id = models.IntegerField()
-    questionary_ans = models.IntegerField()
-    activity_id = models.CharField(max_length=512)
-
-    class Meta:
-        db_table = 'questionary3_answer'
-
-
-class Questionary3Template(models.Model):
-    questionary_id = models.IntegerField(primary_key=True)
-    questionary_description = models.CharField(max_length=512)
-
-    class Meta:
-        db_table = 'questionary3_template'
-
-
-class Questionary4Answer(models.Model):
-    answer_id = models.AutoField(primary_key=True)
-    questionary_id = models.IntegerField()
-    activity_id = models.CharField(max_length=512)
-    name = models.CharField(max_length=512)
-    role = models.CharField(max_length=45)
-    email = models.CharField(max_length=45)
-    part = models.CharField(max_length=45)
-    feedback = models.CharField(max_length=45)
-
-    class Meta:
-        db_table = 'questionary4_answer'
-
-
-class Questionary4Template(models.Model):
-    questionary_id = models.IntegerField(primary_key=True)
-    questionary_description = models.CharField(max_length=512)
-
-    class Meta:
-        db_table = 'questionary4_template'
+        db_table = 'questionary_template'
 
 
 class User(models.Model):
@@ -105,6 +60,9 @@ class User(models.Model):
     permission_level = models.IntegerField()
     name = models.CharField(max_length=20)
     activity_id = models.IntegerField()
+
+    def __str__(self):
+        return self.account
 
     class Meta:
         db_table = 'user'
