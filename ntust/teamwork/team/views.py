@@ -6,7 +6,7 @@ from .models import User
 from .models import QuestionaryTemplate
 # Create your views here.
 def index(request):
-    return render('team/home.html',locals())
+    return render(request,'team/home.html',locals())
 
 def login(request):
     account = request.POST['account']
