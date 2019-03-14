@@ -70,3 +70,18 @@ class User(models.Model):
 
     class Meta:
         db_table = 'user'
+
+class Stakeholder(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.TextField()
+    role = models.TextField()
+    email = models.TextField()
+    part = models.TextField()
+    feedback = models.TextField()
+    activity = models.ForeignKey(Activity, models.DO_NOTHING)
+
+    def __str__(self):
+        return self.id
+
+    class Meta:
+        db_table = 'stakeholder'
