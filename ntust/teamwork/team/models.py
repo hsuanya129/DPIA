@@ -25,9 +25,9 @@ class Activity(models.Model):
 
 
 class Answer(models.Model):
-    question_id = models.IntegerField()
+    question = models.ForeignKey('Question', models.DO_NOTHING)
     context = models.TextField()
-    activity_id = models.IntegerField()
+    activity = models.ForeignKey(Activity, models.DO_NOTHING)
 
     def __str__(self):
         return self.id
@@ -39,7 +39,7 @@ class Answer(models.Model):
 class Question(models.Model):
     description = models.TextField()
     inner_id = models.IntegerField()
-    questionary_type_id = models.IntegerField()
+    questionary_type = models.ForeignKey('QuestionaryType', models.DO_NOTHING)
 
     def __str__(self):
         return self.description
@@ -63,7 +63,7 @@ class User(models.Model):
     password = models.TextField()
     permission_level = models.IntegerField()
     name = models.TextField()
-    activity_id = models.IntegerField()
+    activity = models.ForeignKey(Activity, models.DO_NOTHING)
 
     def __str__(self):
         return self.account
