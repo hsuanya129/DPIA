@@ -20,4 +20,10 @@ def show_qn1(request):
 	qn1_list = QuestionaryTemplate.objects.filter(questionary_type=1)
 	path = request.path
 	return render(request,'team/overview.html', locals())
+def new(request):
+	return render(request,'team/new_pia.html', locals())
+def sign(request):
+	return render(request,'team/sign.html', locals())
+def home(request):
+	return render(request,'team/home.html', locals())
 
