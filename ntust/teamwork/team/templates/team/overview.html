@@ -13,7 +13,7 @@
 		
 		{% csrf_token %}
 		{% for qn1list in qn1_list %}
-		{{ qn1list.questionary_description }}
+		{{ qn1list.description }}
 		<input type="textarea"><br>
 		
 		{% endfor %}
