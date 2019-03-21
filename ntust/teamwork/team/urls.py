@@ -9,4 +9,5 @@ urlpatterns = [
 	url(r'^new_pia/',views.new, name='new_pia'),
 	url(r'^sign/',views.sign, name='sign'),
 	url(r'^home/',views.home, name='home'),
+	url(r'^stakeholder/',views.stakeholder, name='stakeholder'),
 ]

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		簡介
+	</title>
+</head>
+<body>
+	
+	<form action="" method="post">
+		{% csrf_token %}
+		<h1>{{ qn_type.name }}</h1>
+
+		{% for unit in qn_list %} 
+		<!-- unit 代表是該list中的單位，不要用qn1list 因為他只是qn1_list中的一個單位，或你可以叫qn -->
+			{{ unit.description }}
+			{% if qn_type.id == 3 %}
+			<input type="radio" name="answer{{ unit.inner_id }}" value="yes"> 是
+			<input type="radio" name="answer{{ unit.inner_id }}" value="no"> 否<br>
+			{% else %}
+			<input type="textarea" name="answer{{ unit.inner_id }}"><br>
+			{% endif %}	
+		{% endfor %}
+
+		<input type="submit" vaule="送出" onclick="">
+	</form>
+	<br><br>
+	
+</body>
+</html>

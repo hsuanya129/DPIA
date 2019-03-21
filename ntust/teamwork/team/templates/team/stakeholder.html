@@ -11,17 +11,17 @@
 		 //建立新的td 而Tr.cells.length就是這個tr目前的td數
 		 Td = Tr.insertCell(Tr.cells.length);
 		 //而這個就是要填入td中的innerHTML
-		 Td.innerHTML='<input name="name[]" type="text" size="12">';
+		 Td.innerHTML='<input name="name" type="text">';
 		 //這裡也可以用不同的變數來辨別不同的td (我是用同一個比較省事XD)
 		 Td = Tr.insertCell(Tr.cells.length);
-		 Td.innerHTML='<input name="character[]" type="text" size="12">';
+		 Td.innerHTML='<input name="role" type="text">';
 		 //記得td數目要一樣 不然會亂掉~
 		 Td = Tr.insertCell(Tr.cells.length);
-		 Td.innerHTML='<input name="email[]" type="text" size="12">';
+		 Td.innerHTML='<input name="email" type="text">';
 		 Td = Tr.insertCell(Tr.cells.length);
-		 Td.innerHTML='<input name="take_part_in[]" type="text" size="12">';
+		 Td.innerHTML='<input name="part" type="text">';
 		 Td = Tr.insertCell(Tr.cells.length);
-		 Td.innerHTML='<input name="feedback[]" type="text" size="12">';
+		 Td.innerHTML='<input name="feedback" type="text">';
 		}
 	</script>
 	<script>
@@ -38,36 +38,37 @@
 </head>
 <body>
 	<h1>描述利益相關者</h1>
-	<form action="." method="post">
-		<table id="mytable">
+	<form action="" method="post">
+		{% csrf_token %}
+		<table id = "mytable">
 		  <tr>
-		    <td class="td01">姓名</td>
-		    <td class="td01">角色</td>
-		    <td class="td01">email</td>
-		    <td class="td01">參與專案部分</td>
-		    <td class="td01">回饋</td>
+		    <td>姓名</td>
+		    <td>角色</td>
+		    <td>email</td>
+		    <td>參與專案部分</td>
+		    <td>回饋</td>
 		  </tr>
 		  <tr>
 		    <td>
-		    <input name="name[]" type="text" size="12">
+		    <input name="name" type="text">
 		    </td>
 		    <td>
-		    <input name="character[]" type="text" size="12">
+		    <input name="role" type="text">
 		    </td>
 		    <td>
-		    <input name="email[]" type="text" size="12">
+		    <input name="email" type="text">
 		    </td>
 		    <td>
-		    <input name="take_part_in[]" type="text" size="12">
+		    <input name="part" type="text">
 		    </td>
 		    <td>
-		    <input name="feedback[]" type="text" size="12">
+		    <input name="feedback" type="textarea">
 		    </td>
 		  </tr>
 		</table>
 		<button type="button" onclick="add_new_data()">新增欄位</button>
 		<button type="button" onclick="remove_data()">刪除欄位</button>
-
+		<input type="submit" name="ok" value="提交">
 	</form>
 </body>
 </html>
