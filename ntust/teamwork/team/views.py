@@ -41,13 +41,12 @@ def questionary(request, questionary_type_id=None):
         for i in range(len(qn_list)): 
             answer_list.append(request.POST.get('answer'+ str(i+1))) 
             # 取得 input name="answer1~10" 的 value 並加入到 answer_list
-
+        
         for i in range(len(qn_list)):
-
+            
             if answer_list[i] != '':
-
                 Answer.objects.create(
-                    question_id=i+1,
+                    question_id=qn_list[i].id,
                     context=answer_list[i],
                     activity_id=1 #test id 
                 )
