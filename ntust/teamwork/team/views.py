@@ -5,8 +5,8 @@ from . import models
 from .models import User,Question,QuestionaryType,Answer,Stakeholder
 import pdb
 from django.urls import reverse
-from django.contrib.auth.models import User
 import datetime
+
 base_url = "http://127.0.0.1:8000/"
 
 def index(request):
