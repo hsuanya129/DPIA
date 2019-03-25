@@ -96,7 +96,8 @@ def new(request):
         today = datetime.date.today()
         description = request.POST.get('description','')
         user = models.Activity.objects.create(name=name,pia_manager_name=piam_name,pia_manager_email=piam_email,activity_manager_name=activity_manager_name,activity_manager_email=activity_manager_email,date=today,description=description)
-        return render(request,'team/choose_pia.html', locals())
+        return HttpResponseRedirect('/team/questionary/1')
+        # return render(request,'team/questionary/1', locals())
     return render(request,'team/new_pia.html', locals())
     
 def home(request):
