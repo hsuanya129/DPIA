@@ -4,12 +4,15 @@
 	<title>註冊帳號</title>
 </head>
 <body>
-帳號:<br>
+	<form action="sign" method="post">
+		姓名:<br>
+	<input type="text" name="name"><br>
+		帳號:<br>
 	<input type="text" name="account"><br>
-新密碼:<br>
+		新密碼:<br>
 	<input type="password" name="password"><br>
-確認密碼:<br>
-	<input type="password" name="password"><br><br>
-<a href="/team/home"><button>註冊</button></a>
+	<!-- <a href="{% url 'team:sign' %}"><button>註冊</button></a> -->
+	<input type="submit" value="註冊">
+	</form>
 </body>
 </html>

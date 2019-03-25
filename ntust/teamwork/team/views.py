@@ -5,18 +5,29 @@ from . import models
 from .models import User
 from .models import Question,QuestionaryType,Answer
 import pdb
+from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse
+from django.contrib.auth.models import User
+import datetime
 # Create your views here.
 def index(request):
-    return render(request,'team/home.html',locals())
+    return render(request,'team/home.html/',locals())
 
-def login(request):
-    account = request.POST['account']
-    password = request.POST['password']
-    user = models.User.objects.filter(account=account,password=password)
-    if len(user)==1:
-        return render('team/choose_pia.html',locals())
-    else:
-        return render('team/home.html',locals())
+def login_sign(request):
+
+    if request.method == "POST":
+        if 'login' in request.POST:#一個表單兩個action時要用到 此為按下登入時觸發的action
+            account = request.POST['account']
+            password = request.POST['password']
+            user = models.User.objects.filter(account=account,password=password)
+            if len(user) != 0:
+                return render(request,'team/choose_pia.html/',locals())
+            else:
+                # return render(request,'team/home.html',locals())
+                return HttpResponseRedirect('/team/') 
+        else:#此為按下註冊時觸發的action
+            return render(request,'team/sign.html',locals())
+    return render(request, 'team/home.html',locals())
 
 def questionary(request, questionary_type_id=None):
 
@@ -55,9 +66,28 @@ def questionary(request, questionary_type_id=None):
     return render(request,'team/questionary.html', locals()) #第三個變數代表會傳給第二個變數規定的html的變數有哪些
 
 def new(request):
-	return render(request,'team/new_pia.html', locals())
-def sign(request):
-	return render(request,'team/sign.html', locals())
+    if request.method == 'POST':
+        name = request.POST.get('pia_name','')
+        piam_name = request.POST.get('piam_name','')
+        piam_email = request.POST.get('piam_email','')
+        activity_manager_name = request.POST.get('activitym_name','')
+        activity_manager_email = request.POST.get('activitym_email','')
+        today = datetime.date.today()
+        description = request.POST.get('description','')
+        user = models.Activity.objects.create(name=name,pia_manager_name=piam_name,pia_manager_email=piam_email,activity_manager_name=activity_manager_name,activity_manager_email=activity_manager_email,date=today,description=description)
+        return render(request,'team/choose_pia.html', locals())
+    return render(request,'team/new_pia.html', locals())
+    
 def home(request):
-	return render(request,'team/home.html', locals())
+    return render(request,'team/home.html', locals())
+
+def sign(request):
+    if request.method == "POST":
+        name = request.POST.get('name','')
+        account = request.POST.get('account','')
+        password = request.POST.get('password','')
+        user = models.User.objects.create(name=name,account=account, password=password,permission_level=1,activity_id=1)
+        return HttpResponseRedirect('/team/')
+    return HttpResponseRedirect('/team/')
+
 
