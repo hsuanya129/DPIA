@@ -2,9 +2,9 @@ from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext 
 from django.http import HttpResponseRedirect, HttpResponse
 from . import models
-from .models import User
-from .models import Question,QuestionaryType,Answer,Stakeholder
+from .models import User,Question,QuestionaryType,Answer,Stakeholder
 import pdb
+<<<<<<< HEAD
 <<<<<<< HEAD
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse
@@ -16,6 +16,13 @@ base_url = "http://127.0.0.1:8000/"
 
 >>>>>>> 197dafdec4152bc863e0d956848c6c43aeb7be24
 # Create your views here.
+=======
+from django.urls import reverse
+from django.contrib.auth.models import User
+import datetime
+base_url = "http://127.0.0.1:8000/"
+
+>>>>>>> feature/yixuan
 def index(request):
     return render(request,'team/home.html/',locals())
 
@@ -82,8 +89,7 @@ def questionary(request, questionary_type_id=None):
         '''
         
     return render(request,'team/questionary.html', locals()) #第三個變數代表會傳給第二個變數規定的html的變數有哪些
-# def stakeholder(request,id):
-#     if id:
+
 def stakeholder(request):
     if 'ok' in request.POST:
         name = request.POST['name']
