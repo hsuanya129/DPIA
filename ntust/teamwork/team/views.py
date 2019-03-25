@@ -4,25 +4,11 @@ from django.http import HttpResponseRedirect, HttpResponse
 from . import models
 from .models import User,Question,QuestionaryType,Answer,Stakeholder
 import pdb
-<<<<<<< HEAD
-<<<<<<< HEAD
-from django.contrib.auth.forms import UserCreationForm
-from django.urls import reverse
-from django.contrib.auth.models import User
-import datetime
-=======
-
-base_url = "http://127.0.0.1:8000/"
-
->>>>>>> 197dafdec4152bc863e0d956848c6c43aeb7be24
-# Create your views here.
-=======
 from django.urls import reverse
 import datetime
 
 base_url = "http://127.0.0.1:8000/"
 
->>>>>>> feature/yixuan
 def index(request):
     return render(request,'team/home.html/',locals())
 
