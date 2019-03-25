@@ -18,8 +18,8 @@ base_url = "http://127.0.0.1:8000/"
 # Create your views here.
 =======
 from django.urls import reverse
-from django.contrib.auth.models import User
 import datetime
+
 base_url = "http://127.0.0.1:8000/"
 
 >>>>>>> feature/yixuan
