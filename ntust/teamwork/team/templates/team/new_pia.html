@@ -1,33 +1,59 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
+
 <html>
-<head>
-	<title>newpia</title>
-</head>
-<body>
-<h1 class = "text-left">新增PIA</h1>
-<form action="new_pia" method="post">
-<!-- 公司名稱:<br>
-<input type="text" name="company_name">
-<br> -->
-pia名稱:<br>
-<input type="text" name="pia_name">
-<br>
-pia負責人:<br>
-<input type="text" name="piam_name">
-<br>
-email:<br>
-<input type="text" name="piam_email">
-<br>
-專案負責人:<br>
-<input type="text" name="activitym_name">
-<br>
-email:<br>
-<input type="text" name="activitym_email">
-<br>
-描述:<br>
-<input type="text" name="description">
-<br>
-<input type="submit" value="新增">
-</form>
-</body>
+	<head>
+		<title>NewPIA</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="/static/css/main.css" />
+		<noscript><link rel="stylesheet" href="/static/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+				<!-- Header -->
+					<header id="header">
+						
+						<div class="content"
+							<div class="inner">
+								<h1>新增PIA</h1>
+
+								<form method="post" action="login_sign/" onsubmit="return">
+									PIA名稱:<input type="text" name="pia_name"><br>
+									
+									PIA負責人:<input type="text" name="piam_name"><br>
+									
+									PIA負責人Email:<input type="text" name="piam_email"><br>
+									
+									專案負責人:<input type="text" name="activitym_name"><br>
+									
+									專案負責人Email:<input type="text" name="activitym_email"><br>
+									
+									描述:<input type="text" name="description"><br>
+									
+									<input type="submit" value="新增">
+								</form> 
+							</div>
+						</div>
+						
+										
+					</header>
+
+
+			
+
+			</div>
+
+		<!-- BG -->
+			<div id="bg"></div>
+
+		<!-- Scripts -->
+			<script src="/static/js/jquery.min.js"></script>
+			<script src="/static/js/browser.min.js"></script>
+			<script src="/static/js/breakpoints.min.js"></script>
+			<script src="/static/js/util.js"></script>
+			<script src="/static/js/main.js"></script>
+
+	</body>
 </html>

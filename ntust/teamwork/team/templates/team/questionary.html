@@ -1,30 +1,61 @@
-<!DOCTYPE html>
+
+<!DOCTYPE HTML>
+
 <html>
-<head>
-	<title>
-		簡介
-	</title>
-</head>
-<body>
-	
-	<form action="" method="post">
-		{% csrf_token %}
-		<h1>{{ qn_type.name }}</h1>
+	<head>
+		<title>簡介</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="/static/css/main.css" />
+		<noscript><link rel="stylesheet" href="/static/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
 
-		{% for unit in qn_list %} 
-		<!-- unit 代表是該list中的單位，不要用qn1list 因為他只是qn1_list中的一個單位，或你可以叫qn -->
-			{{ unit.description }}
-			{% if qn_type.id == 3 %}
-			<input type="radio" name="answer{{ unit.inner_id }}" value="yes"> 是
-			<input type="radio" name="answer{{ unit.inner_id }}" value="no"> 否<br>
-			{% else %}
-			<input type="textarea" name="answer{{ unit.inner_id }}"><br>
-			{% endif %}	
-		{% endfor %}
+		<!-- Wrapper -->
+			<div id="wrapper">
+				<!-- Header -->
+					<header id="header">
+						
+						<div class="content"
+							<div class="inner">
+								<form action="" method="post">
+									{% csrf_token %}
+									<h1>{{ qn_type.name }}</h1>
 
-		<input type="submit" vaule="送出">
-	</form>
-	<br><br>
-	
-</body>
+									{% for unit in qn_list %} 
+									<!-- unit 代表是該list中的單位，不要用qn1list 因為他只是qn1_list中的一個單位，或你可以叫qn -->
+									{{ unit.description }}
+									{% if qn_type.id == 3 %}
+									<input type="radio" name="answer{{ unit.inner_id }}" value="yes"> 是
+									<input type="radio" name="answer{{ unit.inner_id }}" value="no"> 否<br>
+									{% else %}
+									<input type="textarea" name="answer{{ unit.inner_id }}"><br>
+									{% endif %}	
+									{% endfor %}
+
+									<input type="submit" vaule="送出">
+
+								</form> 
+							</div>
+						</div>
+						
+										
+					</header>
+
+
+			
+
+			</div>
+
+		<!-- BG -->
+			<div id="bg"></div>
+
+		<!-- Scripts -->
+			<script src="/static/js/jquery.min.js"></script>
+			<script src="/static/js/browser.min.js"></script>
+			<script src="/static/js/breakpoints.min.js"></script>
+			<script src="/static/js/util.js"></script>
+			<script src="/static/js/main.js"></script>
+
+	</body>
 </html>

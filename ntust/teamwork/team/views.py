@@ -66,7 +66,6 @@ def questionary(request, questionary_type_id=None):
 
             return render(request,'team/stakeholder.html', locals())
 
-        
 
         '''
         pdb.set_trace()
