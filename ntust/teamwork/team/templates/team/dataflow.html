@@ -52,7 +52,9 @@
         margin-top: 0px;
       }
   </style>
-  <script src="site/release/go.js"></script>
+  {% load static %}
+  <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="{% static "site/release/go.js" %}"></script>
   <script id="code">
     // These parameters need to be set before defining the templates.
     var MINLENGTH = 200;  // this controls the minimum length of any swimlane
@@ -295,9 +297,8 @@
               { font: "bold 6pt sans-serif" })
           )
         )  // end Adornment
-          }
-          { dragComputation: stayInGroup } // limit dragging of Nodes to stay within the containing Group, defined above
-        );
+          },
+          { dragComputation: stayInGroup });
       function groupStyle() {  // common settings for both Lane and Pool Groups
         return [
           {
@@ -505,15 +506,36 @@
       }
       // force all lanes' layouts to be performed
       relayoutLanes();
+      load();
     }  // end init
     // Show the diagram's model in JSON format
     function save() {
       document.getElementById("mySavedModel").value = myDiagram.model.toJson();
-      myDiagram.isModified = false;
+      myDiagram.isModified = false;  
+        jQuery.ajax({
+          method:'POST',
+          url:'dataflow',
+          data:{'postdata':myDiagram.model.toJson()},
+          dataType:'json'
+        });
     }
+
     function load() {
-      myDiagram.model = go.Model.fromJson(document.getElementById("mySavedModel").value);
-      myDiagram.delayInitialization(relayoutDiagram);
+      var getdata
+      document.getElementById("mySavedModel").value = myDiagram.model.toJson();
+      // myDiagram.model = go.Model.fromJson(document.getElementById("mySavedModel").value);
+      jQuery.ajax({
+        method: 'GET',
+        url: 'dataflow_get',
+        data:{getdata},
+        dataType: 'json',
+        success: function(getdata) {
+        getdata_json = getdata['getdata'];
+        getdata_json = JSON.stringify(getdata_json);
+        console.log(getdata_json);
+        myDiagram.model =  go.Model.fromJson(getdata['getdata']);
+      }});
+      return 
     }
     function cxcommand(event, obj, val) {
       if (val === undefined) val = event.currentTarget.id;

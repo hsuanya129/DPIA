@@ -7,6 +7,7 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 from django_mysql.models import Bit1BooleanField
+from django_mysql.models import JSONField
 
 class Activity(models.Model):
     name = models.TextField()
@@ -35,6 +36,22 @@ class Answer(models.Model):
     class Meta:
         db_table = 'answer'
 
+class Asset(models.Model):
+    id = models.IntegerField(primary_key=True)
+    type = models.TextField()
+    name = models.TextField()
+    impact_level = models.IntegerField()
+    risk = models.TextField()
+    likelihood = models.IntegerField()
+    activity = models.ForeignKey(Activity, models.DO_NOTHING)
+
+    def __str__(self):
+        return self.id+"/"+self.type+"/"+self.name
+
+
+    class Meta:
+        db_table = 'asset'
+
 
 class Question(models.Model):
     description = models.TextField()
@@ -56,6 +73,16 @@ class QuestionaryType(models.Model):
 
     class Meta:
         db_table = 'questionary_type'
+
+class Swimlane(models.Model):
+    swimlane_json = JSONField(blank=True, null=True)  
+    activity = models.ForeignKey(Activity, models.DO_NOTHING)
+
+    def __str__(self):
+        return "activity id:"+self.activity
+
+    class Meta:
+        db_table = 'swimlane'
 
 
 class User(models.Model):

@@ -1,11 +1,12 @@
 from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext 
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from . import models
-from .models import User,Question,QuestionaryType,Answer,Stakeholder
+from .models import *
 import pdb
 from django.urls import reverse
 import datetime
+import json
 
 base_url = "http://127.0.0.1:8000/"
 
@@ -18,7 +19,7 @@ def login_sign(request):
         if 'login' in request.POST:#一個表單兩個action時要用到 此為按下登入時觸發的action
             account = request.POST['account']
             password = request.POST['password']
-            user = models.User.objects.filter(account=account,password=password)
+            user = User.objects.filter(account=account,password=password)
             if len(user) != 0:
                 return render(request,'team/choose_pia.html/',locals())
             else:
@@ -94,7 +95,7 @@ def new(request):
         activity_manager_email = request.POST.get('activitym_email','')
         today = datetime.date.today()
         description = request.POST.get('description','')
-        user = models.Activity.objects.create(name=name,pia_manager_name=piam_name,pia_manager_email=piam_email,activity_manager_name=activity_manager_name,activity_manager_email=activity_manager_email,date=today,description=description)
+        user = Activity.objects.create(name=name,pia_manager_name=piam_name,pia_manager_email=piam_email,activity_manager_name=activity_manager_name,activity_manager_email=activity_manager_email,date=today,description=description)
         return HttpResponseRedirect('/team/questionary/1')
         # return render(request,'team/questionary/1', locals())
     return render(request,'team/new_pia.html', locals())
@@ -107,7 +108,27 @@ def sign(request):
         name = request.POST.get('name','')
         account = request.POST.get('account','')
         password = request.POST.get('password','')
-        user = models.User.objects.create(name=name,account=account, password=password,permission_level=1,activity_id=1)
+        user = User.objects.create(name=name,account=account, password=password,permission_level=1,activity_id=1)
         return HttpResponseRedirect('/team/')
     return HttpResponseRedirect('/team/')
 
+def dataflow(request):
+    pk =2
+    swimlane_objects = Swimlane.objects.filter(activity_id=pk)
+    if len(swimlane_objects) == 0:
+        Swimlane.objects.create(activity_id= pk)
+
+    if request.method == 'POST':
+        swimlane_object_post = Swimlane.objects.get(activity_id=pk)
+        data_text = request.POST.get('postdata')
+        data_json = json.loads(data_text)
+        swimlane_object_post.swimlane_json = data_json  
+        swimlane_object_post.save()
+
+    return render(request, 'team/dataflow.html')
+
+def dataflow_get(request):
+    pk=2
+    swimlane_object_get = Swimlane.objects.get(activity_id=pk)
+    data ={'getdata': swimlane_object_get.swimlane_json}
+    return JsonResponse(data)

@@ -10,4 +10,6 @@ urlpatterns = [
 	url(r'^login_sign/sign',views.sign, name='sign'),
 	url(r'^home/',views.home, name='home'),
 	url(r'^stakeholder/',views.stakeholder, name='stakeholder'),
+	url(r'^dataflow/',views.dataflow, name='dataflow'),
+	url(r'^dataflow_get/',views.dataflow_get, name='dataflow_get'),
 ]
