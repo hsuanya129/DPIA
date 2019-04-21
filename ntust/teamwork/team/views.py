@@ -130,5 +130,7 @@ def dataflow(request):
 def dataflow_get(request):
     pk=2
     swimlane_object_get = Swimlane.objects.get(activity_id=pk)
-    data ={'getdata': swimlane_object_get.swimlane_json}
-    return JsonResponse(data)
+    if json.dumps(swimlane_object_get.swimlane_json) == "{}":
+        swimlane_object_one = Swimlane.objects.get(activity_id=1)
+        swimlane_object_get.swimlane_json = swimlane_object_one.swimlane_json
+    return JsonResponse(swimlane_object_get.swimlane_json)

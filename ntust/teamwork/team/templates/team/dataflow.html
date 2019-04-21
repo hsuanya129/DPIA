@@ -454,33 +454,34 @@
           $(go.Shape, { toArrow: "Standard" })
         );
       // define some sample graphs in some of the lanes
-      myDiagram.model = new go.GraphLinksModel(
-        [ // node data
-          { key: "Pool1", text: "Pool", isGroup: true, category: "Pool" },
-          { key: "Lane1", text: "Participants", isGroup: true, group: "Pool1", color: "lightblue", category:"Participants" },
-          { key: "Lane2", text: "System", isGroup: true, group: "Pool1", color: "lightgreen", category:"System" },
-          { key: "Lane3", text: "Input", isGroup: true, group: "Pool1", color: "lightyellow", category:"Input" },
-          { key: "Lane4", text: "Process", isGroup: true, group: "Pool1", color: "orange", category:"Process" },
-          { key: "Lane5", text: "Output", isGroup: true, group: "Pool1", color: "lightskyblue", category:"Output" },
-          { key: "Start", group: "Lane4"},
-          { key: "Collect", group: "Lane4"},
-          { key: "Store", group: "Lane4"},
-          { key: "Use", group: "Lane4" },
-          { key: "Transfer", group: "Lane4" },
-          { key: "Delete", group: "Lane4" },
-          { key: "End", group: "Lane4" },
-          { key:"Input", group:"Lane3"},
+      // myDiagram.model = new go.GraphLinksModel(
+      //   [ // node data
+      //     { key: "Pool1", text: "Pool", isGroup: true, category: "Pool" },
+      //     { key: "Lane1", text: "Participants", isGroup: true, group: "Pool1", color: "lightblue", category:"Participants" },
+      //     { key: "Lane2", text: "System", isGroup: true, group: "Pool1", color: "lightgreen", category:"System" },
+      //     { key: "Lane3", text: "Input", isGroup: true, group: "Pool1", color: "lightyellow", category:"Input" },
+      //     { key: "Lane4", text: "Process", isGroup: true, group: "Pool1", color: "orange", category:"Process" },
+      //     { key: "Lane5", text: "Output", isGroup: true, group: "Pool1", color: "lightskyblue", category:"Output" },
+      //     { key: "Start", group: "Lane4"},
+      //     { key: "Collect", group: "Lane4"},
+      //     { key: "Store", group: "Lane4"},
+      //     { key: "Use", group: "Lane4" },
+      //     { key: "Transfer", group: "Lane4" },
+      //     { key: "Delete", group: "Lane4" },
+      //     { key: "End", group: "Lane4" },
+      //     { key:"Input", group:"Lane3"},
 
-        ],
-        [ // link data
-          { from: "Start", to: "Collect" },
-          { from: "Collect", to: "Store" },
-          { from: "Store", to: "Use" },
-          { from: "Use", to: "Transfer" },
-          { from: "Transfer",to: "Delete" },
-          { from: "Delete", to: "End" },
-          { from: "Collect", to:"Input"},
-        ]);
+      //   ],
+      //   [ // link data
+      //     { from: "Start", to: "Collect" },
+      //     { from: "Collect", to: "Store" },
+      //     { from: "Store", to: "Use" },
+      //     { from: "Use", to: "Transfer" },
+      //     { from: "Transfer",to: "Delete" },
+      //     { from: "Delete", to: "End" },
+      //     { from: "Collect", to:"Input"},
+      //   ]);
+      load();
       myDiagram.contextMenu = myContextMenu;
       // We don't want the div acting as a context menu to have a (browser) context menu!
       cxElement.addEventListener("contextmenu", function(e, obj) {
@@ -506,7 +507,6 @@
       }
       // force all lanes' layouts to be performed
       relayoutLanes();
-      load();
     }  // end init
     // Show the diagram's model in JSON format
     function save() {
@@ -521,21 +521,10 @@
     }
 
     function load() {
-      var getdata
-      document.getElementById("mySavedModel").value = myDiagram.model.toJson();
-      // myDiagram.model = go.Model.fromJson(document.getElementById("mySavedModel").value);
-      jQuery.ajax({
-        method: 'GET',
-        url: 'dataflow_get',
-        data:{getdata},
-        dataType: 'json',
-        success: function(getdata) {
-        getdata_json = getdata['getdata'];
-        getdata_json = JSON.stringify(getdata_json);
-        console.log(getdata_json);
-        myDiagram.model =  go.Model.fromJson(getdata['getdata']);
-      }});
-      return 
+      jQuery.getJSON('../dataflow_get/',function(getdata){
+        myDiagram.model = go.Model.fromJson(getdata);
+        document.getElementById("mySavedModel").value = myDiagram.model.toJson();
+        }) 
     }
     function cxcommand(event, obj, val) {
       if (val === undefined) val = event.currentTarget.id;
