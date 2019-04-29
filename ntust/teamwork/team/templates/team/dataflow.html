@@ -53,11 +53,11 @@
         }
     </style>
     {% load static %}
-    <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="{% static "site/release/go-debug.js" %}"></script>
+    <script src="{% static "site/release/go.js" %}"></script>
+    <script src="https://unpkg.com/gojs/release/go-debug.js"></script>
     <script id="code">
       // These parameters need to be set before defining the templates.
-      var MINLENGTH = 200;  // this controls the minimum length of any swimlane
+      var MINLENGTH = 500;  // this controls the minimum length of any swimlane
       var MINBREADTH = 20;  // this controls the minimum breadth of any non-collapsed swimlane
       var fromnode = null;
       // some shared functions
@@ -227,7 +227,7 @@
               // automatically re-layout the swim lanes after dragging the selection
               "SelectionMoved": relayoutDiagram,  // this DiagramEvent listener is
               "SelectionCopied": relayoutDiagram, // defined above
-              "animationManager.isEnabled": true,
+              "animationManager.isEnabled": false,
 
               // enable undo & redo
               "undoManager.isEnabled": true
@@ -240,7 +240,6 @@
           show: showContextMenu,
           mainElement: cxElement
         },);
-        // this is a Part.dragComputation function for limiting where a Node may be dragged
         function stayInGroup(part, pt, gridpt) {
           // don't constrain top-level nodes
           var grp = part.containingGroup;
@@ -277,14 +276,25 @@
                 if (link.fromNode !== null) link.fromNode.invalidateConnectedLinks();
                 if (link.toNode !== null) link.toNode.invalidateConnectedLinks();
               },
-
+              doubleClick:function(e,node){
+              // 雙擊事件
+              document.getElementById("popup").style.display="block"
+              },
             },
 
             { contextMenu: myContextMenu },
             new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
             $(go.Shape, "Rectangle",
               { fill: "white", portId: "", cursor: "pointer", fromLinkable: false, toLinkable: false }),
-            $(go.TextBlock, { margin: 5 },
+            $(go.TextBlock, {
+              margin: 5,
+              maxSize: new go.Size(200, NaN),
+              wrap: go.TextBlock.WrapFit,
+              textAlign: "center",
+              editable: true,
+              font: "bold 9pt Helvetica, Arial, sans-serif",
+              name: "TEXT"
+            },
               new go.Binding("text", "key")),
             {
         selectionAdornmentTemplate:
@@ -451,12 +461,7 @@
                 { row: 1 })
             )
           ));
-        // myDiagram.groupTemplateMap.add("LD",
-        //   $(go.Group, "Auto",
-        //     { layout: $(go.LayeredDigraphLayout) },
-        //    $(go.Shape, { fill: "white", stroke: "lightgray" }),
-        //     $(go.Placeholder, { padding: 10 })
-        //  ));
+        
         myDiagram.linkTemplate =
           $(go.Link,
             { routing: go.Link.AvoidsNodes, corner: 5 },
@@ -480,6 +485,7 @@
             { key: "Transfer", group: "Lane4" },
             { key: "Delete", group: "Lane4" },
             { key: "End", group: "Lane4" },
+
             
             
 
@@ -575,24 +581,24 @@
           var newnode = { key: "N", group: lane, parent: fromnode.node.data.key};
           fromnode.diagram.model.addNodeData(newnode);
           // locate the node initially where the parent node is
-          if (lane == 4) {
-            fromnode.diagram.findNodeForData(newnode).location = fromnode.node.location.y+200;
-          }else {
+          // if (lane == 4) {
+          //   fromnode.diagram.findNodeForData(newnode).location = fromnode.node.location.y+200;
+          // }else {
             fromnode.diagram.findNodeForData(newnode).location = fromnode.node.location;
-          }
+          //    }
           var newlink = { from: fromnode.node.data.key, to: newnode.key };
           fromnode.diagram.model.addLinkData(newlink);
 
-          if(lane !== "Lane1" || lane !== "Lane2"){
-           // console.log(newlink.isVisible())
+          // if(lane !== "Lane1" || lane !== "Lane2"){
+          //  // console.log(newlink.isVisible())
             
 
-          }
+          // }
           // and then add a link data connecting the original node with the new one
           
           // finish the transaction -- will automatically perform a layout
           fromnode.diagram.commitTransaction("add node and link");
-          relayoutLanes();
+          
           fromnode=null;
         return;
 
@@ -627,5 +633,37 @@
     <br />
     <textarea id="mySavedModel" style="width:100%;height:300px"></textarea>
   </div>
+  <div class="popup" style="position:absolute;top:50;left:500px;width:18vw;height:20vh;z-index: 999;background-color:#FFBB73;display: none" id="popup">
+      <!-- <div id="myInfo"></div> -->
+      <form id="db">
+      Level Of Impact:
+      <select>
+      <option>1</option>
+      <option>2</option>
+      <option >3</option>
+      <option >4</option>
+      </select>
+      <br>
+      <input type="text" id="txt">
+      <br>
+      <FORM Name="myForm">
+      事件:
+      <SELECT Name="event" OnChange="Buildkey(this.selectedIndex);">
+      <OPTION Value="非法訪問">非法訪問
+      <OPTION Value="修改">修改
+      <OPTION Value="消失">消失
+      </Select>
+      <br>
+      likelihood:
+      <SELECT Name="likelihood">
+      <option>1</option>
+      <option> 2</option>
+      <option>3</option>
+      </Select>
+      </Form>
+      <button id="close" onclick="getElementById('popup').style.display='none'">確定</button>
+      <input type="button" onclick="formReset(),getElementById('popup').style.display='none'" value="取消">
+      </form>
+    </div>
   </body>
   </html>
