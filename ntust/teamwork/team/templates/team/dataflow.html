@@ -292,7 +292,7 @@
               wrap: go.TextBlock.WrapFit,
               textAlign: "center",
               editable: true,
-              font: "bold 9pt Helvetica, Arial, sans-serif",
+              font: "bold 11pt Helvetica, Arial, sans-serif",
               name: "TEXT"
             },
               new go.Binding("text", "key")),
@@ -346,6 +346,7 @@
                   isOngoing: true,  // invalidate layout when nodes or links are added or removed
                   direction: 90,
                   columnSpacing: 10,
+                  setsPortSpots: false,
                   layeringOption: go.LayeredDigraphLayout.LayerLongestPathSource
                 }),
               computesBoundsAfterDrag: true,  // needed to prevent recomputing Group.placeholder bounds too soon
@@ -478,13 +479,11 @@
             { key: "Lane3", text: "Input", isGroup: true, group: "Pool1", color: "lightyellow", category:"Input" },
             { key: "Lane4", text: "Process", isGroup: true, group: "Pool1", color: "orange", category:"Process" },
             { key: "Lane5", text: "Output", isGroup: true, group: "Pool1", color: "lightskyblue", category:"Output" },
-            { key: "Start", group: "Lane4"},
             { key: "Collect", group: "Lane4"},
             { key: "Store", group: "Lane4"},
             { key: "Use", group: "Lane4" },
             { key: "Transfer", group: "Lane4" },
             { key: "Delete", group: "Lane4" },
-            { key: "End", group: "Lane4" },
 
             
             
