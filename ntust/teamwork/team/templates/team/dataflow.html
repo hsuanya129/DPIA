@@ -281,21 +281,18 @@
               document.getElementById("popup").style.display="block"
               },
             },
-
+            { selectionObjectName: "TEXT" },
             { contextMenu: myContextMenu },
             new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
             $(go.Shape, "RoundedRectangle",
               { fill: "white", portId: "", cursor: "pointer", fromLinkable: false, toLinkable: false }),
-            $(go.TextBlock, {
-              margin: 5,
-              maxSize: new go.Size(200, NaN),
-              wrap: go.TextBlock.WrapFit,
-              textAlign: "center",
-              editable: true,
-              font: "bold 11pt Helvetica, Arial, sans-serif",
-              name: "TEXT"
+            $(go.TextBlock,
+            {
+              name: "TEXT",
+              minSize: new go.Size(30, 15),
+              editable: true
             },
-              new go.Binding("text", "key")),
+            new go.Binding("text", "key").makeTwoWay()),
             {
         selectionAdornmentTemplate:
           $(go.Adornment, "Spot",
@@ -516,6 +513,8 @@
           document.getElementById("add_output").style.display=(obj.part.containingGroup.key =='Lane4' ? "block" : "none");
           document.getElementById("add_system").style.display=(obj.part.containingGroup.key =='Lane4' ? "block" : "none");
           document.getElementById("add_participants").style.display=(obj.part.containingGroup.key =='Lane4' ? "block" : "none");
+          document.getElementById("add_value3").style.display=(obj.part.containingGroup.key =='Lane3' ? "block" : "none");
+          document.getElementById("add_value5").style.display=(obj.part.containingGroup.key =='Lane5' ? "block" : "none");
 
           // Now show the whole context menu element
           cxElement.style.display = "block";
@@ -563,6 +562,8 @@
           case "add_output": addNodeAndLink(fromnode, "Lane5"); break;
           case "add_system": addNodeAndLink(fromnode, "Lane2"); break;
           case "add_participants": addNodeAndLink(fromnode, "Lane1"); break;
+          case "add_value3": document.getElementById("popup").style.display="block"; break;
+          case "add_value5": document.getElementById("popup").style.display="block"; break;
           
         }
         diagram.currentTool.stopTool();
@@ -673,6 +674,8 @@
             <li id="add_system" onclick="cxcommand(event)"><a href="#" target="_self">Add System</a></li>
             <li id="add_participants" onclick="cxcommand(event)"><a href="#" target="_self">Add Participant</a></li>
             <li id="delete" onclick="cxcommand(event)"><a href="#" target="_self">Delete</a></li>
+            <li id="add_value3" onclick="cxcommand(event)"><a href="#" target="_self">Add Value</a></li>
+            <li id="add_value5" onclick="cxcommand(event)"><a href="#" target="_self">Add Value</a></li>
             
               </ul>
             </li>
@@ -687,5 +690,12 @@
     <br />
     <textarea id="mySavedModel" style="width:100%;height:300px"></textarea>
   </div>
+  <div class="popup" style="position:absolute;top:0;left:1;width:18vw;height:15vh;z-index: 999;background-color:#FFBB73;display: none;border-width:3px;border-style:solid;border-color:black;padding:5px;" id="popup">
+      <form id="db">
+      <input type="TextBlock" id="txt" value="描述">
+      <button id="close" onclick="getElementById('popup').style.display='none'">確定</button>
+      <input type="reset" value="清除">
+      </form>
+    </div>
   </body>
   </html>
