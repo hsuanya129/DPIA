@@ -12,4 +12,5 @@ urlpatterns = [
 	url(r'^stakeholder/',views.stakeholder, name='stakeholder'),
 	url(r'^dataflow/',views.dataflow, name='dataflow'),
 	url(r'^dataflow_get/',views.dataflow_get, name='dataflow_get'),
+	url(r'^dataflow_saveTemp/',views.dataflow_saveTemp, name='dataflow_saveTemp'),
 ]

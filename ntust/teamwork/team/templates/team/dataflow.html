@@ -551,6 +551,17 @@
 
       }  // end init
       // Show the diagram's model in JSON format
+
+      function saveTemp(){
+        jQuery.ajax({
+          method:'POST',
+          url:'dataflow_saveTemp',
+          data:{'postdata':myDiagram.model.toJson()},
+          dataType:'json'
+        });
+
+      }
+
       function save() {
         document.getElementById("mySavedModel").value = myDiagram.model.toJson();
         myDiagram.isModified = false;  
