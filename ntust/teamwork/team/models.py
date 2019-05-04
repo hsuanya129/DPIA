@@ -15,8 +15,8 @@ class Activity(models.Model):
     pia_manager_email = models.TextField()
     activity_manager_name = models.TextField()
     activity_manager_email = models.TextField()
-    date = models.DateTimeField()
     description = models.TextField()
+    date = models.DateTimeField()
 
     def __str__(self):
         return self.name
@@ -36,21 +36,84 @@ class Answer(models.Model):
     class Meta:
         db_table = 'answer'
 
-class Asset(models.Model):
-    id = models.IntegerField(primary_key=True)
-    type = models.TextField()
-    name = models.TextField()
-    impact_level = models.IntegerField()
-    risk = models.TextField()
-    likelihood = models.IntegerField()
+
+class Evaluation(models.Model):
+    activity = models.ForeignKey(Activity, models.DO_NOTHING)
+    pii_id = models.IntegerField()
+    asset_type = models.TextField(blank=True, null=True)
+    asset_id = models.IntegerField(blank=True, null=True)
+    probability = models.IntegerField(blank=True, null=True)
+    value = models.IntegerField(blank=True, null=True)
+    risk = models.ForeignKey('Risk', models.DO_NOTHING, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+
+
+    def __str__(self):
+        return self.id
+
+    class Meta:
+        db_table = 'evaluation'
+
+
+class Participant(models.Model):
+    name = models.TextField(blank=True, null=True)
     activity = models.ForeignKey(Activity, models.DO_NOTHING)
 
     def __str__(self):
-        return self.id+"/"+self.type+"/"+self.name
-
+        return str(self.activity_id)+","+self.name
 
     class Meta:
-        db_table = 'asset'
+        db_table = 'participant'
+
+
+class Pii(models.Model):
+    name = models.TextField()
+    activity = models.ForeignKey(Activity, models.DO_NOTHING)
+    value = models.IntegerField()
+
+    def __str__(self):
+        return str(self.activity_id)+","+self.name
+
+    class Meta:
+        db_table = 'pii'
+
+
+class Process(models.Model):
+    name = models.TextField()
+    activity = models.ForeignKey(Activity, models.DO_NOTHING)
+
+    def __str__(self):
+        return str(self.activity_id)+","+self.name
+
+    class Meta:
+        db_table = 'process'
+
+
+class ProcessHasParticipant(models.Model):
+    process = models.ForeignKey(Process, models.DO_NOTHING, primary_key=True)
+    participant = models.ForeignKey(Participant, models.DO_NOTHING)
+
+    class Meta:
+        db_table = 'process_has_participant'
+        unique_together = (('process', 'participant'),)
+
+
+class ProcessHasPii(models.Model):
+    process = models.ForeignKey(Process, models.DO_NOTHING, primary_key=True)
+    pii = models.ForeignKey(Pii, models.DO_NOTHING)
+
+    class Meta:
+        db_table = 'process_has_pii'
+        unique_together = (('process', 'pii'),)
+
+
+class ProcessHasSystem(models.Model):
+    process = models.ForeignKey(Process, models.DO_NOTHING, primary_key=True)
+    system = models.ForeignKey('System', models.DO_NOTHING)
+
+    class Meta:
+        db_table = 'process_has_system'
+        unique_together = (('process', 'system'),)
 
 
 class Question(models.Model):
@@ -74,32 +137,19 @@ class QuestionaryType(models.Model):
     class Meta:
         db_table = 'questionary_type'
 
-class Swimlane(models.Model):
-    swimlane_json = JSONField(blank=True, null=True)  
-    activity = models.ForeignKey(Activity, models.DO_NOTHING)
+
+class Risk(models.Model):
+    id = models.IntegerField(primary_key=True)
+    description = models.TextField()
 
     def __str__(self):
-        return "activity id:"+self.activity
+        return str(self.id)+","+self.description
 
     class Meta:
-        db_table = 'swimlane'
+        db_table = 'risk'
 
-
-class User(models.Model):
-    account = models.TextField()
-    password = models.TextField()
-    permission_level = models.IntegerField()
-    name = models.TextField()
-    activity = models.ForeignKey(Activity, models.DO_NOTHING)
-
-    def __str__(self):
-        return self.account
-
-    class Meta:
-        db_table = 'user'
 
 class Stakeholder(models.Model):
-    id = models.IntegerField(primary_key=True)
     name = models.TextField()
     role = models.TextField()
     email = models.TextField()
@@ -112,3 +162,51 @@ class Stakeholder(models.Model):
 
     class Meta:
         db_table = 'stakeholder'
+
+
+class Swimlane(models.Model):
+    swimlane_json = models.TextField(blank=True, null=True)  # This field type is a guess.
+    activity = models.ForeignKey(Activity, models.DO_NOTHING)
+
+    def __str__(self):
+        return "activity id:"+str(self.activity)
+
+    class Meta:
+        db_table = 'swimlane'
+
+
+class System(models.Model):
+    name = models.TextField(blank=True, null=True)
+    activity = models.ForeignKey(Activity, models.DO_NOTHING)
+
+    def __str__(self):
+        return str(self.activity_id)+","+self.name
+
+    class Meta:
+        db_table = 'system'
+
+
+class User(models.Model):
+    account = models.TextField()
+    password = models.TextField()
+    name = models.TextField()
+    permission_level = models.IntegerField(blank=True, null=True)
+
+    def __str__(self):
+        return self.account
+
+
+    class Meta:
+        db_table = 'user'
+
+
+class UserHasActivity(models.Model):
+    user = models.ForeignKey(User, models.DO_NOTHING, primary_key=True)
+    activity = models.ForeignKey(Activity, models.DO_NOTHING)
+
+    def __str__(self):
+        return str(self.user_id)+","+str(self.activity_id)
+
+    class Meta:
+        db_table = 'user_has_activity'
+        unique_together = (('user', 'activity'),)
