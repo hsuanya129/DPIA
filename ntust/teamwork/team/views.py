@@ -134,3 +134,7 @@ def dataflow_get(request):
         swimlane_object_one = Swimlane.objects.get(activity_id=1)
         swimlane_object_get.swimlane_json = swimlane_object_one.swimlane_json
     return JsonResponse(swimlane_object_get.swimlane_json)
+
+def saveNodes(request):
+    return
+

@@ -165,7 +165,7 @@ class Stakeholder(models.Model):
 
 
 class Swimlane(models.Model):
-    swimlane_json = models.TextField(blank=True, null=True)  # This field type is a guess.
+    swimlane_json = JSONField(blank=True, null=True) 
     activity = models.ForeignKey(Activity, models.DO_NOTHING)
 
     def __str__(self):

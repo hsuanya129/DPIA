@@ -53,6 +53,7 @@
         }
     </style>
     {% load static %}
+    <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="{% static "site/release/go.js" %}"></script>
     <script src="https://unpkg.com/gojs/release/go-debug.js"></script>
     <script id="code">
@@ -70,6 +71,7 @@
         });
         myDiagram.layoutDiagram();
       }
+
       // this is called after nodes have been moved or lanes resized, to layout all of the Pool Groups again
       function relayoutDiagram() {
         myDiagram.layout.invalidateLayout();
@@ -228,7 +230,6 @@
               "SelectionMoved": relayoutDiagram,  // this DiagramEvent listener is
               "SelectionCopied": relayoutDiagram, // defined above
               "animationManager.isEnabled": false,
-
               // enable undo & redo
               "undoManager.isEnabled": true
             });
@@ -292,7 +293,7 @@
               minSize: new go.Size(30, 15),
               editable: true
             },
-            new go.Binding("text", "key").makeTwoWay()),
+            new go.Binding("text", "text").makeTwoWay()),
             {
         selectionAdornmentTemplate:
           $(go.Adornment, "Spot",
@@ -467,34 +468,34 @@
             $(go.Shape, { toArrow: "Standard" })
           );
         // define some sample graphs in some of the lanes
-        myDiagram.model = new go.GraphLinksModel(
-          [ // node data
-            { key: "Pool1", text: "Pool", isGroup: true, category: "Pool" },
-            { key: "Lane1", text: "Participants", isGroup: true, group: "Pool1", color: "lightblue", category:"Participants" },
-            { key: "Lane2", text: "System", isGroup: true, group: "Pool1", color: "lightgreen", category:"System" },
-            { key: "Lane3", text: "Input", isGroup: true, group: "Pool1", color: "lightyellow", category:"Input" },
-            { key: "Lane4", text: "Process", isGroup: true, group: "Pool1", color: "orange", category:"Process" },
-            { key: "Lane5", text: "Output", isGroup: true, group: "Pool1", color: "lightskyblue", category:"Output" },
-            { key: "Collect", group: "Lane4"},
-            { key: "Store", group: "Lane4"},
-            { key: "Use", group: "Lane4" },
-            { key: "Transfer", group: "Lane4" },
-            { key: "Delete", group: "Lane4" },
+        // myDiagram.model = new go.GraphLinksModel(
+        //   [ // node data
+        //     { key: "Pool1", text: "Pool", isGroup: true, category: "Pool" },
+        //     { key: "Lane1", text: "Participants", isGroup: true, group: "Pool1", color: "lightblue", category:"Participants" },
+        //     { key: "Lane2", text: "System", isGroup: true, group: "Pool1", color: "lightgreen", category:"System" },
+        //     { key: "Lane3", text: "Input", isGroup: true, group: "Pool1", color: "lightyellow", category:"Input" },
+        //     { key: "Lane4", text: "Process", isGroup: true, group: "Pool1", color: "orange", category:"Process" },
+        //     { key: "Lane5", text: "Output", isGroup: true, group: "Pool1", color: "lightskyblue", category:"Output" },
+        //     { key: "Collect", group: "Lane4",text:"Collect"},
+        //     { key: "Store", group: "Lane4",text:"Store"},
+        //     { key: "Use", group: "Lane4",text:"Use" },
+        //     { key: "Transfer", group: "Lane4" ,text:"Transfer"},
+        //     { key: "Delete", group: "Lane4" ,text:"Delete"},
 
             
             
 
-          ],
-          [ // link data
-            { from: "Collect", to: "Store" },
-            { from: "Store", to: "Use" },
-            { from: "Use", to: "Transfer" },
-            { from: "Transfer",to: "Delete" },
+        //   ],
+        //   [ // link data
+        //     { from: "Collect", to: "Store" },
+        //     { from: "Store", to: "Use" },
+        //     { from: "Use", to: "Transfer" },
+        //     { from: "Transfer",to: "Delete" },
 
             
-          ]);
+        //   ]);
+        load();
         document.getElementById("mySavedModel").value = myDiagram.model.toJson();
-        // load(); 等之後確定流程圖格式後再加入
 
         myDiagram.contextMenu = myContextMenu;
         // We don't want the div acting as a context menu to have a (browser) context menu!
@@ -525,6 +526,28 @@
         }
         // force all lanes' layouts to be performed
         relayoutLanes();
+
+        myDiagram.addDiagramListener('TextEdited',function(e){
+          console.log("addDiagramListener: "+e.subject.part.key+e.subject.text);
+        });
+
+        myDiagram.addModelChangedListener(function(evt) {
+          // ignore unimportant Transaction events
+          if (!evt.isTransactionFinished) return;
+          var txn = evt.object;  // a Transaction
+          if (txn === null) return;
+          // iterate over all of the actual ChangedEvents of the Transaction
+          txn.changes.each(function(e) {
+
+            // record node insertions and removals
+            if (e.modelChange !== "nodeDataArray") return;
+            if(e.change === go.ChangedEvent.Insert){
+              console.log(evt.propertyName + "added node:" + e.newValue.key);
+             } else if (e.change === go.ChangedEvent.Remove){
+               console.log(evt.propertyName + " removed node: " + e.oldValue.key);
+             }
+          });
+        });
 
       }  // end init
       // Show the diagram's model in JSON format
@@ -574,7 +597,7 @@
           fromnode.diagram.startTransaction("add node and link");
           // have the Model add the node data
           console.log(fromnode.node.data.key)
-          var newnode = { key: "N", group: lane, parent: fromnode.node.data.key};
+          var newnode = { key: "N", group: lane, parent: fromnode.node.data.key, text:"please enter the name of your data"};
           fromnode.diagram.model.addNodeData(newnode);
           // locate the node initially where the parent node is
           // if (lane == 4) {
