@@ -203,19 +203,37 @@ def removeNode(saveTemp,pk):
 def renameNode(saveTemp,pk):
     swimlane = Swimlane.objects.get(activity_id=pk)
     nodeDataArray = swimlane.swimlane_json['nodeDataArray']
-
+    process = Process.objects.get(activity_id=pk, name=saveTemp['process'])
 
     if saveTemp["asset_type"] =="Lane1":
-        if len(Participant.objects.filter(activity_id = pk ,name = saveTemp['name'])) ==0:
-            participant = Participant.objects.get(activity_id=pk, name=saveTemp["old_name"])
-            participant.name = saveTemp["name"]
-            participant.save()
+        participant_old = Participant.objects.get(activity_id=pk, name=saveTemp['old_name'])
+        if len(ProcessHasParticipant.objects.filter(participant_id=participant_old.id))==1: #舊的name只有一個物件
+            if len(Participant.objects.filter(activity_id=pk, name=saveTemp['name'])) ==0: #新的name尚未有物件
+                participant_old.name = saveTemp['name']
+                participant_old.save()
+                print("it's first circumstance")
 
-            for node in nodeDataArray:
-                if node.get("group") != None:
-                    if node['group'] == "Lane1" and node['text'] == saveTemp["old_name"]:
-                        node['text'] = saveTemp["name"]
-                    
+            elif len(Participant.objects.filter(activity_id=pk, name=saveTemp['name'])) ==1: #新的name已有物件
+                participant_new = Participant.objects.get(activity_id=pk, name=saveTemp['name'])
+                participant_old.delete()
+                ProcessHasParticipant.objects.create(participant_id=participant_new.id,process_id=process.id)
+                print("it's second circumstance")
+
+        elif len(ProcessHasParticipant.objects.filter(participant_id=participant_old.id))!=1: #舊的name不只有一個物件
+            if len(Participant.objects.filter(activity_id=pk, name=saveTemp['name'])) ==0: #新的name尚未有物件
+                Participant.objects.create(activity_id=pk, name=saveTemp['name'])
+                participant_new = Participant.objects.get(activity_id=pk, name=saveTemp['name'])
+                processHasParticipant_old = ProcessHasParticipant.objects.get(process_id=process.id,participant_id=participant_old.id)
+                processHasParticipant_old.delete()
+                ProcessHasParticipant.objects.create(process_id=process.id,participant_id=participant_new.id)
+                print("it's third circumstance")
+
+            elif len(Participant.objects.filter(activity_id=pk, name=saveTemp['name'])) ==1: #新的name已有物件
+                participant_new = Participant.objects.get(activity_id=pk, name=saveTemp['name'])
+                processHasParticipant_old = ProcessHasParticipant.objects.get(process_id=process.id,participant_id=participant_old.id)
+                processHasParticipant_old.delete()
+                ProcessHasParticipant.objects.create(process_id=process.id,participant_id=participant_new.id)
+                print("it's forth circumstance")
 
     elif saveTemp["asset_type"] == "Lane2":
         if len(System.objects.filter(activity_id = pk ,name = saveTemp['name'])) ==0:
