@@ -133,8 +133,119 @@ def dataflow_get(request):
     if json.dumps(swimlane_object_get.swimlane_json) == "{}":
         swimlane_object_one = Swimlane.objects.get(activity_id=1)
         swimlane_object_get.swimlane_json = swimlane_object_one.swimlane_json
+        Process.objects.create(activity_id=pk,name="Collect")
+        Process.objects.create(activity_id=pk,name="Store")
+        Process.objects.create(activity_id=pk,name="Use")
+        Process.objects.create(activity_id=pk,name="Transfer")
+        Process.objects.create(activity_id=pk,name="Delete")
     return JsonResponse(swimlane_object_get.swimlane_json)
 
 def dataflow_saveTemp(request):
-    return
+    pk=2
+    saveTemp = request.POST.get('postdata')
+    saveTemp = json.loads(saveTemp)
 
+    if saveTemp["event"]=="addNode":
+        addNode(saveTemp,pk)
+    elif saveTemp["event"]=="removeNode":
+        removeNode(saveTemp,pk)
+    elif saveTemp["event"]=="rename" :
+        renameNode(saveTemp,pk)
+
+    return render(request, 'team/dataflow.html')
+
+def addNode(saveTemp,pk):
+
+    
+    if saveTemp["asset_type"] =="Lane1":
+        if len(Participant.objects.filter(activity_id=pk, name=saveTemp["name"])) == 0:
+            Participant.objects.create(activity_id=pk, name=saveTemp["name"])
+        participant = Participant.objects.get(activity_id=pk, name=saveTemp["name"])
+        process = Process.objects.get(activity_id=pk, name=saveTemp["process"])
+        if len(ProcessHasParticipant.objects.filter(process_id=process.id,participant_id=participant.id)) == 0:
+            ProcessHasParticipant.objects.create(process_id=process.id,participant_id=participant.id)
+
+    elif saveTemp["asset_type"] == "Lane2":
+        if len(System.objects.filter(activity_id=pk, name=saveTemp["name"])) ==0:
+            System.objects.create(activity_id=pk, name=saveTemp["name"])
+        system = System.objects.get(activity_id=pk, name=saveTemp["name"])
+        process = Process.objects.get(activity_id=pk, name=saveTemp["process"])
+        if len(ProcessHasSystem.objects.filter(process_id =process.id,system_id=system.id)) ==0:
+            ProcessHasSystem.objects.create(process_id =process.id,system_id=system.id)
+
+    elif (saveTemp["asset_type"]=="Lane3" or saveTemp["asset_type"]=="Lane5") :
+        if len(Pii.objects.filter(activity_id=pk, name=saveTemp["name"])) ==0:
+            Pii.objects.create(activity_id=pk, name=saveTemp["name"])
+        pii = Pii.objects.get(activity_id=pk, name=saveTemp["name"])
+        process = Process.objects.get(activity_id=pk, name=saveTemp["process"])
+        if len(ProcessHasPii.objects.filter(process_id =process.id,pii_id=pii.id)) ==0:
+            ProcessHasPii.objects.create(process_id =process.id,pii_id=pii.id)
+
+def removeNode(saveTemp,pk):
+    if saveTemp["asset_type"] =="Lane1":
+        participant = Participant.objects.get(activity_id=pk, name=saveTemp["name"])
+        process = Process.objects.get(activity_id=pk, name=saveTemp["process"])
+        itemDelete = ProcessHasParticipant.objects.get(process_id =process.id,participant_id=participant.id)
+        itemDelete.delete()
+
+    elif saveTemp["asset_type"] == "Lane2":
+        system = System.objects.get(activity_id=pk, name=saveTemp["name"])
+        process = Process.objects.get(activity_id=pk, name=saveTemp["process"])
+        itemDelete =ProcessHasSystem.objects.get(process_id =process.id,system_id=system.id)
+        itemDelete.delete()
+
+    elif (saveTemp["asset_type"]=="Lane3" or saveTemp["asset_type"]=="Lane5") :
+        pii = Pii.objects.get(activity_id=pk, name=saveTemp["name"])
+        process = Process.objects.get(activity_id=pk, name=saveTemp["process"])
+        itemDelete =ProcessHasPii.objects.get(process_id =process.id,pii_id=pii.id)
+        itemDelete.delete()
+
+def renameNode(saveTemp,pk):
+    swimlane = Swimlane.objects.get(activity_id=pk)
+    nodeDataArray = swimlane.swimlane_json['nodeDataArray']
+
+
+    if saveTemp["asset_type"] =="Lane1":
+        if len(Participant.objects.filter(activity_id = pk ,name = saveTemp['name'])) ==0:
+            participant = Participant.objects.get(activity_id=pk, name=saveTemp["old_name"])
+            participant.name = saveTemp["name"]
+            participant.save()
+
+            for node in nodeDataArray:
+                if node.get("group") != None:
+                    if node['group'] == "Lane1" and node['text'] == saveTemp["old_name"]:
+                        node['text'] = saveTemp["name"]
+                    
+
+    elif saveTemp["asset_type"] == "Lane2":
+        if len(System.objects.filter(activity_id = pk ,name = saveTemp['name'])) ==0:
+            system = System.objects.get(activity_id=pk, name=saveTemp["old_name"])
+            system.name = saveTemp["name"]
+            system.save()
+
+            for node in nodeDataArray:
+                if node.get("group") != None:
+                    if node['group'] == "Lane2" and node['text'] == saveTemp["old_name"]:
+                        node['text'] = saveTemp["name"]
+
+    elif (saveTemp["asset_type"]=="Lane3" or saveTemp["asset_type"]=="Lane5") :
+        if len(Pii.objects.filter(activity_id = pk ,name = saveTemp['name'])) ==0:
+            pii = Pii.objects.get(activity_id=pk, name=saveTemp["old_name"])
+            pii.name = saveTemp["name"]
+            pii.save()
+
+            for node in nodeDataArray:
+                if node.get("group") != None:
+                    if (node['group'] == "Lane3" or "Lane5") and node['text'] == saveTemp["old_name"]:
+                        node['text'] = saveTemp["name"]
+
+    elif saveTemp["asset_type"] == "Lane4":
+        if len(Process.objects.filter(activity_id = pk ,name = saveTemp['name'])) ==0:
+            process = Process.objects.get(activity_id=pk, name=saveTemp["old_name"])
+            process.name = saveTemp["name"]
+            process.save()
+
+            for node in nodeDataArray:
+                if node.get("group") != None:
+                    if node['group'] == "Lane4" and node['text'] == saveTemp["old_name"]:
+                        node['text'] = saveTemp["name"]

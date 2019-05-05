@@ -528,7 +528,18 @@
         relayoutLanes();
 
         myDiagram.addDiagramListener('TextEdited',function(e){
-          console.log("addDiagramListener: "+e.subject.part.key+e.subject.text);
+          //console.log("addDiagramListener: "+e.subject.part.key+e.parameter);
+          var node =myDiagram.findNodeForKey(e.subject.part.key).data;
+
+          var postdata={
+            event:"rename",
+            process:node.parent,
+            name:node.text,
+            asset_type:node.group,
+            old_name:e.parameter
+          }
+          saveTemp(JSON.stringify(postdata));
+          save();
         });
 
         myDiagram.addModelChangedListener(function(evt) {
@@ -542,9 +553,28 @@
             // record node insertions and removals
             if (e.modelChange !== "nodeDataArray") return;
             if(e.change === go.ChangedEvent.Insert){
-              console.log(evt.propertyName + "added node:" + e.newValue.key);
-             } else if (e.change === go.ChangedEvent.Remove){
-               console.log(evt.propertyName + " removed node: " + e.oldValue.key);
+              //console.log(evt.propertyName + "added node:" + e.newValue.key);
+              var node = myDiagram.findNodeForKey(e.newValue.key).data;
+              var postdata={
+                event:"addNode",
+                process:node.parent,
+                name:node.text,
+                asset_type:node.group
+            }
+              saveTemp(JSON.stringify(postdata));
+              save();
+
+            } else if (e.change === go.ChangedEvent.Remove){
+              //console.log(evt.propertyName + " removed node: " + e.oldValue.key);
+              var node = e.oldValue;
+              var postdata={
+                event:"removeNode",
+                process:node.parent,
+                name:node.text,
+                asset_type:node.group
+              }
+              saveTemp(JSON.stringify(postdata));
+              save();
              }
           });
         });
@@ -552,11 +582,11 @@
       }  // end init
       // Show the diagram's model in JSON format
 
-      function saveTemp(){
+      function saveTemp(postdata){
         jQuery.ajax({
           method:'POST',
-          url:'dataflow_saveTemp',
-          data:{'postdata':myDiagram.model.toJson()},
+          url:'../dataflow_saveTemp/',
+          data:{'postdata':postdata},
           dataType:'json'
         });
 

@@ -90,7 +90,7 @@ class Process(models.Model):
 
 
 class ProcessHasParticipant(models.Model):
-    process = models.ForeignKey(Process, models.DO_NOTHING, primary_key=True)
+    process = models.ForeignKey(Process, models.DO_NOTHING,primary_key=True)
     participant = models.ForeignKey(Participant, models.DO_NOTHING)
 
     class Meta:
@@ -99,17 +99,27 @@ class ProcessHasParticipant(models.Model):
 
 
 class ProcessHasPii(models.Model):
-    process = models.ForeignKey(Process, models.DO_NOTHING, primary_key=True)
+    process = models.ForeignKey(Process, models.DO_NOTHING,primary_key=True)
     pii = models.ForeignKey(Pii, models.DO_NOTHING)
 
     class Meta:
         db_table = 'process_has_pii'
         unique_together = (('process', 'pii'),)
 
+class System(models.Model):
+    name = models.TextField(blank=True, null=True)
+    activity = models.ForeignKey(Activity, models.DO_NOTHING)
+
+    def __str__(self):
+        return str(self.activity_id)+","+self.name
+
+    class Meta:
+        db_table = 'system'
+
 
 class ProcessHasSystem(models.Model):
-    process = models.ForeignKey(Process, models.DO_NOTHING, primary_key=True)
-    system = models.ForeignKey('System', models.DO_NOTHING)
+    process = models.ForeignKey(Process, models.DO_NOTHING,primary_key=True)
+    system = models.ForeignKey(System, models.DO_NOTHING)
 
     class Meta:
         db_table = 'process_has_system'
@@ -175,16 +185,6 @@ class Swimlane(models.Model):
         db_table = 'swimlane'
 
 
-class System(models.Model):
-    name = models.TextField(blank=True, null=True)
-    activity = models.ForeignKey(Activity, models.DO_NOTHING)
-
-    def __str__(self):
-        return str(self.activity_id)+","+self.name
-
-    class Meta:
-        db_table = 'system'
-
 
 class User(models.Model):
     account = models.TextField()
@@ -201,7 +201,7 @@ class User(models.Model):
 
 
 class UserHasActivity(models.Model):
-    user = models.ForeignKey(User, models.DO_NOTHING, primary_key=True)
+    user = models.ForeignKey(User, models.DO_NOTHING,primary_key=True)
     activity = models.ForeignKey(Activity, models.DO_NOTHING)
 
     def __str__(self):
