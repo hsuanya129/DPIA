@@ -53,7 +53,6 @@
         }
     </style>
     {% load static %}
-    <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="{% static "site/release/go.js" %}"></script>
     <script src="https://unpkg.com/gojs/release/go-debug.js"></script>
     <script id="code">
@@ -71,7 +70,6 @@
         });
         myDiagram.layoutDiagram();
       }
-
       // this is called after nodes have been moved or lanes resized, to layout all of the Pool Groups again
       function relayoutDiagram() {
         myDiagram.layout.invalidateLayout();
@@ -230,6 +228,7 @@
               "SelectionMoved": relayoutDiagram,  // this DiagramEvent listener is
               "SelectionCopied": relayoutDiagram, // defined above
               "animationManager.isEnabled": false,
+
               // enable undo & redo
               "undoManager.isEnabled": true
             });
@@ -277,10 +276,10 @@
                 if (link.fromNode !== null) link.fromNode.invalidateConnectedLinks();
                 if (link.toNode !== null) link.toNode.invalidateConnectedLinks();
               },
-              doubleClick:function(e,node){
-              // 雙擊事件
-              document.getElementById("popup").style.display="block"
-              },
+              // doubleClick:function(e,node){
+              // // 雙擊事件
+              // document.getElementById("popup").style.display="block"
+              // },
             },
             { selectionObjectName: "TEXT" },
             { contextMenu: myContextMenu },
@@ -291,9 +290,10 @@
             {
               name: "TEXT",
               minSize: new go.Size(30, 15),
-              editable: true
+              editable: true,
+              font:"bold 11pt Helvetica, Arial, sans-serif"
             },
-            new go.Binding("text", "text").makeTwoWay()),
+            new go.Binding("text", "key").makeTwoWay()),
             {
         selectionAdornmentTemplate:
           $(go.Adornment, "Spot",
@@ -468,34 +468,34 @@
             $(go.Shape, { toArrow: "Standard" })
           );
         // define some sample graphs in some of the lanes
-        // myDiagram.model = new go.GraphLinksModel(
-        //   [ // node data
-        //     { key: "Pool1", text: "Pool", isGroup: true, category: "Pool" },
-        //     { key: "Lane1", text: "Participants", isGroup: true, group: "Pool1", color: "lightblue", category:"Participants" },
-        //     { key: "Lane2", text: "System", isGroup: true, group: "Pool1", color: "lightgreen", category:"System" },
-        //     { key: "Lane3", text: "Input", isGroup: true, group: "Pool1", color: "lightyellow", category:"Input" },
-        //     { key: "Lane4", text: "Process", isGroup: true, group: "Pool1", color: "orange", category:"Process" },
-        //     { key: "Lane5", text: "Output", isGroup: true, group: "Pool1", color: "lightskyblue", category:"Output" },
-        //     { key: "Collect", group: "Lane4",text:"Collect"},
-        //     { key: "Store", group: "Lane4",text:"Store"},
-        //     { key: "Use", group: "Lane4",text:"Use" },
-        //     { key: "Transfer", group: "Lane4" ,text:"Transfer"},
-        //     { key: "Delete", group: "Lane4" ,text:"Delete"},
+        myDiagram.model = new go.GraphLinksModel(
+          [ // node data
+            { key: "Pool1", text: "Pool", isGroup: true, category: "Pool" },
+            { key: "Lane1", text: "Participants", isGroup: true, group: "Pool1", color: "lightblue", category:"Participants" },
+            { key: "Lane2", text: "System", isGroup: true, group: "Pool1", color: "lightgreen", category:"System" },
+            { key: "Lane3", text: "Input", isGroup: true, group: "Pool1", color: "lightyellow", category:"Input" },
+            { key: "Lane4", text: "Process", isGroup: true, group: "Pool1", color: "orange", category:"Process" },
+            { key: "Lane5", text: "Output", isGroup: true, group: "Pool1", color: "lightskyblue", category:"Output" },
+            { key: "Collect", group: "Lane4"},
+            { key: "Store", group: "Lane4"},
+            { key: "Use", group: "Lane4" },
+            { key: "Transfer", group: "Lane4" },
+            { key: "Delete", group: "Lane4" },
 
             
             
 
-        //   ],
-        //   [ // link data
-        //     { from: "Collect", to: "Store" },
-        //     { from: "Store", to: "Use" },
-        //     { from: "Use", to: "Transfer" },
-        //     { from: "Transfer",to: "Delete" },
+          ],
+          [ // link data
+            { from: "Collect", to: "Store" },
+            { from: "Store", to: "Use" },
+            { from: "Use", to: "Transfer" },
+            { from: "Transfer",to: "Delete" },
 
             
-        //   ]);
-        load();
+          ]);
         document.getElementById("mySavedModel").value = myDiagram.model.toJson();
+        // load(); 等之後確定流程圖格式後再加入
 
         myDiagram.contextMenu = myContextMenu;
         // We don't want the div acting as a context menu to have a (browser) context menu!
@@ -527,71 +527,8 @@
         // force all lanes' layouts to be performed
         relayoutLanes();
 
-        myDiagram.addDiagramListener('TextEdited',function(e){
-          //console.log("addDiagramListener: "+e.subject.part.key+e.parameter);
-          var node =myDiagram.findNodeForKey(e.subject.part.key).data;
-
-          var postdata={
-            event:"rename",
-            process:node.parent,
-            name:node.text,
-            asset_type:node.group,
-            old_name:e.parameter
-          }
-          saveTemp(JSON.stringify(postdata));
-          save();
-        });
-
-        myDiagram.addModelChangedListener(function(evt) {
-          // ignore unimportant Transaction events
-          if (!evt.isTransactionFinished) return;
-          var txn = evt.object;  // a Transaction
-          if (txn === null) return;
-          // iterate over all of the actual ChangedEvents of the Transaction
-          txn.changes.each(function(e) {
-
-            // record node insertions and removals
-            if (e.modelChange !== "nodeDataArray") return;
-            if(e.change === go.ChangedEvent.Insert){
-              //console.log(evt.propertyName + "added node:" + e.newValue.key);
-              var node = myDiagram.findNodeForKey(e.newValue.key).data;
-              var postdata={
-                event:"addNode",
-                process:node.parent,
-                name:node.text,
-                asset_type:node.group
-            }
-              saveTemp(JSON.stringify(postdata));
-              save();
-
-            } else if (e.change === go.ChangedEvent.Remove){
-              //console.log(evt.propertyName + " removed node: " + e.oldValue.key);
-              var node = e.oldValue;
-              var postdata={
-                event:"removeNode",
-                process:node.parent,
-                name:node.text,
-                asset_type:node.group
-              }
-              saveTemp(JSON.stringify(postdata));
-              save();
-             }
-          });
-        });
-
       }  // end init
       // Show the diagram's model in JSON format
-
-      function saveTemp(postdata){
-        jQuery.ajax({
-          method:'POST',
-          url:'../dataflow_saveTemp/',
-          data:{'postdata':postdata},
-          dataType:'json'
-        });
-
-      }
-
       function save() {
         document.getElementById("mySavedModel").value = myDiagram.model.toJson();
         myDiagram.isModified = false;  
@@ -638,7 +575,7 @@
           fromnode.diagram.startTransaction("add node and link");
           // have the Model add the node data
           console.log(fromnode.node.data.key)
-          var newnode = { key: "N", group: lane, parent: fromnode.node.data.key, text:"please enter the name of your data"};
+          var newnode = { key: "N", group: lane, parent: fromnode.node.data.key};
           fromnode.diagram.model.addNodeData(newnode);
           // locate the node initially where the parent node is
           // if (lane == 4) {
@@ -696,8 +633,7 @@
   </head>
   <body onload="init()">
   <div id="sample">
-  	  <div class="popup" style="position:absolute;top:50;left:500px;width:18vw;height:15vh;z-index: 999;background-color:#FFBB73;display: none;border-width:3px;border-style:solid;border-color:black;padding:5px;" id="popup">
-      <!-- <div id="myInfo"></div> -->
+  	  <!-- <div class="popup" style="position:absolute;top:50;left:500px;width:18vw;height:15vh;z-index: 999;background-color:#FFBB73;display: none;border-width:3px;border-style:solid;border-color:black;padding:5px;" id="popup">
       <form id="db">
       Level Of Impact:
       <select>
@@ -727,7 +663,7 @@
       <button id="close" onclick="getElementById('popup').style.display='none'">確定</button>
       <input type="button" onclick="formReset()" value="清除">
       </form>
-    </div>
+    </div> -->
     <div id="myDiagramDiv" style="border: solid 1px black; width:100%; height:600px;"></div>
     <div id="contextMenu">
           <ul>
