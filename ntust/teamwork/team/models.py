@@ -90,7 +90,7 @@ class Process(models.Model):
 
 
 class ProcessHasParticipant(models.Model):
-    process = models.ForeignKey(Process, models.DO_NOTHING,primary_key=True)
+    process = models.ForeignKey(Process, models.DO_NOTHING)
     participant = models.ForeignKey(Participant, models.DO_NOTHING)
 
     class Meta:
@@ -99,7 +99,7 @@ class ProcessHasParticipant(models.Model):
 
 
 class ProcessHasPii(models.Model):
-    process = models.ForeignKey(Process, models.DO_NOTHING,primary_key=True)
+    process = models.ForeignKey(Process, models.DO_NOTHING)
     pii = models.ForeignKey(Pii, models.DO_NOTHING)
 
     class Meta:
@@ -118,7 +118,7 @@ class System(models.Model):
 
 
 class ProcessHasSystem(models.Model):
-    process = models.ForeignKey(Process, models.DO_NOTHING,primary_key=True)
+    process = models.ForeignKey(Process, models.DO_NOTHING)
     system = models.ForeignKey(System, models.DO_NOTHING)
 
     class Meta:

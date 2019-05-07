@@ -598,7 +598,7 @@
         myDiagram.isModified = false;  
           jQuery.ajax({
             method:'POST',
-            url:'dataflow',
+            url:'../dataflow_saveLane/',
             data:{'postdata':myDiagram.model.toJson()},
             dataType:'json'
           });
