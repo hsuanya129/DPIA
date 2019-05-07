@@ -469,32 +469,32 @@
             $(go.Shape, { toArrow: "Standard" })
           );
         // define some sample graphs in some of the lanes
-        myDiagram.model = new go.GraphLinksModel(
-          [ // node data
-            { key: "Pool1", text: "Pool", isGroup: true, category: "Pool" },
-            { key: "Lane1", text: "Participants", isGroup: true, group: "Pool1", color: "lightblue", category:"Participants" },
-            { key: "Lane2", text: "System", isGroup: true, group: "Pool1", color: "lightgreen", category:"System" },
-            { key: "Lane3", text: "Input", isGroup: true, group: "Pool1", color: "lightyellow", category:"Input" },
-            { key: "Lane4", text: "Process", isGroup: true, group: "Pool1", color: "orange", category:"Process" },
-            { key: "Lane5", text: "Output", isGroup: true, group: "Pool1", color: "lightskyblue", category:"Output" },
-            { key: "Collect", group: "Lane4",text:"Collect"},
-            { key: "Store", group: "Lane4",text:"Store"},
-            { key: "Use", group: "Lane4",text:"Use" },
-            { key: "Transfer", group: "Lane4" ,text:"Transfer"},
-            { key: "Delete", group: "Lane4" ,text:"Delete"},
+        // myDiagram.model = new go.GraphLinksModel(
+        //   [ // node data
+        //     { key: "Pool1", text: "Pool", isGroup: true, category: "Pool" },
+        //     { key: "Lane1", text: "Participants", isGroup: true, group: "Pool1", color: "lightblue", category:"Participants" },
+        //     { key: "Lane2", text: "System", isGroup: true, group: "Pool1", color: "lightgreen", category:"System" },
+        //     { key: "Lane3", text: "Input", isGroup: true, group: "Pool1", color: "lightyellow", category:"Input" },
+        //     { key: "Lane4", text: "Process", isGroup: true, group: "Pool1", color: "orange", category:"Process" },
+        //     { key: "Lane5", text: "Output", isGroup: true, group: "Pool1", color: "lightskyblue", category:"Output" },
+        //     { key: "Collect", group: "Lane4",text:"Collect"},
+        //     { key: "Store", group: "Lane4",text:"Store"},
+        //     { key: "Use", group: "Lane4",text:"Use" },
+        //     { key: "Transfer", group: "Lane4" ,text:"Transfer"},
+        //     { key: "Delete", group: "Lane4" ,text:"Delete"},
 
             
             
 
-          ],
-          [ // link data
-            { from: "Collect", to: "Store" },
-            { from: "Store", to: "Use" },
-            { from: "Use", to: "Transfer" },
-            { from: "Transfer",to: "Delete" },
+        //   ],
+        //   [ // link data
+        //     { from: "Collect", to: "Store" },
+        //     { from: "Store", to: "Use" },
+        //     { from: "Use", to: "Transfer" },
+        //     { from: "Transfer",to: "Delete" },
 
             
-          ]);
+        //   ]);
         load();
         // document.getElementById("mySavedModel").value = myDiagram.model.toJson();
 
@@ -610,6 +610,7 @@
         myDiagram.model = go.Model.fromJson(getdata);
         // document.getElementById("mySavedModel").value = myDiagram.model.toJson();
         }) 
+        
       }
       function cxcommand(event, val) {
         if (val === undefined) val = event.currentTarget.id;
