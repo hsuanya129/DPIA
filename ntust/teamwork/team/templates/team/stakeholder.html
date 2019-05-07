@@ -22,16 +22,19 @@
 		 Td.innerHTML='<input name="part" type="text">';
 		 Td = Tr.insertCell(Tr.cells.length);
 		 Td.innerHTML='<input name="feedback" type="text">';
+		 Td = Tr.insertCell(Tr.cells.length);
+		 Td.innerHTML='<button onclick="remove_data()">刪除欄位';
 		}
 	</script>
 	<script>
 		function remove_data() {
 		//先取得目前的row數
 		var num = document.getElementById("mytable").rows.length;
-		//防止把標題跟原本的第一個刪除XD
+		//防止把標題跟原本的第一個刪除
 		if(num >2){
-		//刪除最後一個
-		document.getElementById("mytable").deleteRow(-1);
+		var td = event.target.parentNode;
+		var tr = td.parentNode;
+		tr.parentNode.removeChild(tr);
 			}
 		}
 	</script>
@@ -64,10 +67,12 @@
 		    <td>
 		    <input name="feedback" type="textarea">
 		    </td>
+		    <td>
+		   	<button type="button" onclick="remove_data()">刪除欄位</button>
+		    </td>	
 		  </tr>
 		</table>
 		<button type="button" onclick="add_new_data()">新增欄位</button>
-		<button type="button" onclick="remove_data()">刪除欄位</button>
 		<input type="submit" name="ok" value="提交">
 	</form>
 </body>
