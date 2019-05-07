@@ -113,26 +113,32 @@ def sign(request):
     return HttpResponseRedirect('/team/')
 
 def dataflow(request):
-    pk =2
+    pk =3
     swimlane_objects = Swimlane.objects.filter(activity_id=pk)
     if len(swimlane_objects) == 0:
         Swimlane.objects.create(activity_id= pk)
 
-    if request.method == 'POST':
-        swimlane_object_post = Swimlane.objects.get(activity_id=pk)
-        data_text = request.POST.get('postdata')
-        data_json = json.loads(data_text)
-        swimlane_object_post.swimlane_json = data_json  
-        swimlane_object_post.save()
+    return render(request, 'team/dataflow.html')
+
+def dataflow_saveLane(request):
+    pk =3
+
+    swimlane_object_post = Swimlane.objects.get(activity_id=pk)
+    data_text = request.POST.get('postdata')
+    data_json = json.loads(data_text)
+    swimlane_object_post.swimlane_json = data_json  
+    swimlane_object_post.save()
 
     return render(request, 'team/dataflow.html')
 
+
 def dataflow_get(request):
-    pk=2
+    pk=3
     swimlane_object_get = Swimlane.objects.get(activity_id=pk)
     if json.dumps(swimlane_object_get.swimlane_json) == "{}":
         swimlane_object_one = Swimlane.objects.get(activity_id=1)
         swimlane_object_get.swimlane_json = swimlane_object_one.swimlane_json
+        swimlane_object_get.save()
         Process.objects.create(activity_id=pk,name="Collect")
         Process.objects.create(activity_id=pk,name="Store")
         Process.objects.create(activity_id=pk,name="Use")
@@ -141,9 +147,10 @@ def dataflow_get(request):
     return JsonResponse(swimlane_object_get.swimlane_json)
 
 def dataflow_saveTemp(request):
-    pk=2
+    pk=3
     saveTemp = request.POST.get('postdata')
     saveTemp = json.loads(saveTemp)
+    print(saveTemp)
 
     if saveTemp["event"]=="addNode":
         addNode(saveTemp,pk)
@@ -200,52 +207,105 @@ def removeNode(saveTemp,pk):
         itemDelete =ProcessHasPii.objects.get(process_id =process.id,pii_id=pii.id)
         itemDelete.delete()
 
-def renameNode(saveTemp,pk):
-    swimlane = Swimlane.objects.get(activity_id=pk)
-    nodeDataArray = swimlane.swimlane_json['nodeDataArray']
 
+def renameNode(saveTemp,pk):
+    if saveTemp['old_name'] == saveTemp['name']:
+        print("OLD NAME = NEW NAME RETURN")
+        return
 
     if saveTemp["asset_type"] =="Lane1":
-        if len(Participant.objects.filter(activity_id = pk ,name = saveTemp['name'])) ==0:
-            participant = Participant.objects.get(activity_id=pk, name=saveTemp["old_name"])
-            participant.name = saveTemp["name"]
-            participant.save()
+        process = Process.objects.get(activity_id=pk, name=saveTemp['process'])
+        participant_old = Participant.objects.get(activity_id=pk, name=saveTemp['old_name'])
+        if len(ProcessHasParticipant.objects.filter(participant_id=participant_old.id))==1: #舊的name只有一個物件
+            if len(Participant.objects.filter(activity_id=pk, name=saveTemp['name'])) ==0: #新的name尚未有物件
+                participant_old.name = saveTemp['name']
+                participant_old.save()
+                
 
-            for node in nodeDataArray:
-                if node.get("group") != None:
-                    if node['group'] == "Lane1" and node['text'] == saveTemp["old_name"]:
-                        node['text'] = saveTemp["name"]
-                    
+            elif len(Participant.objects.filter(activity_id=pk, name=saveTemp['name'])) ==1: #新的name已有物件
+                participant_new = Participant.objects.get(activity_id=pk, name=saveTemp['name'])
+                participant_old.delete()
+                ProcessHasParticipant.objects.create(participant_id=participant_new.id,process_id=process.id)
+                
+
+        elif len(ProcessHasParticipant.objects.filter(participant_id=participant_old.id))!=1: #舊的name不只有一個物件
+            if len(Participant.objects.filter(activity_id=pk, name=saveTemp['name'])) ==0: #新的name尚未有物件
+                Participant.objects.create(activity_id=pk, name=saveTemp['name'])
+                participant_new = Participant.objects.get(activity_id=pk, name=saveTemp['name'])
+                processHasParticipant_old = ProcessHasParticipant.objects.get(process_id=process.id,participant_id=participant_old.id)
+                processHasParticipant_old.delete()
+                ProcessHasParticipant.objects.create(process_id=process.id,participant_id=participant_new.id)
+                
+
+            elif len(Participant.objects.filter(activity_id=pk, name=saveTemp['name'])) ==1: #新的name已有物件
+                participant_new = Participant.objects.get(activity_id=pk, name=saveTemp['name'])
+                processHasParticipant_old = ProcessHasParticipant.objects.get(process_id=process.id,participant_id=participant_old.id)
+                processHasParticipant_old.delete()
+                ProcessHasParticipant.objects.create(process_id=process.id,participant_id=participant_new.id)
+                
 
     elif saveTemp["asset_type"] == "Lane2":
-        if len(System.objects.filter(activity_id = pk ,name = saveTemp['name'])) ==0:
-            system = System.objects.get(activity_id=pk, name=saveTemp["old_name"])
-            system.name = saveTemp["name"]
-            system.save()
+        process = Process.objects.get(activity_id=pk, name=saveTemp['process'])
+        system_old = System.objects.get(activity_id=pk, name=saveTemp['old_name'])
+        if len(ProcessHasSystem.objects.filter(system_id=system_old.id))==1: #舊的name只有一個物件
+            if len(System.objects.filter(activity_id=pk, name=saveTemp['name'])) ==0: #新的name尚未有物件
+                system_old.name = saveTemp['name']
+                system_old.save()
+                
 
-            for node in nodeDataArray:
-                if node.get("group") != None:
-                    if node['group'] == "Lane2" and node['text'] == saveTemp["old_name"]:
-                        node['text'] = saveTemp["name"]
+            elif len(System.objects.filter(activity_id=pk, name=saveTemp['name'])) ==1: #新的name已有物件
+                system_new = System.objects.get(activity_id=pk, name=saveTemp['name'])
+                system_old.delete()
+                ProcessHasSystem.objects.create(system_id=system_new.id,process_id=process.id)
+                
+
+        elif len(ProcessHasSystem.objects.filter(system_id=system_old.id))!=1: #舊的name不只有一個物件
+            if len(System.objects.filter(activity_id=pk, name=saveTemp['name'])) ==0: #新的name尚未有物件
+                System.objects.create(activity_id=pk, name=saveTemp['name'])
+                system_new = System.objects.get(activity_id=pk, name=saveTemp['name'])
+                processHasSystem_old = ProcessHasSystem.objects.get(process_id=process.id,system_id=system_old.id)
+                processHasSystem_old.delete()
+                ProcessHasSystem.objects.create(process_id=process.id,system_id=system_new.id)
+                
+
+            elif len(System.objects.filter(activity_id=pk, name=saveTemp['name'])) ==1: #新的name已有物件
+                system_new = System.objects.get(activity_id=pk, name=saveTemp['name'])
+                processHasSystem_old = ProcessHasSystem.objects.get(process_id=process.id,system_id=system_old.id)
+                processHasSystem_old.delete()
+                ProcessHasSystem.objects.create(process_id=process.id,system_id=system_new.id)
 
     elif (saveTemp["asset_type"]=="Lane3" or saveTemp["asset_type"]=="Lane5") :
-        if len(Pii.objects.filter(activity_id = pk ,name = saveTemp['name'])) ==0:
-            pii = Pii.objects.get(activity_id=pk, name=saveTemp["old_name"])
-            pii.name = saveTemp["name"]
-            pii.save()
+        print("it's pii")
+        process = Process.objects.get(activity_id=pk, name=saveTemp['process'])
+        pii_old = Pii.objects.get(activity_id=pk, name=saveTemp['old_name'])
+        if len(ProcessHasPii.objects.filter(pii_id=pii_old.id))==1: #舊的name只有一個物件
+            if len(Pii.objects.filter(activity_id=pk, name=saveTemp['name'])) ==0: #新的name尚未有物件
+                pii_old.name = saveTemp['name']
+                pii_old.save()
+                
 
-            for node in nodeDataArray:
-                if node.get("group") != None:
-                    if (node['group'] == "Lane3" or "Lane5") and node['text'] == saveTemp["old_name"]:
-                        node['text'] = saveTemp["name"]
+            elif len(Pii.objects.filter(activity_id=pk, name=saveTemp['name'])) ==1: #新的name已有物件
+                pii_new = Pii.objects.get(activity_id=pk, name=saveTemp['name'])
+                pii_old.delete()
+                ProcessHasPii.objects.create(pii_id=pii_new.id,process_id=process.id)
+                
+        elif len(ProcessHasPii.objects.filter(pii_id=pii_old.id))!=1: #舊的name不只有一個物件
+            if len(Pii.objects.filter(activity_id=pk, name=saveTemp['name'])) ==0: #新的name尚未有物件
+                Pii.objects.create(activity_id=pk, name=saveTemp['name'])
+                pii_new = Pii.objects.get(activity_id=pk, name=saveTemp['name'])
+                processHasPii_old = ProcessHasPii.objects.get(process_id=process.id,pii_id=pii_old.id)
+                processHasPii_old.delete()
+                ProcessHasPii.objects.create(process_id=process.id,pii_id=pii_new.id)
+
+            elif len(Pii.objects.filter(activity_id=pk, name=saveTemp['name'])) ==1: #新的name已有物件
+                pii_new = Pii.objects.get(activity_id=pk, name=saveTemp['name'])
+                processHasPii_old = ProcessHasPii.objects.get(process_id=process.id,pii_id=pii_old.id)
+                processHasPii_old.delete()
+                ProcessHasPii.objects.create(process_id=process.id,pii_id=pii_new.id)
 
     elif saveTemp["asset_type"] == "Lane4":
-        if len(Process.objects.filter(activity_id = pk ,name = saveTemp['name'])) ==0:
-            process = Process.objects.get(activity_id=pk, name=saveTemp["old_name"])
-            process.name = saveTemp["name"]
-            process.save()
+        process_old = Process.objects.get(activity_id = pk , name = saveTemp['old_name'])
+        process_old.name = saveTemp['name']
+        process_old.save()
 
-            for node in nodeDataArray:
-                if node.get("group") != None:
-                    if node['group'] == "Lane4" and node['text'] == saveTemp["old_name"]:
-                        node['text'] = saveTemp["name"]
+

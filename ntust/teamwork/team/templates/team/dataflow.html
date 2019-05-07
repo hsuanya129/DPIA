@@ -469,34 +469,34 @@
             $(go.Shape, { toArrow: "Standard" })
           );
         // define some sample graphs in some of the lanes
-        // myDiagram.model = new go.GraphLinksModel(
-        //   [ // node data
-        //     { key: "Pool1", text: "Pool", isGroup: true, category: "Pool" },
-        //     { key: "Lane1", text: "Participants", isGroup: true, group: "Pool1", color: "lightblue", category:"Participants" },
-        //     { key: "Lane2", text: "System", isGroup: true, group: "Pool1", color: "lightgreen", category:"System" },
-        //     { key: "Lane3", text: "Input", isGroup: true, group: "Pool1", color: "lightyellow", category:"Input" },
-        //     { key: "Lane4", text: "Process", isGroup: true, group: "Pool1", color: "orange", category:"Process" },
-        //     { key: "Lane5", text: "Output", isGroup: true, group: "Pool1", color: "lightskyblue", category:"Output" },
-        //     { key: "Collect", group: "Lane4",text:"Collect"},
-        //     { key: "Store", group: "Lane4",text:"Store"},
-        //     { key: "Use", group: "Lane4",text:"Use" },
-        //     { key: "Transfer", group: "Lane4" ,text:"Transfer"},
-        //     { key: "Delete", group: "Lane4" ,text:"Delete"},
+        myDiagram.model = new go.GraphLinksModel(
+          [ // node data
+            { key: "Pool1", text: "Pool", isGroup: true, category: "Pool" },
+            { key: "Lane1", text: "Participants", isGroup: true, group: "Pool1", color: "lightblue", category:"Participants" },
+            { key: "Lane2", text: "System", isGroup: true, group: "Pool1", color: "lightgreen", category:"System" },
+            { key: "Lane3", text: "Input", isGroup: true, group: "Pool1", color: "lightyellow", category:"Input" },
+            { key: "Lane4", text: "Process", isGroup: true, group: "Pool1", color: "orange", category:"Process" },
+            { key: "Lane5", text: "Output", isGroup: true, group: "Pool1", color: "lightskyblue", category:"Output" },
+            { key: "Collect", group: "Lane4",text:"Collect"},
+            { key: "Store", group: "Lane4",text:"Store"},
+            { key: "Use", group: "Lane4",text:"Use" },
+            { key: "Transfer", group: "Lane4" ,text:"Transfer"},
+            { key: "Delete", group: "Lane4" ,text:"Delete"},
 
             
             
 
-        //   ],
-        //   [ // link data
-        //     { from: "Collect", to: "Store" },
-        //     { from: "Store", to: "Use" },
-        //     { from: "Use", to: "Transfer" },
-        //     { from: "Transfer",to: "Delete" },
+          ],
+          [ // link data
+            { from: "Collect", to: "Store" },
+            { from: "Store", to: "Use" },
+            { from: "Use", to: "Transfer" },
+            { from: "Transfer",to: "Delete" },
 
             
-        //   ]);
+          ]);
         load();
-        document.getElementById("mySavedModel").value = myDiagram.model.toJson();
+        // document.getElementById("mySavedModel").value = myDiagram.model.toJson();
 
         myDiagram.contextMenu = myContextMenu;
         // We don't want the div acting as a context menu to have a (browser) context menu!
@@ -531,6 +531,7 @@
         myDiagram.addDiagramListener('TextEdited',function(e){
           //console.log("addDiagramListener: "+e.subject.part.key+e.parameter);
           var node =myDiagram.findNodeForKey(e.subject.part.key).data;
+          console.log(e.subject.text+e.parameter);
 
           var postdata={
             event:"rename",
@@ -594,11 +595,11 @@
       }
 
       function save() {
-        document.getElementById("mySavedModel").value = myDiagram.model.toJson();
+        // document.getElementById("mySavedModel").value = myDiagram.model.toJson();
         myDiagram.isModified = false;  
           jQuery.ajax({
             method:'POST',
-            url:'dataflow',
+            url:'../dataflow_saveLane/',
             data:{'postdata':myDiagram.model.toJson()},
             dataType:'json'
           });
@@ -607,7 +608,7 @@
       function load() {
       jQuery.getJSON('../dataflow_get/',function(getdata){
         myDiagram.model = go.Model.fromJson(getdata);
-        document.getElementById("mySavedModel").value = myDiagram.model.toJson();
+        // document.getElementById("mySavedModel").value = myDiagram.model.toJson();
         }) 
       }
       function cxcommand(event, val) {
@@ -639,7 +640,7 @@
           fromnode.diagram.startTransaction("add node and link");
           // have the Model add the node data
           console.log(fromnode.node.data.key)
-          var newnode = { key: "N", group: lane, parent: fromnode.node.data.key, text:"please enter the name of your data"};
+          var newnode = { key: "N", group: lane, parent: fromnode.node.data.key, text:"edit"};
           fromnode.diagram.model.addNodeData(newnode);
           // locate the node initially where the parent node is
           // if (lane == 4) {
@@ -716,12 +717,11 @@
         </div>
 
     
-    <button onclick="relayoutLanes()">Layout</button>
-    <button id="SaveButton" onclick="save()">Save</button>
-    <button onclick="load()">Load</button>
-    Diagram Model saved in JSON format:
+    <!-- <button onclick="relayoutLanes()">Layout</button> -->
+    <!-- <button id="SaveButton" onclick="save()">Save</button>
+    <button onclick="load()">Load</button> -->
     <br />
-    <textarea id="mySavedModel" style="width:100%;height:300px"></textarea>
+    <!-- <textarea id="mySavedModel" style="width:100%;height:300px"></textarea> -->
   </div>
   <div class="popup" style="position:absolute;top:0;left:1;width:18vw;height:10vh;z-index: 999;background-color:#FFBB73;display: none;border-width:3px;border-style:solid;border-color:black;padding:5px;" id="popup">
       <form id="db">
