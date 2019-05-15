@@ -1,741 +1,831 @@
-  <!DOCTYPE html>
-  <html>
-  <head>
-    <title>Dataflow</title>
-    <style type="text/css">
-      /* CSS for the traditional context menu */
-      #contextMenu {
-        z-index: 10002;
-        position: absolute;
-        left: 5px;
-        border: 1px solid #444;
-        background-color: #F5F5F5;
-        display: none;
-        box-shadow: 0 0 10px rgba( 0, 0, 0, .4 );
-        font-size: 12px;
-        font-family: sans-serif;
-        font-weight: bold;
-      }
-        #contextMenu ul {
-          list-style: none;
-          top: 0;
-          left: 0;
-          margin: 0;
-          padding: 0;
-        }
-        #contextMenu li a {
-          position: relative;
-          min-width: 60px;
-          color: #444;
-          display: inline-block;
-          padding: 6px;
-          text-decoration: none;
-          cursor: pointer;
-        }
-        #contextMenu li:hover {
-          background: #CEDFF2;
-          color: #EEE;
-        }
-        #contextMenu li ul li {
-          display: none;
-        }
-          #contextMenu li ul li a {
-            position: relative;
-            min-width: 60px;
-            padding: 6px;
-            text-decoration: none;
-            cursor: pointer;
-          }
-        #contextMenu li:hover ul li {
-          display: block;
-          margin-left: 0px;
-          margin-top: 0px;
-        }
-    </style>
-    {% load static %}
-    <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="{% static "site/release/go.js" %}"></script>
-    <script src="https://unpkg.com/gojs/release/go-debug.js"></script>
-    <script id="code">
-      // These parameters need to be set before defining the templates.
-      var MINLENGTH = 500;  // this controls the minimum length of any swimlane
-      var MINBREADTH = 150;  // this controls the minimum breadth of any non-collapsed swimlane
-      var fromnode = null;
-      // some shared functions
-      // this may be called to force the lanes to be laid out again
-      function relayoutLanes() {
-        myDiagram.nodes.each(function(lane) {
-          if (!(lane instanceof go.Group)) return;
-          if (lane.category === "Pool") return;
-          lane.layout.isValidLayout = false;  // force it to be invalid
-        });
-        myDiagram.layoutDiagram();
-      }
+<!DOCTYPE html>
+<html>
 
-      // this is called after nodes have been moved or lanes resized, to layout all of the Pool Groups again
-      function relayoutDiagram() {
-        myDiagram.layout.invalidateLayout();
-        myDiagram.findTopLevelGroups().each(function(g) { if (g.category === "Pool") g.layout.invalidateLayout(); });
-        myDiagram.layoutDiagram();
+<head>
+  <title>Dataflow</title>
+  <style type="text/css">
+    /* CSS for the traditional context menu */  
+    #contextMenu {
+      z-index: 10002;
+      position: absolute;
+      left: 5px;
+      border: 1px solid #444;
+      background-color: #F5F5F5;
+      display: none;
+      box-shadow: 0 0 10px rgba(0, 0, 0, .4);
+      font-size: 12px;
+      font-family: sans-serif;
+      font-weight: bold;
+    }
+
+    #contextMenu ul {
+      list-style: none;
+      top: 0;
+      left: 0;
+      margin: 0;
+      padding: 0;
+    }
+
+    #contextMenu li a {
+      position: relative;
+      min-width: 60px;
+      color: #444;
+      display: inline-block;
+      padding: 6px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    #contextMenu li:hover {
+      background: #CEDFF2;
+      color: #EEE;
+    }
+
+    #contextMenu li ul li {
+      display: none;
+    }
+
+    #contextMenu li ul li a {
+      position: relative;
+      min-width: 60px;
+      padding: 6px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    #contextMenu li:hover ul li {
+      display: block;
+      margin-left: 0px;
+      margin-top: 0px;
+    }
+  </style>
+  {% load static %}
+  <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="{% static "site/release/go.js" %}"></script>
+  <script src="https://unpkg.com/gojs/release/go-debug.js"></script>
+  <script id="code">
+    // These parameters need to be set before defining the templates.
+    var MINLENGTH = 500;  // this controls the minimum length of any swimlane
+    var MINBREADTH = 150;  // this controls the minimum breadth of any non-collapsed swimlane
+    var fromnode = null;
+    // some shared functions
+    // this may be called to force the lanes to be laid out again
+    function relayoutLanes() {
+      myDiagram.nodes.each(function (lane) {
+        if (!(lane instanceof go.Group)) return;
+        if (lane.category === "Pool") return;
+        lane.layout.isValidLayout = false;  // force it to be invalid
+      });
+      myDiagram.layoutDiagram();
+    }
+
+    // this is called after nodes have been moved or lanes resized, to layout all of the Pool Groups again
+    function relayoutDiagram() {
+      myDiagram.layout.invalidateLayout();
+      myDiagram.findTopLevelGroups().each(function (g) { if (g.category === "Pool") g.layout.invalidateLayout(); });
+      myDiagram.layoutDiagram();
+    }
+    // compute the minimum size of a Pool Group needed to hold all of the Lane Groups
+    function computeMinPoolSize(pool) {
+      // assert(pool instanceof go.Group && pool.category === "Pool");
+      var len = MINLENGTH;
+      pool.memberParts.each(function (lane) {
+        // pools ought to only contain lanes, not plain Nodes
+        if (!(lane instanceof go.Group)) return;
+        var holder = lane.placeholder;
+        if (holder !== null) {
+          var sz = holder.actualBounds;
+          len = Math.max(len, sz.height);
+        }
+      });
+      return new go.Size(NaN, len);
+    }
+    // compute the minimum size for a particular Lane Group
+    function computeLaneSize(lane) {
+      // assert(lane instanceof go.Group && lane.category !== "Pool");
+      var sz = computeMinLaneSize(lane);
+      if (lane.isSubGraphExpanded) {
+        var holder = lane.placeholder;
+        if (holder !== null) {
+          var hsz = holder.actualBounds;
+          sz.width = Math.max(sz.width, hsz.width);
+        }
       }
-      // compute the minimum size of a Pool Group needed to hold all of the Lane Groups
-      function computeMinPoolSize(pool) {
-        // assert(pool instanceof go.Group && pool.category === "Pool");
-        var len = MINLENGTH;
-        pool.memberParts.each(function(lane) {
-          // pools ought to only contain lanes, not plain Nodes
+      // minimum breadth needs to be big enough to hold the header
+      var hdr = lane.findObject("HEADER");
+      if (hdr !== null) sz.width = Math.max(sz.width, hdr.actualBounds.width);
+      return sz;
+    }
+    // determine the minimum size of a Lane Group, even if collapsed
+    function computeMinLaneSize(lane) {
+      if (!lane.isSubGraphExpanded) return new go.Size(1, MINLENGTH);
+      return new go.Size(MINBREADTH, MINLENGTH);
+    }
+    // define a custom ResizingTool to limit how far one can shrink a lane Group
+    function LaneResizingTool() {
+      go.ResizingTool.call(this);
+    }
+    go.Diagram.inherit(LaneResizingTool, go.ResizingTool);
+    LaneResizingTool.prototype.isLengthening = function () {
+      return (this.handle.alignment === go.Spot.Bottom);
+    };
+    LaneResizingTool.prototype.computeMinPoolSize = function () {
+      var lane = this.adornedObject.part;
+      // assert(lane instanceof go.Group && lane.category !== "Pool");
+      var msz = computeMinLaneSize(lane);  // get the absolute minimum size
+      if (this.isLengthening()) {  // compute the minimum length of all lanes
+        var sz = computeMinPoolSize(lane.containingGroup);
+        msz.height = Math.max(msz.height, sz.height);
+      } else {  // find the minimum size of this single lane
+        var sz = computeLaneSize(lane);
+        msz.width = Math.max(msz.width, sz.width);
+        msz.height = Math.max(msz.height, sz.height);
+      }
+      return msz;
+    };
+    LaneResizingTool.prototype.resize = function (newr) {
+      var lane = this.adornedObject.part;
+      if (this.isLengthening()) {  // changing the length of all of the lanes
+        lane.containingGroup.memberParts.each(function (lane) {
           if (!(lane instanceof go.Group)) return;
-          var holder = lane.placeholder;
-          if (holder !== null) {
-            var sz = holder.actualBounds;
-            len = Math.max(len, sz.height);
+          var shape = lane.resizeObject;
+          if (shape !== null) {  // set its desiredSize length, but leave each breadth alone
+            shape.height = newr.height;
           }
         });
-        return new go.Size(NaN, len);
+      } else {  // changing the breadth of a single lane
+        go.ResizingTool.prototype.resize.call(this, newr);
       }
-      // compute the minimum size for a particular Lane Group
-      function computeLaneSize(lane) {
-        // assert(lane instanceof go.Group && lane.category !== "Pool");
-        var sz = computeMinLaneSize(lane);
-        if (lane.isSubGraphExpanded) {
-          var holder = lane.placeholder;
-          if (holder !== null) {
-            var hsz = holder.actualBounds;
-            sz.width = Math.max(sz.width, hsz.width);
-          }
-        }
-        // minimum breadth needs to be big enough to hold the header
-        var hdr = lane.findObject("HEADER");
-        if (hdr !== null) sz.width = Math.max(sz.width, hdr.actualBounds.width);
-        return sz;
-      }
-      // determine the minimum size of a Lane Group, even if collapsed
-      function computeMinLaneSize(lane) {
-        if (!lane.isSubGraphExpanded) return new go.Size(1, MINLENGTH);
-        return new go.Size(MINBREADTH, MINLENGTH);
-      }
-      // define a custom ResizingTool to limit how far one can shrink a lane Group
-      function LaneResizingTool() {
-        go.ResizingTool.call(this);
-      }
-      go.Diagram.inherit(LaneResizingTool, go.ResizingTool);
-      LaneResizingTool.prototype.isLengthening = function() {
-        return (this.handle.alignment === go.Spot.Bottom);
+      relayoutDiagram();  // now that the lane has changed size, layout the pool again
+    };
+    // end LaneResizingTool class
+    // define a custom grid layout that makes sure the length of each lane is the same
+    // and that each lane is broad enough to hold its subgraph
+    function PoolLayout() {
+      go.GridLayout.call(this);
+      this.cellSize = new go.Size(1, 1);
+      this.wrappingColumn = Infinity;
+      this.wrappingWidth = Infinity;
+      this.isRealtime = false;  // don't continuously layout while dragging
+      this.alignment = go.GridLayout.Position;
+      // This sorts based on the location of each Group.
+      // This is useful when Groups can be moved up and down in order to change their order.
+      this.comparer = function (a, b) {
+        var ax = a.location.x;
+        var bx = b.location.x;
+        if (isNaN(ax) || isNaN(bx)) return 0;
+        if (ax < bx) return -1;
+        if (ax > bx) return 1;
+        return 0;
       };
-      LaneResizingTool.prototype.computeMinPoolSize = function() {
-        var lane = this.adornedObject.part;
-        // assert(lane instanceof go.Group && lane.category !== "Pool");
-        var msz = computeMinLaneSize(lane);  // get the absolute minimum size
-        if (this.isLengthening()) {  // compute the minimum length of all lanes
-          var sz = computeMinPoolSize(lane.containingGroup);
-          msz.height = Math.max(msz.height, sz.height);
-        } else {  // find the minimum size of this single lane
-          var sz = computeLaneSize(lane);
-          msz.width = Math.max(msz.width, sz.width);
-          msz.height = Math.max(msz.height, sz.height);
-        }
-        return msz;
-      };
-      LaneResizingTool.prototype.resize = function(newr) {
-        var lane = this.adornedObject.part;
-        if (this.isLengthening()) {  // changing the length of all of the lanes
-          lane.containingGroup.memberParts.each(function(lane) {
-            if (!(lane instanceof go.Group)) return;
+    }
+    go.Diagram.inherit(PoolLayout, go.GridLayout);
+    PoolLayout.prototype.doLayout = function (coll) {
+      var diagram = this.diagram;
+      if (diagram === null) return;
+      diagram.startTransaction("PoolLayout");
+      var pool = this.group;
+      if (pool !== null && pool.category === "Pool") {
+        // make sure all of the Group Shapes are big enough
+        var minsize = computeMinPoolSize(pool);
+        pool.memberParts.each(function (lane) {
+          if (!(lane instanceof go.Group)) return;
+          if (lane.category !== "Pool") {
             var shape = lane.resizeObject;
-            if (shape !== null) {  // set its desiredSize length, but leave each breadth alone
-              shape.height = newr.height;
+            if (shape !== null) {  // change the desiredSize to be big enough in both directions
+              var sz = computeLaneSize(lane);
+              shape.width = (!isNaN(shape.width)) ? Math.max(shape.width, sz.width) : sz.width;
+              shape.height = (isNaN(shape.height) ? minsize.height : Math.max(shape.height, minsize.height));
+              var cell = lane.resizeCellSize;
+              if (!isNaN(shape.width) && !isNaN(cell.width) && cell.width > 0) shape.width = Math.ceil(shape.width / cell.width) * cell.width;
+              if (!isNaN(shape.height) && !isNaN(cell.height) && cell.height > 0) shape.height = Math.ceil(shape.height / cell.height) * cell.height;
             }
-          });
-        } else {  // changing the breadth of a single lane
-          go.ResizingTool.prototype.resize.call(this, newr);
-        }
-        relayoutDiagram();  // now that the lane has changed size, layout the pool again
-      };
-      // end LaneResizingTool class
-      // define a custom grid layout that makes sure the length of each lane is the same
-      // and that each lane is broad enough to hold its subgraph
-      function PoolLayout() {
-        go.GridLayout.call(this);
-        this.cellSize = new go.Size(1, 1);
-        this.wrappingColumn = Infinity;
-        this.wrappingWidth = Infinity;
-        this.isRealtime = false;  // don't continuously layout while dragging
-        this.alignment = go.GridLayout.Position;
-        // This sorts based on the location of each Group.
-        // This is useful when Groups can be moved up and down in order to change their order.
-        this.comparer = function(a, b) {
-          var ax = a.location.x;
-          var bx = b.location.x;
-          if (isNaN(ax) || isNaN(bx)) return 0;
-          if (ax < bx) return -1;
-          if (ax > bx) return 1;
-          return 0;
-        };
+          }
+        });
       }
-      go.Diagram.inherit(PoolLayout, go.GridLayout);
-      PoolLayout.prototype.doLayout = function(coll) {
-        var diagram = this.diagram;
-        if (diagram === null) return;
-        diagram.startTransaction("PoolLayout");
-        var pool = this.group;
-        if (pool !== null && pool.category === "Pool") {
-          // make sure all of the Group Shapes are big enough
-          var minsize = computeMinPoolSize(pool);
-          pool.memberParts.each(function(lane) {
-            if (!(lane instanceof go.Group)) return;
-            if (lane.category !== "Pool") {
-              var shape = lane.resizeObject;
-              if (shape !== null) {  // change the desiredSize to be big enough in both directions
-                var sz = computeLaneSize(lane);
-                shape.width = (!isNaN(shape.width)) ? Math.max(shape.width, sz.width) : sz.width;
-                shape.height = (isNaN(shape.height) ? minsize.height : Math.max(shape.height, minsize.height));
-                var cell = lane.resizeCellSize;
-                if (!isNaN(shape.width) && !isNaN(cell.width) && cell.width > 0) shape.width = Math.ceil(shape.width / cell.width) * cell.width;
-                if (!isNaN(shape.height) && !isNaN(cell.height) && cell.height > 0) shape.height = Math.ceil(shape.height / cell.height) * cell.height;
+      // now do all of the usual stuff, according to whatever properties have been set on this GridLayout
+      go.GridLayout.prototype.doLayout.call(this, coll);
+      diagram.commitTransaction("PoolLayout");
+    };
+    // end PoolLayout class
+    function init() {
+      if (window.goSamples) goSamples();  // init for these samples -- you don't need to call this
+      var $ = go.GraphObject.make;
+      myDiagram =
+        $(go.Diagram, "myDiagramDiv",
+
+          {
+            // use a custom ResizingTool (along with a custom ResizeAdornment on each Group)
+            resizingTool: new LaneResizingTool(),
+            // use a simple layout that ignores links to stack the top-level Pool Groups next to each other
+            layout: $(PoolLayout),
+            // don't allow dropping onto the diagram's background unless they are all Groups (lanes or pools)
+            "draggingTool.isEnabled": true,
+            mouseDragOver: function (e) {
+              if (!e.diagram.selection.all(function (n) { return n instanceof go.Group; })) {
+                e.diagram.currentCursor = 'not-allowed';
               }
-            }
+            },
+            mouseDrop: function (e) {
+              if (!e.diagram.selection.all(function (n) { return n instanceof go.Group; })) {
+                e.diagram.currentTool.doCancel();
+              }
+            },
+            // a clipboard copied node is pasted into the original node's group (i.e. lane).
+            "commandHandler.copiesGroupKey": true,
+            // automatically re-layout the swim lanes after dragging the selection
+            "SelectionMoved": relayoutDiagram,  // this DiagramEvent listener is
+            "SelectionCopied": relayoutDiagram, // defined above
+            "animationManager.isEnabled": false,
+            // enable undo & redo
+            "undoManager.isEnabled": true
           });
-        }
-        // now do all of the usual stuff, according to whatever properties have been set on this GridLayout
-        go.GridLayout.prototype.doLayout.call(this, coll);
-        diagram.commitTransaction("PoolLayout");
-      };
-      // end PoolLayout class
-      function init() {
-        if (window.goSamples) goSamples();  // init for these samples -- you don't need to call this
-        var $ = go.GraphObject.make;
-        myDiagram =
-          $(go.Diagram, "myDiagramDiv",
+      // This is the actual HTML context menu:
+      myDiagram.grid.visible = true; //顯示grid格線
 
-            {
-              // use a custom ResizingTool (along with a custom ResizeAdornment on each Group)
-              resizingTool: new LaneResizingTool(),
-              // use a simple layout that ignores links to stack the top-level Pool Groups next to each other
-              layout: $(PoolLayout),
-              // don't allow dropping onto the diagram's background unless they are all Groups (lanes or pools)
-               "draggingTool.isEnabled": true,
-              mouseDragOver: function(e) {
-                if (!e.diagram.selection.all(function(n) { return n instanceof go.Group; })) {
-                  e.diagram.currentCursor = 'not-allowed';
-                }
-              },
-              mouseDrop: function(e) {
-                if (!e.diagram.selection.all(function(n) { return n instanceof go.Group; })) {
-                  e.diagram.currentTool.doCancel();
-                }
-              },
-              // a clipboard copied node is pasted into the original node's group (i.e. lane).
-              "commandHandler.copiesGroupKey": true,
-              // automatically re-layout the swim lanes after dragging the selection
-              "SelectionMoved": relayoutDiagram,  // this DiagramEvent listener is
-              "SelectionCopied": relayoutDiagram, // defined above
-              "animationManager.isEnabled": false,
-              // enable undo & redo
-              "undoManager.isEnabled": true
-            });
-        // This is the actual HTML context menu:
-        var cxElement = document.getElementById("contextMenu");
-        // Since we have only one main element, we don't have to declare a hide method,
-        // we can set mainElement and GoJS will hide it automatically
-        var myContextMenu = $(go.HTMLInfo, {
-          show: showContextMenu,
-          mainElement: cxElement
-        },);
-        function stayInGroup(part, pt, gridpt) {
-          // don't constrain top-level nodes
-          var grp = part.containingGroup;
-          if (grp === null) return pt;
-          // try to stay within the background Shape of the Group
-          var back = grp.resizeObject;
-          if (back === null) return pt;
-          // allow dragging a Node out of a Group if the Shift key is down
-          if (part.diagram.lastInput.shift) return pt;
-          var p1 = back.getDocumentPoint(go.Spot.TopLeft);
-          var p2 = back.getDocumentPoint(go.Spot.BottomRight);
-          var b = part.actualBounds;
-          var loc = part.location;
-          // find the padding inside the group's placeholder that is around the member parts
-          var m = grp.placeholder.padding;
-          // now limit the location appropriately
-          var x = Math.max(p1.x + m.left, Math.min(pt.x, p2.x - m.right - b.width - 1)) + (loc.x - b.x);
-          var y = Math.max(p1.y + m.top, Math.min(pt.y, p2.y - m.bottom - b.height - 1)) + (loc.y - b.y);
-          return new go.Point(x, y);
-        }
+      var cxElement = document.getElementById("contextMenu");
+      // Since we have only one main element, we don't have to declare a hide method,
+      // we can set mainElement and GoJS will hide it automatically
+      var myContextMenu = $(go.HTMLInfo, {
+        show: showContextMenu,
+        mainElement: cxElement
+      });
+      function stayInGroup(part, pt, gridpt) {
+        // don't constrain top-level nodes
+        var grp = part.containingGroup;
+        if (grp === null) return pt;
+        // try to stay within the background Shape of the Group
+        var back = grp.resizeObject;
+        if (back === null) return pt;
+        // allow dragging a Node out of a Group if the Shift key is down
+        if (part.diagram.lastInput.shift) return pt;
+        var p1 = back.getDocumentPoint(go.Spot.TopLeft);
+        var p2 = back.getDocumentPoint(go.Spot.BottomRight);
+        var b = part.actualBounds;
+        var loc = part.location;
+        // find the padding inside the group's placeholder that is around the member parts
+        var m = grp.placeholder.padding;
+        // now limit the location appropriately
+        var x = Math.max(p1.x + m.left, Math.min(pt.x, p2.x - m.right - b.width - 1)) + (loc.x - b.x);
+        var y = Math.max(p1.y + m.top, Math.min(pt.y, p2.y - m.bottom - b.height - 1)) + (loc.y - b.y);
+        return new go.Point(x, y);
+      }
 
-        myDiagram.nodeTemplate =
-          $(go.Node, "Auto",
-            {
-              fromSpot: go.Spot.Right,
-              toSpot: go.Spot.Left
+      myDiagram.nodeTemplate =
+        $(go.Node, "Auto",
+          {
+            fromSpot: go.Spot.Right,
+            toSpot: go.Spot.Left
+          },
+          {
+            linkConnected: function (node, link, port) {
+              if (link.fromNode !== null) link.fromNode.invalidateConnectedLinks();
+              if (link.toNode !== null) link.toNode.invalidateConnectedLinks();
             },
-            {
-              linkConnected: function(node, link, port) {
-                if (link.fromNode !== null) link.fromNode.invalidateConnectedLinks();
-                if (link.toNode !== null) link.toNode.invalidateConnectedLinks();
-              },
-              linkDisconnected: function(node, link, port) {
-                if (link.fromNode !== null) link.fromNode.invalidateConnectedLinks();
-                if (link.toNode !== null) link.toNode.invalidateConnectedLinks();
-              },
-              // doubleClick:function(e,node){
-              // // 雙擊事件
-              // document.getElementById("popup").style.display="block"
-              // },
+            linkDisconnected: function (node, link, port) {
+              if (link.fromNode !== null) link.fromNode.invalidateConnectedLinks();
+              if (link.toNode !== null) link.toNode.invalidateConnectedLinks();
             },
-            { selectionObjectName: "TEXT" },
-            { contextMenu: myContextMenu },
-            new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
-            $(go.Shape, "RoundedRectangle",
-              { fill: "white", portId: "", cursor: "pointer", fromLinkable: false, toLinkable: false }),
-            $(go.TextBlock,
+            // doubleClick:function(e,node){
+            // // 雙擊事件
+            // document.getElementById("popup").style.display="block"
+            // },
+          },
+          { selectionObjectName: "TEXT" },
+          { contextMenu: myContextMenu },
+          new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
+          $(go.Shape, "RoundedRectangle",
+            { fill: "white", portId: "", cursor: "pointer", fromLinkable: false, toLinkable: false }),
+          $(go.TextBlock,
             {
               name: "TEXT",
               minSize: new go.Size(30, 15),
               editable: true,
               font: "bold 11pt Helvetica, Arial, sans-serif",
+              margin: 5,
             },
             new go.Binding("text", "text").makeTwoWay()),
-            {
-        selectionAdornmentTemplate:
-          $(go.Adornment, "Spot",
-            $(go.Panel, "Auto",
-              // this Adornment has a rectangular blue Shape around the selected node
-              $(go.Shape, { fill: null, stroke: "dodgerblue", strokeWidth: 3 }),
-              $(go.Placeholder)
-            ),
-            // and this Adornment has a Button to the right of the selected node
-            // $("Button",
-            //   { alignment: go.Spot.Right, alignmentFocus: go.Spot.Left,
-            //     click: addNodeAndLink },  // define click behavior for Button in Adornment
-            //   $(go.TextBlock, "ADD",  // the Button content
-            //     { font: "bold 6pt sans-serif" })
-            // )
-          )  // end Adornment
-            },
-            { dragComputation: stayInGroup });
-        function groupStyle() {  // common settings for both Lane and Pool Groups
-          return [
-            {
-              layerName: "Background",  // all pools and lanes are always behind all nodes and links
-              background: "transparent",  // can grab anywhere in bounds
-              movable: false, // allows users to re-order by dragging
-              copyable: false,  // can't copy lanes or pools
-              avoidable: false,  // don't impede AvoidsNodes routed Links
-              minLocation: new go.Point(-Infinity, NaN),  // only allow horizontal movement
-              maxLocation: new go.Point(Infinity, NaN)
-            },
-            new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify)
-          ];
-        }
-        // hide links between lanes when either lane is collapsed
-        function updateCrossLaneLinks(group) {
-          group.findExternalLinksConnected().each(function(l) {
-            l.visible = (l.fromNode.isVisible() && l.toNode.isVisible());
-          });
-        }
-        // each Group is a "swimlane" with a header on the left and a resizable lane on the right
-        myDiagram.groupTemplate =
-          $(go.Group, "Vertical", groupStyle(),
-            {
-              selectionObjectName: "SHAPE",  // selecting a lane causes the body of the lane to be highlit, not the label
-              resizable: true, resizeObjectName: "SHAPE",  // the custom resizeAdornmentTemplate only permits two kinds of resizing
-              layout: $(go.LayeredDigraphLayout,  // automatically lay out the lane's subgraph
-                {
-                  isInitial: false,  // don't even do initial layout
-                  isOngoing: true,  // invalidate layout when nodes or links are added or removed
-                  direction: 90,
-                  columnSpacing: 10,
-                  layeringOption: go.LayeredDigraphLayout.LayerLongestPathSource
-                }),
-              computesBoundsAfterDrag: true,  // needed to prevent recomputing Group.placeholder bounds too soon
-              computesBoundsIncludingLinks: false,  // to reduce occurrences of links going briefly outside the lane
-              computesBoundsIncludingLocation: true,  // to support empty space at top-left corner of lane
-              handlesDragDropForMembers: true,  // don't need to define handlers on member Nodes and Links
-              mouseDrop: function(e, grp) {  // dropping a copy of some Nodes and Links onto this Group adds them to this Group
-                if (!e.shift) return;  // cannot change groups with an unmodified drag-and-drop
-                // don't allow drag-and-dropping a mix of regular Nodes and Groups
-                if (!e.diagram.selection.any(function(n) { return n instanceof go.Group; })) {
-                  var ok = grp.addMembers(grp.diagram.selection, true);
-                  if (ok) {
-                    updateCrossLaneLinks(grp);
-                  } else {
-                    grp.diagram.currentTool.doCancel();
-                  }
+          {
+            selectionAdornmentTemplate:
+              $(go.Adornment, "Spot",
+                $(go.Panel, "Auto",
+                  // this Adornment has a rectangular blue Shape around the selected node
+                  $(go.Shape, { fill: null, stroke: "dodgerblue", strokeWidth: 3 }),
+                  $(go.Placeholder)
+                ),
+              )  // end Adornment
+          },
+          { dragComputation: stayInGroup });
+      function groupStyle() {  // common settings for both Lane and Pool Groups
+        return [
+          {
+            layerName: "Background",  // all pools and lanes are always behind all nodes and links
+            background: "transparent",  // can grab anywhere in bounds
+            movable: false, // allows users to re-order by dragging
+            copyable: false,  // can't copy lanes or pools
+            avoidable: false,  // don't impede AvoidsNodes routed Links
+            minLocation: new go.Point(-Infinity, NaN),  // only allow horizontal movement
+            maxLocation: new go.Point(Infinity, NaN)
+          },
+          new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify)
+        ];
+      }
+      // hide links between lanes when either lane is collapsed
+      function updateCrossLaneLinks(group) {
+        group.findExternalLinksConnected().each(function (l) {
+          l.visible = (l.fromNode.isVisible() && l.toNode.isVisible());
+        });
+      }
+      // each Group is a "swimlane" with a header on the left and a resizable lane on the right
+      myDiagram.groupTemplate =
+        $(go.Group, "Vertical", groupStyle(),
+          {
+            selectionObjectName: "SHAPE",  // selecting a lane causes the body of the lane to be highlit, not the label
+            resizable: true, resizeObjectName: "SHAPE",  // the custom resizeAdornmentTemplate only permits two kinds of resizing
+            layout: $(go.LayeredDigraphLayout,  // automatically lay out the lane's subgraph
+              {
+                isInitial: false,  // don't even do initial layout
+                isOngoing: false,  // invalidate layout when nodes or links are added or removed
+                direction: 90,
+                columnSpacing: 10,
+                setsPortSpots: false,
+                layeringOption: go.LayeredDigraphLayout.LayerLongestPathSource
+              }),
+            computesBoundsAfterDrag: true,  // needed to prevent recomputing Group.placeholder bounds too soon
+            computesBoundsIncludingLinks: false,  // to reduce occurrences of links going briefly outside the lane
+            computesBoundsIncludingLocation: true,  // to support empty space at top-left corner of lane
+            handlesDragDropForMembers: true,  // don't need to define handlers on member Nodes and Links
+            mouseDrop: function (e, grp) {  // dropping a copy of some Nodes and Links onto this Group adds them to this Group
+              if (!e.shift) return;  // cannot change groups with an unmodified drag-and-drop
+              // don't allow drag-and-dropping a mix of regular Nodes and Groups
+              if (!e.diagram.selection.any(function (n) { return n instanceof go.Group; })) {
+                var ok = grp.addMembers(grp.diagram.selection, true);
+                if (ok) {
+                  updateCrossLaneLinks(grp);
                 } else {
-                  e.diagram.currentTool.doCancel();
+                  grp.diagram.currentTool.doCancel();
                 }
-              },
-              subGraphExpandedChanged: function(grp) {
-                var shp = grp.resizeObject;
-                if (grp.diagram.undoManager.isUndoingRedoing) return;
-                if (grp.isSubGraphExpanded) {
-                  shp.width = grp._savedBreadth;
-                } else {
-                  grp._savedBreadth = shp.width;
-                  shp.width = NaN;
-                }
-                updateCrossLaneLinks(grp);
+              } else {
+                e.diagram.currentTool.doCancel();
               }
             },
-            new go.Binding("isSubGraphExpanded", "expanded").makeTwoWay(),
-            // the lane header consisting of a Shape and a TextBlock
-            $(go.Panel, "Horizontal",
-              {
-                name: "HEADER",
-                angle: 0,  // maybe rotate the header to read sideways going up
-                alignment: go.Spot.Center
-              },
-              $(go.Panel, "Horizontal",  // this is hidden when the swimlane is collapsed
-                new go.Binding("visible", "isSubGraphExpanded").ofObject(),
-                $(go.Shape, "Diamond",
-                  { width: 8, height: 8, fill: "white" },
-                  new go.Binding("fill", "color")),
-                $(go.TextBlock,  // the lane label
-                  { font: "bold 13pt sans-serif", editable: true, margin: new go.Margin(2, 0, 0, 0) },
-                  new go.Binding("text", "text").makeTwoWay())
-              ),
-              $("SubGraphExpanderButton", { margin: 5 })  // but this remains always visible!
-            ),  // end Horizontal Panel
-            $(go.Panel, "Auto",  // the lane consisting of a background Shape and a Placeholder representing the subgraph
-              $(go.Shape, "Rectangle",  // this is the resized object
-                { name: "SHAPE", fill: "white" },
-                new go.Binding("fill", "color"),
-                new go.Binding("desiredSize", "size", go.Size.parse).makeTwoWay(go.Size.stringify)),
-              $(go.Placeholder,
-                { padding: 20, alignment: go.Spot.TopCenter }),
-              $(go.TextBlock,  // this TextBlock is only seen when the swimlane is collapsed
-                {
-                  name: "LABEL",
-                  font: "bold 13pt sans-serif", editable: true,
-                  angle: 90, alignment: go.Spot.TopLeft, margin: new go.Margin(4, 0, 0, 2)
-                },
-                new go.Binding("visible", "isSubGraphExpanded", function(e) { return !e; }).ofObject(),
-                new go.Binding("text", "text").makeTwoWay())
-            )  // end Auto Panel
-          );  // end Group
-        // define a custom resize adornment that has two resize handles if the group is expanded
-        myDiagram.groupTemplate.resizeAdornmentTemplate =
-          $(go.Adornment, "Spot",
-            $(go.Placeholder),
-            $(go.Shape,  // for changing the length of a lane
-              {
-                alignment: go.Spot.Bottom,
-                desiredSize: new go.Size(50, 7),
-                fill: "lightblue", stroke: "dodgerblue",
-                cursor: "row-resize"
-              },
-              new go.Binding("visible", "", function(ad) {
-                if (ad.adornedPart === null) return false;
-                return ad.adornedPart.isSubGraphExpanded;
-              }).ofObject()),
-            $(go.Shape,  // for changing the breadth of a lane
-              {
-                alignment: go.Spot.Right,
-                desiredSize: new go.Size(7, 50),
-                fill: "lightblue", stroke: "dodgerblue",
-                cursor: "col-resize"
-              },
-              new go.Binding("visible", "", function(ad) {
-                if (ad.adornedPart === null) return false;
-                return ad.adornedPart.isSubGraphExpanded;
-              }).ofObject())
-          );
-        myDiagram.groupTemplateMap.add("Pool",
-          $(go.Group, "Auto", groupStyle(),
-            { // use a simple layout that ignores links to stack the "lane" Groups next to each other
-              layout: $(PoolLayout, { spacing: new go.Size(0, 0) })  // no space between lanes
-            },
-            $(go.Shape,
-              { fill: "white" },
-              new go.Binding("fill", "color")),
-            $(go.Panel, "Table",
-              { defaultRowSeparatorStroke: "black" },
-              $(go.Panel, "Vertical",
-                { row: 0, angle: 0 },
-                $(go.TextBlock,
-                  { font: "bold 16pt sans-serif", editable: true, margin: new go.Margin(2, 0, 0, 0) },
-                  new go.Binding("text").makeTwoWay())
-              ),
-              $(go.Placeholder,
-                { row: 1 })
-            )
-          ));
-        
-        myDiagram.linkTemplate =
-          $(go.Link,
-            { routing: go.Link.AvoidsNodes, corner: 5 },
-            { relinkableFrom: true, relinkableTo: true },
-            $(go.Shape),
-            $(go.Shape, { toArrow: "Standard" })
-          );
-        // define some sample graphs in some of the lanes
-        // myDiagram.model = new go.GraphLinksModel(
-        //   [ // node data
-        //     { key: "Pool1", text: "Pool", isGroup: true, category: "Pool" },
-        //     { key: "Lane1", text: "Participants", isGroup: true, group: "Pool1", color: "lightblue", category:"Participants" },
-        //     { key: "Lane2", text: "System", isGroup: true, group: "Pool1", color: "lightgreen", category:"System" },
-        //     { key: "Lane3", text: "Input", isGroup: true, group: "Pool1", color: "lightyellow", category:"Input" },
-        //     { key: "Lane4", text: "Process", isGroup: true, group: "Pool1", color: "orange", category:"Process" },
-        //     { key: "Lane5", text: "Output", isGroup: true, group: "Pool1", color: "lightskyblue", category:"Output" },
-        //     { key: "Collect", group: "Lane4",text:"Collect"},
-        //     { key: "Store", group: "Lane4",text:"Store"},
-        //     { key: "Use", group: "Lane4",text:"Use" },
-        //     { key: "Transfer", group: "Lane4" ,text:"Transfer"},
-        //     { key: "Delete", group: "Lane4" ,text:"Delete"},
-
-            
-            
-
-        //   ],
-        //   [ // link data
-        //     { from: "Collect", to: "Store" },
-        //     { from: "Store", to: "Use" },
-        //     { from: "Use", to: "Transfer" },
-        //     { from: "Transfer",to: "Delete" },
-
-            
-        //   ]);
-        load();
-        // document.getElementById("mySavedModel").value = myDiagram.model.toJson();
-
-        myDiagram.contextMenu = myContextMenu;
-        // We don't want the div acting as a context menu to have a (browser) context menu!
-        cxElement.addEventListener("contextmenu", function(e, obj) {
-          e.preventDefault();
-          return false;
-        }, false);
-        function showContextMenu(obj, diagram, tool) {
-          // Show only the relevant buttons given the current state.
-          var cmd = diagram.commandHandler;
-          let node = { node: obj, diagram: diagram };
-          fromnode = node;
-          document.getElementById("delete").style.display = cmd.canDeleteSelection() ? "block" : "none";
-          document.getElementById("add_process").style.display=(obj.part.containingGroup.key == "Lane4" ? "block" : "none");
-          document.getElementById("add_input").style.display=(obj.part.containingGroup.key =='Lane4' ? "block" : "none");
-          document.getElementById("add_output").style.display=(obj.part.containingGroup.key =='Lane4' ? "block" : "none");
-          document.getElementById("add_system").style.display=(obj.part.containingGroup.key =='Lane4' ? "block" : "none");
-          document.getElementById("add_participants").style.display=(obj.part.containingGroup.key =='Lane4' ? "block" : "none");
-          document.getElementById("add_value3").style.display=(obj.part.containingGroup.key =='Lane3' ? "block" : "none");
-          document.getElementById("add_value5").style.display=(obj.part.containingGroup.key =='Lane5' ? "block" : "none");
-
-          // Now show the whole context menu element
-          cxElement.style.display = "block";
-          // we don't bother overriding positionContextMenu, we just do it here:
-          var mousePt = diagram.lastInput.viewPoint;
-          cxElement.style.left = mousePt.x + "px";
-          cxElement.style.top = mousePt.y + "px";
-        }
-        // force all lanes' layouts to be performed
-        relayoutLanes();
-
-        myDiagram.addDiagramListener('TextEdited',function(e){
-          //console.log("addDiagramListener: "+e.subject.part.key+e.parameter);
-          var node =myDiagram.findNodeForKey(e.subject.part.key).data;
-          console.log(e.subject.text+e.parameter);
-
-          var postdata={
-            event:"rename",
-            process:node.parent,
-            name:node.text,
-            asset_type:node.group,
-            old_name:e.parameter
-          }
-          saveTemp(JSON.stringify(postdata));
-          save();
-        });
-
-        myDiagram.addModelChangedListener(function(evt) {
-          // ignore unimportant Transaction events
-          if (!evt.isTransactionFinished) return;
-          var txn = evt.object;  // a Transaction
-          if (txn === null) return;
-          // iterate over all of the actual ChangedEvents of the Transaction
-          txn.changes.each(function(e) {
-
-            // record node insertions and removals
-            if (e.modelChange !== "nodeDataArray") return;
-            if(e.change === go.ChangedEvent.Insert){
-              //console.log(evt.propertyName + "added node:" + e.newValue.key);
-              var node = myDiagram.findNodeForKey(e.newValue.key).data;
-              var postdata={
-                event:"addNode",
-                process:node.parent,
-                name:node.text,
-                asset_type:node.group
+            subGraphExpandedChanged: function (grp) {
+              var shp = grp.resizeObject;
+              if (grp.diagram.undoManager.isUndoingRedoing) return;
+              if (grp.isSubGraphExpanded) {
+                shp.width = grp._savedBreadth;
+              } else {
+                grp._savedBreadth = shp.width;
+                shp.width = NaN;
+              }
+              updateCrossLaneLinks(grp);
             }
-              saveTemp(JSON.stringify(postdata));
-              save();
+          },
+          new go.Binding("isSubGraphExpanded", "expanded").makeTwoWay(),
+          // the lane header consisting of a Shape and a TextBlock
+          $(go.Panel, "Horizontal",
+            {
+              name: "HEADER",
+              angle: 0,  // maybe rotate the header to read sideways going up
+              alignment: go.Spot.Center
+            },
+            $(go.Panel, "Horizontal",  // this is hidden when the swimlane is collapsed
+              new go.Binding("visible", "isSubGraphExpanded").ofObject(),
+              $(go.Shape, "Diamond",
+                { width: 8, height: 8, fill: "white" },
+                new go.Binding("fill", "color")),
+              $(go.TextBlock,  // the lane label
+                { font: "bold 13pt sans-serif", editable: true, margin: new go.Margin(2, 0, 0, 0) },
+                new go.Binding("text", "text").makeTwoWay())
+            ),
+            $("SubGraphExpanderButton", { margin: 5 })  // but this remains always visible!
+          ),  // end Horizontal Panel
+          $(go.Panel, "Auto",  // the lane consisting of a background Shape and a Placeholder representing the subgraph
+            $(go.Shape, "Rectangle",  // this is the resized object
+              { name: "SHAPE", fill: "white" },
+              new go.Binding("fill", "color"),
+              new go.Binding("desiredSize", "size", go.Size.parse).makeTwoWay(go.Size.stringify)),
+            $(go.Placeholder,
+              { padding: 30, alignment: go.Spot.TopLeft }),
+            $(go.TextBlock,  // this TextBlock is only seen when the swimlane is collapsed
+              {
+                name: "LABEL",
+                font: "bold 13pt sans-serif", editable: true,
+                angle: 90, alignment: go.Spot.TopLeft, margin: new go.Margin(4, 0, 0, 2)
+              },
+              new go.Binding("visible", "isSubGraphExpanded", function (e) { return !e; }).ofObject(),
+              new go.Binding("text", "text").makeTwoWay())
+          )  // end Auto Panel
+        );  // end Group
+      // define a custom resize adornment that has two resize handles if the group is expanded
+      myDiagram.groupTemplate.resizeAdornmentTemplate =
+        $(go.Adornment, "Spot",
+          $(go.Placeholder),
+          $(go.Shape,  // for changing the length of a lane
+            {
+              alignment: go.Spot.Bottom,
+              desiredSize: new go.Size(50, 7),
+              fill: "lightblue", stroke: "dodgerblue",
+              cursor: "row-resize"
+            },
+            new go.Binding("visible", "", function (ad) {
+              if (ad.adornedPart === null) return false;
+              return ad.adornedPart.isSubGraphExpanded;
+            }).ofObject()),
+          $(go.Shape,  // for changing the breadth of a lane
+            {
+              alignment: go.Spot.Right,
+              desiredSize: new go.Size(7, 50),
+              fill: "lightblue", stroke: "dodgerblue",
+              cursor: "col-resize"
+            },
+            new go.Binding("visible", "", function (ad) {
+              if (ad.adornedPart === null) return false;
+              return ad.adornedPart.isSubGraphExpanded;
+            }).ofObject())
+        );
+      myDiagram.groupTemplateMap.add("Pool",
+        $(go.Group, "Auto", groupStyle(),
+          { // use a simple layout that ignores links to stack the "lane" Groups next to each other
+            layout: $(PoolLayout, { spacing: new go.Size(0, 0) })  // no space between lanes
+          },
+          $(go.Shape,
+            { fill: "white" },
+            new go.Binding("fill", "color")),
+          $(go.Panel, "Table",
+            { defaultRowSeparatorStroke: "black" },
+            $(go.Panel, "Vertical",
+              { row: 0, angle: 0 },
+              $(go.TextBlock,
+                { font: "bold 16pt sans-serif", editable: true, margin: new go.Margin(2, 0, 0, 0) },
+                new go.Binding("text").makeTwoWay())
+            ),
+            $(go.Placeholder,
+              { row: 1 })
+          )
+        ));
 
-            } else if (e.change === go.ChangedEvent.Remove){
-              //console.log(evt.propertyName + " removed node: " + e.oldValue.key);
-              var node = e.oldValue;
-              var postdata={
-                event:"removeNode",
-                process:node.parent,
-                name:node.text,
-                asset_type:node.group
-              }
-              saveTemp(JSON.stringify(postdata));
-              save();
-             }
-          });
-        });
+      myDiagram.linkTemplate =
+        $(go.Link,
+          { routing: go.Link.AvoidsNodes, corner: 5 },
+          { relinkableFrom: true, relinkableTo: true },
+          $(go.Shape),
+          $(go.Shape, { toArrow: "Standard" })
+        );
+      // define some sample graphs in some of the lanes
+      // 
+      load();
+      // document.getElementById("mySavedModel").value = myDiagram.model.toJson();
 
-      }  // end init
-      // Show the diagram's model in JSON format
+      myDiagram.contextMenu = myContextMenu;
+      // We don't want the div acting as a context menu to have a (browser) context menu!
+      cxElement.addEventListener("contextmenu", function (e, obj) {
+        e.preventDefault();
+        return false;
+      }, false);
+      function showContextMenu(obj, diagram, tool) {
+        // Show only the relevant buttons given the current state.
+        var cmd = diagram.commandHandler;
+        let node = { node: obj, diagram: diagram };
+        fromnode = node;
+        document.getElementById("delete").style.display = cmd.canDeleteSelection() ? "block" : "none";
+        // document.getElementById("add_process").style.display = (obj.part.containingGroup.key == "Lane4" ? "block" : "none");
+        document.getElementById("add_input").style.display = (obj.part.containingGroup.key == 'Lane4' ? "block" : "none");
+        document.getElementById("add_output").style.display = (obj.part.containingGroup.key == 'Lane4' ? "block" : "none");
+        document.getElementById("add_system").style.display = (obj.part.containingGroup.key == 'Lane4' ? "block" : "none");
+        document.getElementById("add_participants").style.display = (obj.part.containingGroup.key == 'Lane4' ? "block" : "none");
+        document.getElementById("add_value3").style.display = (obj.part.containingGroup.key == 'Lane3' ? "block" : "none");
+        document.getElementById("add_value5").style.display = (obj.part.containingGroup.key == 'Lane5' ? "block" : "none");
 
-      function saveTemp(postdata){
-        jQuery.ajax({
-          method:'POST',
-          url:'../dataflow_saveTemp/',
-          data:{'postdata':postdata},
-          dataType:'json'
-        });
-
+        // Now show the whole context menu element
+        cxElement.style.display = "block";
+        // we don't bother overriding positionContextMenu, we just do it here:
+        var mousePt = diagram.lastInput.viewPoint;
+        cxElement.style.left = mousePt.x + "px";
+        cxElement.style.top = mousePt.y + "px";
       }
+      // force all lanes' layouts to be performed
+      relayoutLanes();
 
-      function save() {
-        // document.getElementById("mySavedModel").value = myDiagram.model.toJson();
-        myDiagram.isModified = false;  
-          jQuery.ajax({
-            method:'POST',
-            url:'../dataflow_saveLane/',
-            data:{'postdata':myDiagram.model.toJson()},
-            dataType:'json'
-          });
-      }
+      myDiagram.addDiagramListener('TextEdited', function (e) {
+        //console.log("addDiagramListener: "+e.subject.part.key+e.parameter);
+        var node = myDiagram.findNodeForKey(e.subject.part.key).data;
+        console.log(e.subject.text + e.parameter);
 
-      function load() {
-      jQuery.getJSON('../dataflow_get/',function(getdata){
+        var postdata = {
+          event: "rename",
+          process: node.parent,
+          name: node.text,
+          asset_type: node.group,
+          old_name: e.parameter
+        }
+        saveTemp(JSON.stringify(postdata));
+        save();
+      });
+
+      myDiagram.addModelChangedListener(function (evt) {
+        // ignore unimportant Transaction events
+        if (!evt.isTransactionFinished) return;
+        var txn = evt.object;  // a Transaction
+        if (txn === null) return;
+        // iterate over all of the actual ChangedEvents of the Transaction
+        txn.changes.each(function (e) {
+
+          // record node insertions and removals
+          if (e.modelChange !== "nodeDataArray") return;
+          if (e.change === go.ChangedEvent.Insert) {
+            //console.log(evt.propertyName + "added node:" + e.newValue.key);
+            var node = myDiagram.findNodeForKey(e.newValue.key).data;
+            var postdata = {
+              event: "addNode",
+              process: node.parent,
+              name: node.text,
+              asset_type: node.group
+            }
+            saveTemp(JSON.stringify(postdata));
+            save();
+
+          } else if (e.change === go.ChangedEvent.Remove) {
+            //console.log(evt.propertyName + " removed node: " + e.oldValue.key);
+            var node = e.oldValue;
+            var postdata = {
+              event: "removeNode",
+              process: node.parent,
+              name: node.text,
+              asset_type: node.group
+            }
+            saveTemp(JSON.stringify(postdata));
+            save();
+          }
+        });
+      });
+
+    }  // end init
+    // Show the diagram's model in JSON format
+
+    function saveTemp(postdata) {
+      jQuery.ajax({
+        method: 'POST',
+        url: '../dataflow_saveTemp/',
+        data: { 'postdata': postdata },
+        dataType: 'json'
+      });
+
+    }
+
+    function save() {
+      // document.getElementById("mySavedModel").value = myDiagram.model.toJson();
+      myDiagram.isModified = false;
+      jQuery.ajax({
+        method: 'POST',
+        url: '../dataflow_saveLane/',
+        data: { 'postdata': myDiagram.model.toJson() },
+        dataType: 'json'
+      });
+    }
+
+    function load() {
+      jQuery.getJSON('../dataflow_get/', function (getdata) {
         myDiagram.model = go.Model.fromJson(getdata);
         // document.getElementById("mySavedModel").value = myDiagram.model.toJson();
-        }) 
+      })
+    }
+    function cxcommand(event, val) {
+      if (val === undefined) val = event.currentTarget.id;
+      var diagram = myDiagram;
+      switch (val) {
+        case "delete":
+          diagram.startTransaction("delete node and link");
+          diagram.commandHandler.deleteSelection();
+          relayoutLanes();
+          resetNodeLayOut();
+          diagram.commitTransaction("delete node and link");
+          break;
+        // case "add_process":
+        //   addNodeAndLink(fromnode, "Lane4");
+        //   break;
+        case "add_input": addNodeAndLink(fromnode, "Lane3"); break;
+        case "add_output": addNodeAndLink(fromnode, "Lane5"); break;
+        case "add_system": addNodeAndLink(fromnode, "Lane2"); break;
+        case "add_participants": addNodeAndLink(fromnode, "Lane1"); break;
+        case "add_value3": document.getElementById("popup").style.display = "block"; break;
+        case "add_value5": document.getElementById("popup").style.display = "block"; break;
+
+      }
+      diagram.currentTool.stopTool();
+    }
+    // A custom command, for changing the color of the selected node(s).
+    function addNodeAndLink(fromnode, lane) {
+      // 新增
+      if (!fromnode) return;
+
+      fromnode.diagram.startTransaction("add node and link");
+      // have the Model add the node data
+      let newnode = { key: "N", group: lane, parent: fromnode.node.data.key, text: "edit" };
+      fromnode.diagram.model.addNodeData(newnode);
+
+      // locate the node initially where the parent node is
+      if (lane == "Lane3") {
+        var newlink = { from: newnode.key, to: fromnode.node.data.key };
+      } else {
+        var newlink = { from: fromnode.node.data.key, to: newnode.key };
+      }
+      if (lane == "Lane1" || lane == "Lane2") {
+        newlink.opacity = 1.0; //線隱形
+      }
+
+      fromnode.diagram.model.addLinkData(newlink);
+      fromnode.diagram.commitTransaction("add node and link");
+      relayoutLanes();
+      resetNodeLayOut();
+      fromnode = null;
+      return;
+
+    }
+    function findSameParent(nodes) {
+      let nodesWithSameParent = {};
+      for (let i = 0; i < nodes.length; i++) {
+        let x = nodes[i];
+        if (x.parent) {
+          nodesWithSameParent[x.parent] = nodesWithSameParent[x.parent] ? nodesWithSameParent[x.parent] : [];
+          nodesWithSameParent[x.parent].push(x);
+        }
+      }
+      return nodesWithSameParent;
+    }
+
+    function findNodesInSameLane(nodes){
+      let nodesInSameLane = {};
+      for (let i =0; i < nodes.length; i++){
+        let x = nodes[i];
+        if (x.group){
+          nodesInSameLane[x.group]=nodesInSameLane[x.group] ? nodesInSameLane[x.group] :[];
+          nodesInSameLane[x.group].push(x);
+        }
         
       }
-      function cxcommand(event, val) {
-        if (val === undefined) val = event.currentTarget.id;
-        var diagram = myDiagram;
-        switch (val) {
-          case "delete": 
-              diagram.startTransaction("delete node and link");
-              diagram.commandHandler.deleteSelection();
-              relayoutLanes();
-              diagram.commitTransaction("delete node and link");
-           break;
-          case "add_process":
-              addNodeAndLink(fromnode, "Lane4");
-              break;
-          case "add_input": addNodeAndLink(fromnode, "Lane3"); break;
-          case "add_output": addNodeAndLink(fromnode, "Lane5"); break;
-          case "add_system": addNodeAndLink(fromnode, "Lane2"); break;
-          case "add_participants": addNodeAndLink(fromnode, "Lane1"); break;
-          case "add_value3": document.getElementById("popup").style.display="block"; break;
-          case "add_value5": document.getElementById("popup").style.display="block"; break;
-          
-        }
-        diagram.currentTool.stopTool();
-      }
-      // A custom command, for changing the color of the selected node(s).
-      function addNodeAndLink(fromnode, lane){
-        if(!fromnode) return;
-          fromnode.diagram.startTransaction("add node and link");
-          // have the Model add the node data
-          console.log(fromnode.node.data.key)
-          var newnode = { key: "N", group: lane, parent: fromnode.node.data.key, text:"edit"};
-          fromnode.diagram.model.addNodeData(newnode);
-          // locate the node initially where the parent node is
-          // if (lane == 4) {
-          //   fromnode.diagram.findNodeForData(newnode).location = fromnode.node.location.y+200;
-          // }else {
-            fromnode.diagram.findNodeForData(newnode).location = fromnode.node.location;
-          //    }
-          var newlink = { from: fromnode.node.data.key, to: newnode.key };
-          fromnode.diagram.model.addLinkData(newlink);
+      return nodesInSameLane;
+    }
 
-          // if(lane !== "Lane1" || lane !== "Lane2"){
-          //  // console.log(newlink.isVisible())
+    function findSameGroup(m, nodesWithSameParent, nodesInSameLane) {
+      let nodeShip = {};
+      const parents = Object.keys(nodesWithSameParent);
+      // 找出每種父節點的子節點
+      console.log(parents +" This is parents")
+      parents.forEach(function (key) {
+        // sameParentsNodes:同樣父節點的節點
+        let sameParentsNodes = nodesWithSameParent[key];
+        console.log(sameParentsNodes + "This is sameParentsNodes");
+        sameParentsNodes.forEach((node) => {
+          nodeShip[key] = nodeShip[key] ? nodeShip[key] : {};
+          nodeShip[key][node.group] = Array.isArray(nodeShip[key][node.group]) ? nodeShip[key][node.group] : [];
+          nodeShip[key][node.group].push(node);
+        })
+        Object.keys(nodeShip[key]).forEach(group => {
+          setNodeLocation(m, nodeShip[key][group], nodesInSameLane);
+        })
+      })
+      return nodeShip;
+    }
+
+    function setNodeLocation(m, nodeWithSameParentAndGroup, nodesINSameLane) {
+      // 取得父節點的key
+      const key = nodeWithSameParentAndGroup[0].parent
+      console.log(key + " this is nodeWithSameParentAndGroup[0].parent")
+      // parentNode:用find方法找到nodeDataArray裡的父節點
+      const parentNode = m.nodeDataArray.find(parent => parent.key == key)
+      // const nodesInSameLane = findNodesInSameLane(m.nodeDataArray);  //error
+      // console.log(nodesInSameLane[0].loc +" this is nodesINSameLane");
+      // 每種同樣Parent同樣Group的子節點要根據個數去設置y軸高度
+      nodeWithSameParentAndGroup.forEach((node, index) => {
+        fromnode.diagram.startTransaction("resetNodeLayOut");
+        console.log(nodeWithSameParentAndGroup + "this is nodeWithSameParentAndGroup")
+
+        switch (nodeWithSameParentAndGroup.length) {
+          // 只有一個的時候跟父節點等y 跟原本aligment設置等x
+          case 1:
+            console.log(parentNode)
+            m.set(node, "loc", `${nodeWithSameParentAndGroup[0].loc.split(" ")[0]} ${parseFloat(parentNode.loc.split(" ")[1])}`);
+            break;
             
+          // 兩個時與第一個節點等x 跟父節點y+-15
+          case 2:
+            if (index % 2 == 0) {
+              m.set(node, "loc", `${nodeWithSameParentAndGroup[0].loc.split(" ")[0]} ${parseFloat(parentNode.loc.split(" ")[1]) + -20}`);
+            } else {
+              m.set(node, "loc", `${nodeWithSameParentAndGroup[0].loc.split(" ")[0]} ${parseFloat(parentNode.loc.split(" ")[1]) + 20}`);
+            }
+            break;
+            relayoutDiagram();
+          // 三個時 與第一個節點等x 第一個節點跟原本aligment設置等x 其餘跟父節點y+-22.5 
+          case 3:
+            if (index == 0) {
+              m.set(node, "loc", `${nodeWithSameParentAndGroup[0].loc.split(" ")[0]} ${parseFloat(parentNode.loc.split(" ")[1]) + -32}`);
+            } else if (index == 1) {
+              m.set(node, "loc", `${nodeWithSameParentAndGroup[0].loc.split(" ")[0]} ${parseFloat(parentNode.loc.split(" ")[1]) + 0}`);
+            } else {
+              m.set(node, "loc", `${nodeWithSameParentAndGroup[0].loc.split(" ")[0]} ${parseFloat(parentNode.loc.split(" ")[1]) + 32}`);
 
-          // }
-          // and then add a link data connecting the original node with the new one
-          
-          // finish the transaction -- will automatically perform a layout
-          fromnode.diagram.commitTransaction("add node and link");
-          
-          fromnode=null;
-        return;
-
+            }
+            break;
+          // 超過三個 節點跟原本aligment設置等x 跟父節點y+-15
+          default:
+            if (index % 2 == 0) {
+              m.set(node, "loc", `${node.loc.split(" ")[0]} ${parseFloat(parentNode.loc.split(" ")[1]) + -15}`);
+            } else {
+              m.set(node, "loc", `${node.loc.split(" ")[0]} ${parseFloat(parentNode.loc.split(" ")[1]) + 15}`);
+            }
         }
-    key=new Array(3);
-    key[0]=new Array(3);
-    key[1]=new Array(2);
-    key[2]=new Array(3);
+        fromnode.diagram.commitTransaction("resetNodeLayOut")
+      })
+    }
+    function resetNodeLayOut() {
+      // 這行是更新model要的commit
+      myDiagram.model.commit(async function (m) {
+        // m=myDiagram.model
+        // 找到有Parent之節點
+        const nodesWithSameParent = findSameParent(m.nodeDataArray);
+        // 將有Parent之節點再依據Group分類
+        const nodesInSameLane = findNodesInSameLane(m, m.nodeDataArray);
+        findSameGroup(m, nodesWithSameParent, nodesInSameLane);
 
-    key[0][0]="1";
-    key[0][1]="2";
-    key[0] [2]="3";
+      }, "resetNodeLayOut")
+    }
 
-    key[1][0]="1";
-    key[1][1]="2";
-    key[1][2]="3";
 
-    key[2][0]="1";
-    key[2][1]="2";
-    key[2] [2]="3";
+    key = new Array(3);
+    key[0] = new Array(3);
+    key[1] = new Array(2);
+    key[2] = new Array(3);
 
-    function Buildkey(num)
-    {
-      document.myForm.fruit.selectedIndex=0;
-      for(ctr=0;ctr<key[num].length;ctr++){
-        document.myForm.fruit.options[ctr]=new Option(key[num][ctr],key[num][ctr]);
+    key[0][0] = "1";
+    key[0][1] = "2";
+    key[0][2] = "3";
+
+    key[1][0] = "1";
+    key[1][1] = "2";
+    key[1][2] = "3";
+
+    key[2][0] = "1";
+    key[2][1] = "2";
+    key[2][2] = "3";
+
+    function Buildkey(num) {
+      document.myForm.fruit.selectedIndex = 0;
+      for (ctr = 0; ctr < key[num].length; ctr++) {
+        document.myForm.fruit.options[ctr] = new Option(key[num][ctr], key[num][ctr]);
       }
-     document.myForm.fruit.length=key[num].length;
+      document.myForm.fruit.length = key[num].length;
     }
-    function formReset()
-    {
-    document.getElementById("db").reset()
+    function formReset() {
+      document.getElementById("db").reset()
     }
-    </script>
-  </head>
-  <body onload="init()">
+  </script>
+</head>
+
+<body onload="init()">
   <div id="sample">
     <div id="myDiagramDiv" style="border: solid 1px black; width:100%; height:600px;"></div>
     <div id="contextMenu">
-          <ul>
+      <ul>
 
-            <li id="add_process" onclick="cxcommand(event)"><a href="#" target="_self">Add Process</a></li>
-            <li id="add_input" onclick="cxcommand(event)"><a href="#" target="_self">Add Input</a></li>
-            <li id="add_output" onclick="cxcommand(event)"><a href="#" target="_self">Add Output</a></li>
-            <li id="add_system" onclick="cxcommand(event)"><a href="#" target="_self">Add System</a></li>
-            <li id="add_participants" onclick="cxcommand(event)"><a href="#" target="_self">Add Participant</a></li>
-            <li id="delete" onclick="cxcommand(event)"><a href="#" target="_self">Delete</a></li>
-            <li id="add_value3" onclick="cxcommand(event)"><a href="#" target="_self">Add Value</a></li>
-            <li id="add_value5" onclick="cxcommand(event)"><a href="#" target="_self">Add Value</a></li>
-            
-              </ul>
-            </li>
-          </ul>
-        </div>
+        <!-- <li id="add_process" onclick="cxcommand(event)"><a href="#" target="_self">Add Process</a></li> -->
+        <li id="add_input" onclick="cxcommand(event)"><a href="#" target="_self">Add Input</a></li>
+        <li id="add_output" onclick="cxcommand(event)"><a href="#" target="_self">Add Output</a></li>
+        <li id="add_system" onclick="cxcommand(event)"><a href="#" target="_self">Add System</a></li>
+        <li id="add_participants" onclick="cxcommand(event)"><a href="#" target="_self">Add Participant</a></li>
+        <li id="delete" onclick="cxcommand(event)"><a href="#" target="_self">Delete</a></li>
+        <li id="add_value3" onclick="cxcommand(event)"><a href="#" target="_self">Add Value</a></li>
+        <li id="add_value5" onclick="cxcommand(event)"><a href="#" target="_self">Add Value</a></li>
 
-    
+      </ul>
+      </li>
+      </ul>
+    </div>
+
+
     <!-- <button onclick="relayoutLanes()">Layout</button> -->
     <!-- <button id="SaveButton" onclick="save()">Save</button>
     <button onclick="load()">Load</button> -->
     <br />
+    <a href="/team/evaluation"><button>下一步</button></a>
     <!-- <textarea id="mySavedModel" style="width:100%;height:300px"></textarea> -->
   </div>
-  <div class="popup" style="position:absolute;top:0;left:1;width:18vw;height:10vh;z-index: 999;background-color:#FFBB73;display: none;border-width:3px;border-style:solid;border-color:black;padding:5px;" id="popup">
-      <form id="db">
+  <div class="popup"
+    style="position:absolute;top:0;left:1;width:18vw;height:10vh;z-index: 999;background-color:#FFBB73;display: none;border-width:3px;border-style:solid;border-color:black;padding:5px;"
+    id="popup">
+    <form id="db">
       Level Of Impact:
       <select>
-      <option>1</option>
-      <option>2</option>
-      <option >3</option>
-      <option >4</option>
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
       </select>
       <button id="close" onclick="getElementById('popup').style.display='none'">確定</button>
       <input type="reset" value="清除">
-      </form>
-    </div>
-  </body>
-  </html>
+    </form>
+  </div>
+</body>
+
+</html>

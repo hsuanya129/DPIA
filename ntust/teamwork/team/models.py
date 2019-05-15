@@ -36,36 +36,6 @@ class Answer(models.Model):
     class Meta:
         db_table = 'answer'
 
-
-class Evaluation(models.Model):
-    activity = models.ForeignKey(Activity, models.DO_NOTHING)
-    pii_id = models.IntegerField()
-    asset_type = models.TextField(blank=True, null=True)
-    asset_id = models.IntegerField(blank=True, null=True)
-    probability = models.IntegerField(blank=True, null=True)
-    value = models.IntegerField(blank=True, null=True)
-    risk = models.ForeignKey('Risk', models.DO_NOTHING, blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
-
-
-    def __str__(self):
-        return self.id
-
-    class Meta:
-        db_table = 'evaluation'
-
-
-class Participant(models.Model):
-    name = models.TextField(blank=True, null=True)
-    activity = models.ForeignKey(Activity, models.DO_NOTHING)
-
-    def __str__(self):
-        return str(self.activity_id)+","+self.name
-
-    class Meta:
-        db_table = 'participant'
-
-
 class Pii(models.Model):
     name = models.TextField()
     activity = models.ForeignKey(Activity, models.DO_NOTHING)
@@ -88,6 +58,46 @@ class Process(models.Model):
     class Meta:
         db_table = 'process'
 
+class Participant(models.Model):
+    name = models.TextField(blank=True, null=True)
+    activity = models.ForeignKey(Activity, models.DO_NOTHING)
+
+    def __str__(self):
+        return str(self.activity_id)+","+self.name
+
+    class Meta:
+        db_table = 'participant'        
+
+class System(models.Model):
+    name = models.TextField(blank=True, null=True)
+    activity = models.ForeignKey(Activity, models.DO_NOTHING)
+
+    def __str__(self):
+        return str(self.activity_id)+","+self.name
+
+    class Meta:
+        db_table = 'system'
+
+
+class Evaluation(models.Model):
+    activity = models.ForeignKey(Activity, models.DO_NOTHING)
+    process = models.ForeignKey(Process, models.DO_NOTHING)
+    pii = models.ForeignKey(Pii, models.DO_NOTHING)
+    participant = models.ForeignKey(Participant, models.DO_NOTHING)
+    system = models.ForeignKey(System, models.DO_NOTHING)
+    probability = models.IntegerField(blank=True, null=True)
+    value = models.IntegerField(blank=True, null=True)
+    risk = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    applicable = models.BooleanField(default=0)
+
+
+    def __str__(self):
+        return self.id
+
+    class Meta:
+        db_table = 'evaluation'
+
 
 class ProcessHasParticipant(models.Model):
     process = models.ForeignKey(Process, models.DO_NOTHING)
@@ -106,15 +116,7 @@ class ProcessHasPii(models.Model):
         db_table = 'process_has_pii'
         unique_together = (('process', 'pii'),)
 
-class System(models.Model):
-    name = models.TextField(blank=True, null=True)
-    activity = models.ForeignKey(Activity, models.DO_NOTHING)
 
-    def __str__(self):
-        return str(self.activity_id)+","+self.name
-
-    class Meta:
-        db_table = 'system'
 
 
 class ProcessHasSystem(models.Model):

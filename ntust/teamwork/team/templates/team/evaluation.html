@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Evaluation</title>
+</head>
+<body>
+<!-- 	evaluation id / process / pii / value / participant/System / risk
+	{% for evaluation in evaluation_all %}
+		<p> {{ evaluation.id }}, {{ evaluation.process.name }} , {{ evaluation.pii.name }} , {{ evaluation.pii.value }} , {{ evaluation.participant.name }} , {{ evaluation.system }}  , {{ evaluation.risk }}  </p>
+	{% endfor %} -->
+
+	<table>
+		<form action="../evaluation/" method="post">
+  		<tr>
+    		<th>id</th>
+    		<th>process</th> 
+    		<th>pii</th>
+    		<th>value</th>
+    		<th>asset</th>
+    		<th>risk</th>
+    		<th>probability</th>
+    		<th>description</th>
+    		<th>applicable</th>
+  		</tr>
+  		{% for evaluation in evaluation_all %}
+  		<tr>
+    		<td>{{ evaluation.id }}</td>
+    		<td>{{ evaluation.process.name }}</td>
+    		<td>{{ evaluation.pii.name }}</td>
+    		<td>{{ evaluation.pii.value }}</td>
+    		{% if evaluation.participant_id is None %}
+    		<td>{{ evaluation.system.name }}</td>
+    		{% else %}
+    		<td>{{ evaluation.participant.name }}</td>
+    		{% endif %}
+    		<td>{{ evaluation.risk }}</td>
+    		<td><select name="probability{{ evaluation.id }}" required="required">
+  				<option value ="1">1</option>
+  				<option value ="2">2</option>
+  				<option value="3">3</option>
+  				<option value="4">4</option>
+				</select></td>
+    		<td><input type="textarea" name="description{{ evaluation.id }}"></td>
+    		<td><input type="checkbox" name="applicable{{ evaluation.id }}"></td>
+  		</tr>
+  		{% endfor %}
+  		
+  	</table>
+  	<input type="submit" name="" value="下一步">
+  </form>
+</body>
+</html>

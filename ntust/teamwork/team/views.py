@@ -113,7 +113,7 @@ def sign(request):
     return HttpResponseRedirect('/team/')
 
 def dataflow(request):
-    pk =3
+    pk =2
     swimlane_objects = Swimlane.objects.filter(activity_id=pk)
     if len(swimlane_objects) == 0:
         Swimlane.objects.create(activity_id= pk)
@@ -121,7 +121,7 @@ def dataflow(request):
     return render(request, 'team/dataflow.html')
 
 def dataflow_saveLane(request):
-    pk =3
+    pk =2
 
     swimlane_object_post = Swimlane.objects.get(activity_id=pk)
     data_text = request.POST.get('postdata')
@@ -133,7 +133,7 @@ def dataflow_saveLane(request):
 
 
 def dataflow_get(request):
-    pk=3
+    pk=2
     swimlane_object_get = Swimlane.objects.get(activity_id=pk)
     if json.dumps(swimlane_object_get.swimlane_json) == "{}":
         swimlane_object_one = Swimlane.objects.get(activity_id=1)
@@ -146,8 +146,9 @@ def dataflow_get(request):
         Process.objects.create(activity_id=pk,name="Delete")
     return JsonResponse(swimlane_object_get.swimlane_json)
 
+#收到由dataflow.html的post請求, 對應其post資訊中的event, 分流至相應事件(新增/刪除/修改 節點)的方法
 def dataflow_saveTemp(request):
-    pk=3
+    pk=2
     saveTemp = request.POST.get('postdata')
     saveTemp = json.loads(saveTemp)
     print(saveTemp)
@@ -161,9 +162,9 @@ def dataflow_saveTemp(request):
 
     return render(request, 'team/dataflow.html')
 
+#節點新增時所啟動的方法: 將新增的節點, 新增與之process對應關係
 def addNode(saveTemp,pk):
 
-    
     if saveTemp["asset_type"] =="Lane1":
         if len(Participant.objects.filter(activity_id=pk, name=saveTemp["name"])) == 0:
             Participant.objects.create(activity_id=pk, name=saveTemp["name"])
@@ -188,6 +189,7 @@ def addNode(saveTemp,pk):
         if len(ProcessHasPii.objects.filter(process_id =process.id,pii_id=pii.id)) ==0:
             ProcessHasPii.objects.create(process_id =process.id,pii_id=pii.id)
 
+#節點刪除時所啟動的方法: 將刪除的節點, 刪除與之process對應關係
 def removeNode(saveTemp,pk):
     if saveTemp["asset_type"] =="Lane1":
         participant = Participant.objects.get(activity_id=pk, name=saveTemp["name"])
@@ -207,7 +209,7 @@ def removeNode(saveTemp,pk):
         itemDelete =ProcessHasPii.objects.get(process_id =process.id,pii_id=pii.id)
         itemDelete.delete()
 
-
+#節點重新命名時 所啟動的方法: 將所改變的節點名字存入資料庫
 def renameNode(saveTemp,pk):
     if saveTemp['old_name'] == saveTemp['name']:
         print("OLD NAME = NEW NAME RETURN")
@@ -307,5 +309,83 @@ def renameNode(saveTemp,pk):
         process_old = Process.objects.get(activity_id = pk , name = saveTemp['old_name'])
         process_old.name = saveTemp['name']
         process_old.save()
+
+
+def evaluation(request):
+    pk=2
+
+    #在此收到evaluation頁面的post請求，並將頁面中使用者填入的資料輸入至資料庫中
+    if request.method == "POST":
+        print("IMPOST")
+
+        probability_list=list()
+        description_list=list()
+        applicable_list=list()
+
+        #將各evaluation item中的資料匯入成list 使之方便存入至資料庫
+        for item in Evaluation.objects.filter(activity_id=pk): 
+            probability_list.append(request.POST.get('probability'+ str(item.id)))
+            description_list.append(request.POST.get('description'+ str(item.id))) 
+            applicable_list.append(request.POST.get('applicable'+ str(item.id)))
+
+
+        #以上方list所存之資料為依據 匯入至資料庫
+        i=0
+        for item in Evaluation.objects.filter(activity_id=pk):
+            item.probability=probability_list[i]
+            item.description=description_list[i]
+            print(applicable_list[i])
+            if applicable_list[i] =="on":
+                item.applicable=True
+            else:
+                item.applicable=False
+            item.save()
+            i+=1
+
+        return HttpResponseRedirect('/team/risk_mapping')
+
+    #在此創立evalation物件
+    if request.method=="GET":
+        process_all = Process.objects.filter(activity_id=pk)
+
+        #若此activity已有evaluation物件 則刪除原有物件 在下方程式碼中recreate
+        if len(Evaluation.objects.filter(activity_id = pk))>0:
+            for item in Evaluation.objects.filter(activity_id = pk):
+                item.delete()
+
+        #在此建立evaluation物件
+        if len(Evaluation.objects.filter(activity_id = pk))==0:
+            for process in process_all:
+                for process_has_pii in ProcessHasPii.objects.filter(process_id = process.id):
+                    pii = Pii.objects.get(id =process_has_pii.pii_id )
+                    for process_has_system in ProcessHasSystem.objects.filter(process_id = process.id):
+                        system = System.objects.get(id=process_has_system.system_id)
+                        Evaluation.objects.create(activity_id=pk,pii_id=pii.id,system_id = system.id,value=pii.value,risk="Disappearance of Pii",process_id=process.id)
+                        Evaluation.objects.create(activity_id=pk,pii_id=pii.id,system_id = system.id,value=pii.value,risk="Illeagal of uasge",process_id=process.id)
+                        Evaluation.objects.create(activity_id=pk,pii_id=pii.id,system_id = system.id,value=pii.value,risk="Unwanted modified Pii",process_id=process.id)
+
+                    for process_has_participant in ProcessHasParticipant.objects.filter(process_id = process.id):
+                        participant = Participant.objects.get(id=process_has_participant.participant_id)
+                        Evaluation.objects.create(activity_id=pk,pii_id=pii.id,participant_id=participant.id,value=pii.value,risk="Disappearance of Pii",process_id=process.id)
+                        Evaluation.objects.create(activity_id=pk,pii_id=pii.id,participant_id=participant.id,value=pii.value,risk="Illeagal of uasge",process_id=process.id)
+                        Evaluation.objects.create(activity_id=pk,pii_id=pii.id,participant_id=participant.id,value=pii.value,risk="Unwanted modified Pii",process_id=process.id)
+
+        context ={
+            'process_all':process_all,
+            'process_has_pii':ProcessHasPii.objects.all(),
+            'process_has_participant':ProcessHasParticipant.objects.all(),
+            'evaluation_all':Evaluation.objects.filter(activity_id = pk)
+        }      
+
+        return render(request,'team/evaluation.html',context)
+
+
+def risk_mapping(request):
+
+    return render(request,'team/risk_mapping.html')   
+    
+    
+
+
 
 
