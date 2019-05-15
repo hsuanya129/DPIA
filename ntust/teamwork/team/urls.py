@@ -14,4 +14,6 @@ urlpatterns = [
 	url(r'^dataflow_get/',views.dataflow_get, name='dataflow_get'),
 	url(r'^dataflow_saveTemp/',views.dataflow_saveTemp, name='dataflow_saveTemp'),
 	url(r'^dataflow_saveLane/',views.dataflow_saveLane, name='dataflow_saveLane'),
+	url(r'^evaluation/',views.evaluation, name='evaluation'),
+	url(r'^risk_mapping/',views.risk_mapping, name='risk_mapping'),
 ]
