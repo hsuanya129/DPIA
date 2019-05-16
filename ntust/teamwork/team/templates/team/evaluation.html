@@ -2,6 +2,16 @@
 <html>
 <head>
 	<title>Evaluation</title>
+  <style>
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 5px;
+      text-align: left;    
+    }
+</style>
 </head>
 <body>
 <!-- 	evaluation id / process / pii / value / participant/System / risk
@@ -23,14 +33,18 @@
   		</tr>
   		{% for evaluation in evaluation_all %}
   		<tr>
-    		<td>{{ evaluation.process.name }}</td>
-    		<td>{{ evaluation.pii.name }}</td>
-    		<td>{{ evaluation.pii.value }}</td>
+        {% if evaluation.risk == "Disappearance of Pii" %}
+    		<td rowspan="3">{{ evaluation.process.name }}</td>
+    		<td rowspan="3">{{ evaluation.pii.name }}</td>
+    		<td rowspan="3">{{ evaluation.pii.value }}</td>
+
+
     		{% if evaluation.participant_id is None %}
-    		<td>{{ evaluation.system.name }}</td>
+    		<td rowspan="3">{{ evaluation.system.name }}</td>
     		{% else %}
-    		<td>{{ evaluation.participant.name }}</td>
+    		<td rowspan="3">{{ evaluation.participant.name }}</td>
     		{% endif %}
+        {% endif %}
     		<td>{{ evaluation.risk }}</td>
     		<td><select name="probability{{ evaluation.id }}" required="required">
   				<option value ="1">1</option>
@@ -39,7 +53,9 @@
   				<option value="4">4</option>
 				</select></td>
     		<td><input type="textarea" name="description{{ evaluation.id }}"></td>
-    		<td><input type="checkbox" name="applicable{{ evaluation.id }}"></td>
+        {% if evaluation.risk == "Disappearance of Pii" %}
+    		<td rowspan="3"><input type="checkbox" name="applicable{{ evaluation.group_risk_id }}"></td>
+        {% endif %}
   		</tr>
   		{% endfor %}
   		
