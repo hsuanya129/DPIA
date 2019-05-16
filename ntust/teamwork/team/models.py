@@ -203,7 +203,7 @@ class User(models.Model):
 
 
 class UserHasActivity(models.Model):
-    user = models.ForeignKey(User, models.DO_NOTHING,primary_key=True)
+    user = models.ForeignKey(User, models.DO_NOTHING)
     activity = models.ForeignKey(Activity, models.DO_NOTHING)
 
     def __str__(self):

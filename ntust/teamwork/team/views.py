@@ -20,7 +20,10 @@ def login_sign(request):
             account = request.POST['account']
             password = request.POST['password']
             user = User.objects.filter(account=account,password=password)
+
             if len(user) != 0:
+                user = User.objects.get(account=account,password=password)
+                user_has_activity = UserHasActivity.objects.filter(user_id = user.id) #擷取出此user有的activity
                 return render(request,'team/choose_pia.html/',locals())
             else:
                 # return render(request,'team/home.html',locals())
@@ -87,6 +90,7 @@ def stakeholder(request):
 
     return render(request, 'team/stakeholder.html', locals())
 def new(request):
+    user_pk=5 #it's for user's id
     if request.method == 'POST':
         name = request.POST.get('pia_name','')
         piam_name = request.POST.get('piam_name','')
@@ -95,7 +99,8 @@ def new(request):
         activity_manager_email = request.POST.get('activitym_email','')
         today = datetime.date.today()
         description = request.POST.get('description','')
-        user = Activity.objects.create(name=name,pia_manager_name=piam_name,pia_manager_email=piam_email,activity_manager_name=activity_manager_name,activity_manager_email=activity_manager_email,date=today,description=description)
+        new_pia = Activity.objects.create(name=name,pia_manager_name=piam_name,pia_manager_email=piam_email,activity_manager_name=activity_manager_name,activity_manager_email=activity_manager_email,date=today,description=description)
+        UserHasActivity.objects.create(user_id=user_pk,activity_id=new_pia.id)
         return HttpResponseRedirect('/team/questionary/1')
         # return render(request,'team/questionary/1', locals())
     return render(request,'team/new_pia.html', locals())
@@ -108,7 +113,7 @@ def sign(request):
         name = request.POST.get('name','')
         account = request.POST.get('account','')
         password = request.POST.get('password','')
-        user = User.objects.create(name=name,account=account, password=password,permission_level=1,activity_id=1)
+        user = User.objects.create(name=name,account=account, password=password,permission_level=1)
         return HttpResponseRedirect('/team/')
     return HttpResponseRedirect('/team/')
 
@@ -383,6 +388,10 @@ def evaluation(request):
 def risk_mapping(request):
 
     return render(request,'team/risk_mapping.html')   
+def pia_examine(request):
+    pk=2
+    activity=Activity.objects.get(id=pk)
+    return render(request, 'team/pia_examine.html',locals())
     
     
 

@@ -16,4 +16,5 @@ urlpatterns = [
 	url(r'^dataflow_saveLane/',views.dataflow_saveLane, name='dataflow_saveLane'),
 	url(r'^evaluation/',views.evaluation, name='evaluation'),
 	url(r'^risk_mapping/',views.risk_mapping, name='risk_mapping'),
+	url(r'^pia_examine/',views.pia_examine, name='pia_examine'),
 ]

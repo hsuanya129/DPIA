@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Pia detail</title>
+</head>
+<body>
+<table class = "table">
+	<tr>
+		<th>專案名稱</th>
+		<th>負責人</th>
+		<th>負責人信箱</th>
+		<th>專案簡述</th>
+		<th>專案建立時間</th>
+	</tr>
+
+	<tr>
+		<td>{{ activity.name }}</td>
+		<td>{{ activity.pia_manager_name }}</td>
+		<td>{{ activity.pia_manager_email }}</td>
+		<td>{{ activity.description }}</td>
+		<th>{{ activity.date }}</th>
+	</tr>
+</table>
+<br></br>
+<a href="/team/login_sign"><button>返回</button></a>
+<!-- <button><a href="/team/new_pia/">新增PIA</a></button> -->
+</body>
+</html>
