@@ -2,8 +2,65 @@
 <html>
 <head>
 	<title>Risk mapping</title>
+	<style>
+    table, th, td {
+      border: 2px solid gray;
+      border-collapse: collapse;
+    }
+    th, td {
+      /*padding: 50px;*/
+      width:100px;
+      height:100px;
+      text-align: left;    
+    }
+	</style>
 </head>
 <body>
   <p>hi i'm risk mapping</p>
+  {% for group in group_risk_all %}
+
+  <table>
+  	<tr>
+  		<td bgcolor="#e88866">
+  		</td>
+  		<td bgcolor="#ea5f2c">
+  		</td>
+  		<td bgcolor="#dd4040">
+  		</td>
+  		<td bgcolor="#ad1d1d">
+  		</td>
+  	</tr>
+  	<tr>
+  		<td bgcolor="#d8d517">
+  		</td>
+  		<td bgcolor="#e88866">
+  		</td>
+  		<td bgcolor="#ea5f2c">
+  		</td>
+  		<td bgcolor="#dd4040">
+  		</td>
+  	</tr>
+  	<tr>
+  		<td bgcolor="#f7f588">
+  		</td>
+  		<td bgcolor="#d8d517">
+  		</td>
+  		<td bgcolor="#e88866">
+  		</td>
+  		<td bgcolor="#ea5f2c">
+  		</td>
+  	</tr>
+  	<tr>
+  		<td bgcolor="#b5b8ce">
+  		</td>
+  		<td bgcolor="#f7f588">
+  		</td>
+  		<td bgcolor="#d8d517">
+  		</td>
+  		<td bgcolor="#e88866">
+  		</td>
+  	</tr>
+  </table>
+  {% endfor %}
 </body>
 </html>

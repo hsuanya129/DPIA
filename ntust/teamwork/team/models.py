@@ -78,6 +78,16 @@ class System(models.Model):
     class Meta:
         db_table = 'system'
 
+class GroupRisk(models.Model):
+    activity = models.ForeignKey(Activity, models.DO_NOTHING)
+    applicable = models.BooleanField(default=0)
+
+    def __str__(self):
+        return str(self.id)
+
+    class Meta:
+        db_table = 'group_risk'
+
 
 class Evaluation(models.Model):
     activity = models.ForeignKey(Activity, models.DO_NOTHING)
@@ -89,7 +99,7 @@ class Evaluation(models.Model):
     value = models.IntegerField(blank=True, null=True)
     risk = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    applicable = models.BooleanField(default=0)
+    group_risk = models.ForeignKey(GroupRisk, models.DO_NOTHING)
 
 
     def __str__(self):
@@ -148,18 +158,6 @@ class QuestionaryType(models.Model):
 
     class Meta:
         db_table = 'questionary_type'
-
-
-class Risk(models.Model):
-    id = models.IntegerField(primary_key=True)
-    description = models.TextField()
-
-    def __str__(self):
-        return str(self.id)+","+self.description
-
-    class Meta:
-        db_table = 'risk'
-
 
 class Stakeholder(models.Model):
     name = models.TextField()

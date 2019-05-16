@@ -327,7 +327,6 @@ def evaluation(request):
 
     #在此收到evaluation頁面的post請求，並將頁面中使用者填入的資料輸入至資料庫中
     if request.method == "POST":
-        print("IMPOST")
 
         probability_list=list()
         description_list=list()
@@ -337,7 +336,9 @@ def evaluation(request):
         for item in Evaluation.objects.filter(activity_id=pk): 
             probability_list.append(request.POST.get('probability'+ str(item.id)))
             description_list.append(request.POST.get('description'+ str(item.id))) 
-            applicable_list.append(request.POST.get('applicable'+ str(item.id)))
+        
+        for group in GroupRisk.objects.filter(activity_id=pk): 
+            applicable_list.append(request.POST.get('applicable'+ str(group.id)))
 
 
         #以上方list所存之資料為依據 匯入至資料庫
@@ -345,14 +346,16 @@ def evaluation(request):
         for item in Evaluation.objects.filter(activity_id=pk):
             item.probability=probability_list[i]
             item.description=description_list[i]
-            print(applicable_list[i])
-            if applicable_list[i] =="on":
-                item.applicable=True
-            else:
-                item.applicable=False
             item.save()
             i+=1
 
+        j=0
+        for group in GroupRisk.objects.filter(activity_id=pk):
+            print(applicable_list[j])
+            if applicable_list[j]=="on":
+                group.applicable=True
+                group.save()
+            j+=1
         return HttpResponseRedirect('/team/risk_mapping')
 
     #在此創立evalation物件
@@ -360,40 +363,47 @@ def evaluation(request):
         process_all = Process.objects.filter(activity_id=pk)
 
         #若此activity已有evaluation物件 則刪除原有物件 在下方程式碼中recreate
-        if len(Evaluation.objects.filter(activity_id = pk))>0:
-            for item in Evaluation.objects.filter(activity_id = pk):
+        if len(GroupRisk.objects.filter(activity_id = pk))>0:
+            for item in GroupRisk.objects.filter(activity_id = pk):
                 item.delete()
 
         #在此建立evaluation物件
-        if len(Evaluation.objects.filter(activity_id = pk))==0:
+        if len(GroupRisk.objects.filter(activity_id = pk))==0:
             for process in process_all:
                 for process_has_pii in ProcessHasPii.objects.filter(process_id = process.id):
                     pii = Pii.objects.get(id =process_has_pii.pii_id )
                     for process_has_system in ProcessHasSystem.objects.filter(process_id = process.id):
                         system = System.objects.get(id=process_has_system.system_id)
-                        Evaluation.objects.create(activity_id=pk,pii_id=pii.id,system_id = system.id,value=pii.value,risk="Disappearance of Pii",process_id=process.id)
-                        Evaluation.objects.create(activity_id=pk,pii_id=pii.id,system_id = system.id,value=pii.value,risk="Illeagal of uasge",process_id=process.id)
-                        Evaluation.objects.create(activity_id=pk,pii_id=pii.id,system_id = system.id,value=pii.value,risk="Unwanted modified Pii",process_id=process.id)
+                        group_risk = GroupRisk.objects.create(activity_id=pk)
+                        Evaluation.objects.create(activity_id=pk,pii_id=pii.id,system_id = system.id,value=pii.value,risk="Disappearance of Pii",process_id=process.id,group_risk_id=group_risk.id)
+                        Evaluation.objects.create(activity_id=pk,pii_id=pii.id,system_id = system.id,value=pii.value,risk="Illeagal of uasge",process_id=process.id,group_risk_id=group_risk.id)
+                        Evaluation.objects.create(activity_id=pk,pii_id=pii.id,system_id = system.id,value=pii.value,risk="Unwanted modified Pii",process_id=process.id,group_risk_id=group_risk.id)
 
                     for process_has_participant in ProcessHasParticipant.objects.filter(process_id = process.id):
                         participant = Participant.objects.get(id=process_has_participant.participant_id)
-                        Evaluation.objects.create(activity_id=pk,pii_id=pii.id,participant_id=participant.id,value=pii.value,risk="Disappearance of Pii",process_id=process.id)
-                        Evaluation.objects.create(activity_id=pk,pii_id=pii.id,participant_id=participant.id,value=pii.value,risk="Illeagal of uasge",process_id=process.id)
-                        Evaluation.objects.create(activity_id=pk,pii_id=pii.id,participant_id=participant.id,value=pii.value,risk="Unwanted modified Pii",process_id=process.id)
+                        group_risk = GroupRisk.objects.create(activity_id=pk)
+                        Evaluation.objects.create(activity_id=pk,pii_id=pii.id,participant_id=participant.id,value=pii.value,risk="Disappearance of Pii",process_id=process.id,group_risk_id=group_risk.id)
+                        Evaluation.objects.create(activity_id=pk,pii_id=pii.id,participant_id=participant.id,value=pii.value,risk="Illeagal of uasge",process_id=process.id,group_risk_id=group_risk.id)
+                        Evaluation.objects.create(activity_id=pk,pii_id=pii.id,participant_id=participant.id,value=pii.value,risk="Unwanted modified Pii",process_id=process.id,group_risk_id=group_risk.id)
 
         context ={
             'process_all':process_all,
-            'process_has_pii':ProcessHasPii.objects.all(),
+            'process_has_pii_all':ProcessHasPii.objects.all(),
             'process_has_participant':ProcessHasParticipant.objects.all(),
-            'evaluation_all':Evaluation.objects.filter(activity_id = pk)
+            'evaluation_all':Evaluation.objects.filter(activity_id = pk),
+            'group_risk_all':GroupRisk.objects.filter(activity=pk)
         }      
 
         return render(request,'team/evaluation.html',context)
 
 
 def risk_mapping(request):
-
-    return render(request,'team/risk_mapping.html')   
+    pk=3
+    context ={
+        'evaluation_all':Evaluation.objects.filter(activity_id = pk),
+        'group_risk_all':GroupRisk.objects.filter(activity_id = pk,applicable=True)
+    }
+    return render(request,'team/risk_mapping.html',context)   
 def pia_examine(request):
     pk=3
     activity=Activity.objects.get(id=pk)
