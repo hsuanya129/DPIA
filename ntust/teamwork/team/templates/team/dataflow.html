@@ -510,7 +510,7 @@
       myDiagram.addDiagramListener('TextEdited', function (e) {
         //console.log("addDiagramListener: "+e.subject.part.key+e.parameter);
         var node = myDiagram.findNodeForKey(e.subject.part.key).data;
-        console.log(e.subject.text + e.parameter);
+        // console.log(e.subject.text + e.parameter);
 
         var postdata = {
           event: "rename",
@@ -608,12 +608,40 @@
         case "add_output": addNodeAndLink(fromnode, "Lane5"); break;
         case "add_system": addNodeAndLink(fromnode, "Lane2"); break;
         case "add_participants": addNodeAndLink(fromnode, "Lane1"); break;
-        case "add_value3": document.getElementById("popup").style.display = "block"; break;
-        case "add_value5": document.getElementById("popup").style.display = "block"; break;
+        case "add_value3": getNodeValue(fromnode) ; break;
+        case "add_value5":  getNodeValue(fromnode) ; break;
 
       }
       diagram.currentTool.stopTool();
     }
+
+    var nodeValue,nodeData;
+    function getNodeValue(parameter){
+
+      if ((typeof parameter) == "string"){
+        nodeValue=parameter;
+
+        if ( nodeData != null){
+
+        var postdata = {
+          event: "addValue",
+          process: nodeData.parent,
+          name: nodeData.text,
+          value:nodeValue
+        }
+        saveTemp(JSON.stringify(postdata));
+
+          nodeData=null;
+          nodeValue=null;
+        }
+
+      }else{
+        nodeData=parameter.node.data;
+        document.getElementById("popup").style.display= "block";
+      }
+      
+    }
+
     // A custom command, for changing the color of the selected node(s).
     function addNodeAndLink(fromnode, lane) {
       // 新增
@@ -671,11 +699,11 @@
       let nodeShip = {};
       const parents = Object.keys(nodesWithSameParent);
       // 找出每種父節點的子節點
-      console.log(parents +" This is parents")
+      // console.log(parents +" This is parents")
       parents.forEach(function (key) {
         // sameParentsNodes:同樣父節點的節點
         let sameParentsNodes = nodesWithSameParent[key];
-        console.log(sameParentsNodes + "This is sameParentsNodes");
+        // console.log(sameParentsNodes + "This is sameParentsNodes");
         sameParentsNodes.forEach((node) => {
           nodeShip[key] = nodeShip[key] ? nodeShip[key] : {};
           nodeShip[key][node.group] = Array.isArray(nodeShip[key][node.group]) ? nodeShip[key][node.group] : [];
@@ -691,7 +719,7 @@
     function setNodeLocation(m, nodeWithSameParentAndGroup, nodesINSameLane) {
       // 取得父節點的key
       const key = nodeWithSameParentAndGroup[0].parent
-      console.log(key + " this is nodeWithSameParentAndGroup[0].parent")
+      // console.log(key + " this is nodeWithSameParentAndGroup[0].parent")
       // parentNode:用find方法找到nodeDataArray裡的父節點
       const parentNode = m.nodeDataArray.find(parent => parent.key == key)
       // const nodesInSameLane = findNodesInSameLane(m.nodeDataArray);  //error
@@ -699,12 +727,12 @@
       // 每種同樣Parent同樣Group的子節點要根據個數去設置y軸高度
       nodeWithSameParentAndGroup.forEach((node, index) => {
         fromnode.diagram.startTransaction("resetNodeLayOut");
-        console.log(nodeWithSameParentAndGroup + "this is nodeWithSameParentAndGroup")
+        // console.log(nodeWithSameParentAndGroup + "this is nodeWithSameParentAndGroup")
 
         switch (nodeWithSameParentAndGroup.length) {
           // 只有一個的時候跟父節點等y 跟原本aligment設置等x
           case 1:
-            console.log(parentNode)
+            // console.log(parentNode)
             m.set(node, "loc", `${nodeWithSameParentAndGroup[0].loc.split(" ")[0]} ${parseFloat(parentNode.loc.split(" ")[1])}`);
             break;
             
@@ -814,17 +842,17 @@
   <div class="popup"
     style="position:absolute;top:0;left:1;width:18vw;height:10vh;z-index: 999;background-color:#FFBB73;display: none;border-width:3px;border-style:solid;border-color:black;padding:5px;"
     id="popup">
-    <form id="db">
+    <!-- <form id="db"> -->
       Level Of Impact:
-      <select>
-        <option>1</option>
-        <option>2</option>
-        <option>3</option>
-        <option>4</option>
+      <select id="postValue">
+        <option name="postValue" value="1">1</option>
+        <option name="postValue" value="2">2</option>
+        <option name="postValue" value="3">3</option>
+        <option name="postValue" value="4">4</option>
       </select>
-      <button id="close" onclick="getElementById('popup').style.display='none'">確定</button>
+      <button id="close" onclick="getNodeValue(getElementById('postValue').value),getElementById('popup').style.display='none'">確定</button>
       <input type="reset" value="清除">
-    </form>
+    <!-- </form> -->
   </div>
 </body>
 

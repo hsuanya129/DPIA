@@ -118,7 +118,7 @@ def sign(request):
     return HttpResponseRedirect('/team/')
 
 def dataflow(request):
-    pk =2
+    pk =3
     swimlane_objects = Swimlane.objects.filter(activity_id=pk)
     if len(swimlane_objects) == 0:
         Swimlane.objects.create(activity_id= pk)
@@ -126,7 +126,7 @@ def dataflow(request):
     return render(request, 'team/dataflow.html')
 
 def dataflow_saveLane(request):
-    pk =2
+    pk =3
 
     swimlane_object_post = Swimlane.objects.get(activity_id=pk)
     data_text = request.POST.get('postdata')
@@ -138,7 +138,7 @@ def dataflow_saveLane(request):
 
 
 def dataflow_get(request):
-    pk=2
+    pk=3
     swimlane_object_get = Swimlane.objects.get(activity_id=pk)
     if json.dumps(swimlane_object_get.swimlane_json) == "{}":
         swimlane_object_one = Swimlane.objects.get(activity_id=1)
@@ -153,7 +153,7 @@ def dataflow_get(request):
 
 #收到由dataflow.html的post請求, 對應其post資訊中的event, 分流至相應事件(新增/刪除/修改 節點)的方法
 def dataflow_saveTemp(request):
-    pk=2
+    pk=3
     saveTemp = request.POST.get('postdata')
     saveTemp = json.loads(saveTemp)
     print(saveTemp)
@@ -164,6 +164,8 @@ def dataflow_saveTemp(request):
         removeNode(saveTemp,pk)
     elif saveTemp["event"]=="rename" :
         renameNode(saveTemp,pk)
+    elif saveTemp["event"]=="addValue" :
+        addValue(saveTemp,pk)
 
     return render(request, 'team/dataflow.html')
 
@@ -315,9 +317,13 @@ def renameNode(saveTemp,pk):
         process_old.name = saveTemp['name']
         process_old.save()
 
+def addValue(saveTemp,pk):
+    pii=Pii.objects.get(activity_id=pk, name=saveTemp["name"])
+    pii.value=saveTemp["value"]
+    pii.save()
 
 def evaluation(request):
-    pk=2
+    pk=3
 
     #在此收到evaluation頁面的post請求，並將頁面中使用者填入的資料輸入至資料庫中
     if request.method == "POST":
@@ -389,7 +395,7 @@ def risk_mapping(request):
 
     return render(request,'team/risk_mapping.html')   
 def pia_examine(request):
-    pk=2
+    pk=3
     activity=Activity.objects.get(id=pk)
     return render(request, 'team/pia_examine.html',locals())
     
