@@ -18,9 +18,23 @@
 <body>
   <p>hi i'm risk mapping</p>
   {% for group in group_risk_all %}
-
   <table>
+    <caption>{{ group.id }}</caption>
+    <tr>
+      <td valign="bottom">Level of impact
+      </td>
+      <td >
+      </td>
+      <td >
+      </td>
+      <td >
+      </td>
+      <td >
+      </td>
+    </tr>
   	<tr>
+      <td >4.Maximum
+      </td>
   		<td bgcolor="#e88866">
   		</td>
   		<td bgcolor="#ea5f2c">
@@ -31,6 +45,8 @@
   		</td>
   	</tr>
   	<tr>
+      <td >3.Significant
+      </td>
   		<td bgcolor="#d8d517">
   		</td>
   		<td bgcolor="#e88866">
@@ -41,6 +57,8 @@
   		</td>
   	</tr>
   	<tr>
+      <td >2.Limited
+      </td>
   		<td bgcolor="#f7f588">
   		</td>
   		<td bgcolor="#d8d517">
@@ -51,15 +69,30 @@
   		</td>
   	</tr>
   	<tr>
+      <td >1.Negligible
+      </td>
   		<td bgcolor="#b5b8ce">
   		</td>
   		<td bgcolor="#f7f588">
   		</td>
   		<td bgcolor="#d8d517">
   		</td>
-  		<td bgcolor="#e88866">
+  		<td bgcolor="#e88866"> 
+        <td valign="bottom">Likelihood</td>
   		</td>
   	</tr>
+    <tr>
+      <td >
+      </td>
+      <td>1.Negligible
+      </td>
+      <td >2.Limited
+      </td>
+      <td >3.Significant
+      </td>
+      <td >4.Maximum
+      </td>
+    </tr>
   </table>
   {% endfor %}
 </body>
