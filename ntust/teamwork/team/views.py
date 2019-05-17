@@ -67,13 +67,20 @@ def questionary(request, questionary_type_id=None):
                     activity_id=activityID #test id 
                 )
 
-        if questionary_type_id == '1' or '2':
+        if questionary_type_id == '1':
 
-            return HttpResponseRedirect(base_url + 'team/questionary/' + str(int(questionary_type_id)+1))
+            return HttpResponseRedirect(base_url + 'team/stakeholder')
 
-        elif questionary_type_id == '3':
+        elif questionary_type_id == '3' or '2':
 
-            return render(request,'team/stakeholder.html', locals())
+            return render(request, 'team/stakeholder.html', locals())
+        # if questionary_type_id == '1' or '2':
+
+        #     return HttpResponseRedirect(base_url + 'team/questionary/' + str(int(questionary_type_id)+1))
+
+        # elif questionary_type_id == '3':
+
+        #     return render(request,'team/stakeholder.html', locals())
 
 
         '''
@@ -92,7 +99,7 @@ def stakeholder(request):
         part = request.POST['part']
         feedback = request.POST['feedback']
         Stakeholder.objects.create(name=name, role=role, email=email, part=part, feedback=feedback, activity_id=activityID)
-
+        return HttpResponseRedirect(base_url + 'team/dataflow')
     return render(request, 'team/stakeholder.html', locals())
 def new(request):
     global userid,activityID
