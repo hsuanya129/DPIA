@@ -3,7 +3,7 @@
 <head>
 	<title>Risk mapping</title>
 	<style>
-    table, th, td {
+    td.graph{
       border: 2px solid gray;
       border-collapse: collapse;
     }
@@ -11,73 +11,67 @@
       /*padding: 50px;*/
       width:100px;
       height:100px;
-      text-align: left;    
+      text-align: center;    
     }
 	</style>
 </head>
 <body>
   <p>hi i'm risk mapping</p>
-  {% for group in group_risk_all %}
+  {% for group in evaluation_all %}
   <table>
-    <caption>{{ group.id }}</caption>
+    <!-- <caption>{{ group.id }}</caption> -->
     <tr>
-      <td valign="bottom">Level of impact
+      <td colspan="2" valign="bottom">Level of impact
       </td>
-      <td >
-      </td>
-      <td >
-      </td>
-      <td >
-      </td>
-      <td >
-      </td>
+      <td colspan="3" valign="bottom">{{ group.id }}</td>
+
     </tr>
   	<tr>
       <td >4.Maximum
       </td>
-  		<td bgcolor="#e88866">
+  		<td class="graph" bgcolor="#e88866">
   		</td>
-  		<td bgcolor="#ea5f2c">
+  		<td class="graph" bgcolor="#ea5f2c">
   		</td>
-  		<td bgcolor="#dd4040">
+  		<td class="graph" bgcolor="#dd4040">
   		</td>
-  		<td bgcolor="#ad1d1d">
+  		<td class="graph" bgcolor="#ad1d1d">
   		</td>
   	</tr>
   	<tr>
       <td >3.Significant
       </td>
-  		<td bgcolor="#d8d517">
+  		<td class="graph" bgcolor="#d8d517">
   		</td>
-  		<td bgcolor="#e88866">
+  		<td class="graph" bgcolor="#e88866">
   		</td>
-  		<td bgcolor="#ea5f2c">
+  		<td class="graph" bgcolor="#ea5f2c">
   		</td>
-  		<td bgcolor="#dd4040">
+  		<td class="graph" bgcolor="#dd4040">
   		</td>
   	</tr>
   	<tr>
       <td >2.Limited
       </td>
-  		<td bgcolor="#f7f588">
+  		<td class="graph" bgcolor="#f7f588">
   		</td>
-  		<td bgcolor="#d8d517">
+  		<td class="graph" bgcolor="#d8d517">
   		</td>
-  		<td bgcolor="#e88866">
+  		<td class="graph" bgcolor="#e88866">
   		</td>
-  		<td bgcolor="#ea5f2c">
+  		<td class="graph" bgcolor="#ea5f2c">
   		</td>
   	</tr>
   	<tr>
       <td >1.Negligible
       </td>
-  		<td bgcolor="#b5b8ce">
+  		<td class="graph" bgcolor="#b5b8ce">
   		</td>
-  		<td bgcolor="#f7f588">
+  		<td class="graph" bgcolor="#f7f588">
   		</td>
-  		<td bgcolor="#d8d517">
+  		<td class="graph" bgcolor="#d8d517">
   		</td>
-  		<td bgcolor="#e88866"> 
+  		<td class="graph" bgcolor="#e88866"> 
         <td valign="bottom">Likelihood</td>
   		</td>
   	</tr>

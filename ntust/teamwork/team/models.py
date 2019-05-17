@@ -78,16 +78,6 @@ class System(models.Model):
     class Meta:
         db_table = 'system'
 
-class GroupRisk(models.Model):
-    activity = models.ForeignKey(Activity, models.DO_NOTHING)
-    applicable = models.BooleanField(default=0)
-
-    def __str__(self):
-        return str(self.id)
-
-    class Meta:
-        db_table = 'group_risk'
-
 
 class Evaluation(models.Model):
     activity = models.ForeignKey(Activity, models.DO_NOTHING)
@@ -95,11 +85,8 @@ class Evaluation(models.Model):
     pii = models.ForeignKey(Pii, models.DO_NOTHING)
     participant = models.ForeignKey(Participant, models.DO_NOTHING)
     system = models.ForeignKey(System, models.DO_NOTHING)
-    probability = models.IntegerField(blank=True, null=True)
     value = models.IntegerField(blank=True, null=True)
-    risk = models.TextField(blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
-    group_risk = models.ForeignKey(GroupRisk, models.DO_NOTHING)
+    applicable = models.BooleanField(default=0)
 
 
     def __str__(self):
@@ -108,6 +95,17 @@ class Evaluation(models.Model):
     class Meta:
         db_table = 'evaluation'
 
+class EvaluationItem(models.Model):
+    probability = models.IntegerField(blank=True, null=True)
+    risk = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    evaluation = models.ForeignKey(Evaluation, models.DO_NOTHING)
+
+    def __str__(self):
+        return self.id
+
+    class Meta:
+        db_table = 'evaluation_item'
 
 class ProcessHasParticipant(models.Model):
     process = models.ForeignKey(Process, models.DO_NOTHING)
