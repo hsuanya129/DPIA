@@ -5,6 +5,50 @@
   <title>Dataflow</title>
   <style type="text/css">
     /* CSS for the traditional context menu */  
+    div.box{width:250px;padding:10px;margin:10px;border:3px dashed #ccc;}
+    div.box span{color:Black;font-weight: bold;font-family:"Microsoft JhengHei", Arial, serif;}
+    div.content{width:250px;margin:0px;padding-left: 0px;border:0px solid #ff6666;}
+    text{width:250px;height:100px;margin:0px;border:0px solid #6699cc;font-family:"Microsoft JhengHei", Arial, serif;}
+    .button {
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    padding: 1px 5px;
+    border: 1px solid #b3b3b3;
+    border-radius: 70px;
+    background: #ffffff;
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
+    background: -moz-linear-gradient(top, #ffffff, #ffffff);
+    background: linear-gradient(to bottom, #ffffff, #ffffff);
+    font: normal normal bold 15px arial;
+    color: #111111;
+    text-decoration: none;
+    }
+/*    .button:hover,
+    .button:focus {
+    border: 0px solid #ffffff;
+    color: #111111;
+    text-decoration: none;
+}
+    .button:active {
+    background: #b3b3b3;
+    background: -webkit-gradient(linear, left top, left bottom, from(#b3b3b3), to(#ffffff));
+    background: -moz-linear-gradient(top, #b3b3b3, #ffffff);
+    background: linear-gradient(to bottom, #b3b3b3, #ffffff);
+}
+    .button:before{
+    content:  "\0000a0";
+    display: inline-block;
+    height: 24px;
+    width: 24px;
+    line-height: 24px;
+    margin: 0 4px -6px -4px;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    background-image: url("C:/Users/user/Documents/teamwork/ntust/teamwork/team/templates/team/arrow-down.png") no-repeat left center transparent;
+    background-size: 100% 100%;
+}*/
     #contextMenu {
       z-index: 10002;
       position: absolute;
@@ -808,6 +852,14 @@
     function formReset() {
       document.getElementById("db").reset()
     }
+    // 收缩展开效果 
+    $(function(){
+    $(".test").hide();  // 默认隐藏状态
+    $(":button").click(function() {
+        $(".test").toggle('slow');  // 改变显隐状态
+        $(this).val($(this).val()=="+"?"-":"+"); // 改变按钮的文字说明
+    })
+  })
   </script>
 </head>
 
@@ -854,6 +906,14 @@
       <input type="reset" value="清除">
     <!-- </form> -->
   </div>
+  <div class="box">
+<!--     <span>点击按钮实现展开和收起输入框的切换：</span> -->
+    <div class="content">
+        <span>被遺忘權</span>  <input type="button" class="button" value="+">
+        <div class="test"><text>被遺忘權（英語：right to be forgotten）是一種在歐盟內部存在的人權概念。簡而言之，即人們有權利要求移除有關於自己的負面信息或過時的個人身分資訊搜尋結果；但因為產生了與言論自由間的衝突，與可能產生網際網路審查的疑慮，因此引發了爭議，且法律框架仍不明確，當前只有在歐盟實行。[1][2]應當注意，應用時有很嚴格的前提條件。 </text></div>
+    </div>   
+</div>
+
 </body>
 
 </html>
