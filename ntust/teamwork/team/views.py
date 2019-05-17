@@ -9,12 +9,14 @@ import datetime
 import json
 
 base_url = "http://127.0.0.1:8000/"
+activityID = 0
+userid = 0
 
 def index(request):
     return render(request,'team/home.html/',locals())
 
 def login_sign(request):
-
+    global activityID,userid
     if request.method == "POST":
         if 'login' in request.POST:#一個表單兩個action時要用到 此為按下登入時觸發的action
             account = request.POST['account']
@@ -23,7 +25,10 @@ def login_sign(request):
 
             if len(user) != 0:
                 user = User.objects.get(account=account,password=password)
-                user_has_activity = UserHasActivity.objects.filter(user_id = user.id) #擷取出此user有的activity
+                userid = user.id
+                user_has_activity = UserHasActivity.objects.filter(user_id = userid) #擷取出此user有的activity
+                activityID = UserHasActivity.objects.filter(user_id = userid)
+                print(activityID)
                 return render(request,'team/choose_pia.html/',locals())
             else:
                 # return render(request,'team/home.html',locals())
@@ -59,7 +64,7 @@ def questionary(request, questionary_type_id=None):
                 Answer.objects.create(
                     question_id=qn_list[i].id,
                     context=answer_list[i],
-                    activity_id=1 #test id 
+                    activity_id=activityID #test id 
                 )
 
         if questionary_type_id == '1' or '2':
@@ -86,11 +91,13 @@ def stakeholder(request):
         email = request.POST['email']
         part = request.POST['part']
         feedback = request.POST['feedback']
-        Stakeholder.objects.create(name=name, role=role, email=email, part=part, feedback=feedback)
+        Stakeholder.objects.create(name=name, role=role, email=email, part=part, feedback=feedback, activity_id=activityID)
 
     return render(request, 'team/stakeholder.html', locals())
 def new(request):
-    user_pk=5 #it's for user's id
+    global userid,activityID
+    print(userid)
+    user_pk = userid #it's for user's id
     if request.method == 'POST':
         name = request.POST.get('pia_name','')
         piam_name = request.POST.get('piam_name','')
@@ -101,6 +108,8 @@ def new(request):
         description = request.POST.get('description','')
         new_pia = Activity.objects.create(name=name,pia_manager_name=piam_name,pia_manager_email=piam_email,activity_manager_name=activity_manager_name,activity_manager_email=activity_manager_email,date=today,description=description)
         UserHasActivity.objects.create(user_id=user_pk,activity_id=new_pia.id)
+        activityID = new_pia.id
+        print(activityID)
         return HttpResponseRedirect('/team/questionary/1')
         # return render(request,'team/questionary/1', locals())
     return render(request,'team/new_pia.html', locals())
@@ -118,7 +127,7 @@ def sign(request):
     return HttpResponseRedirect('/team/')
 
 def dataflow(request):
-    pk =3
+    pk =activityID
     swimlane_objects = Swimlane.objects.filter(activity_id=pk)
     if len(swimlane_objects) == 0:
         Swimlane.objects.create(activity_id= pk)
@@ -126,7 +135,7 @@ def dataflow(request):
     return render(request, 'team/dataflow.html')
 
 def dataflow_saveLane(request):
-    pk =3
+    pk =activityID
 
     swimlane_object_post = Swimlane.objects.get(activity_id=pk)
     data_text = request.POST.get('postdata')
@@ -138,7 +147,7 @@ def dataflow_saveLane(request):
 
 
 def dataflow_get(request):
-    pk=3
+    pk=activityID
     swimlane_object_get = Swimlane.objects.get(activity_id=pk)
     if json.dumps(swimlane_object_get.swimlane_json) == "{}":
         swimlane_object_one = Swimlane.objects.get(activity_id=1)
@@ -153,7 +162,7 @@ def dataflow_get(request):
 
 #收到由dataflow.html的post請求, 對應其post資訊中的event, 分流至相應事件(新增/刪除/修改 節點)的方法
 def dataflow_saveTemp(request):
-    pk=3
+    pk=activityID
     saveTemp = request.POST.get('postdata')
     saveTemp = json.loads(saveTemp)
     print(saveTemp)
@@ -405,8 +414,10 @@ def risk_mapping(request):
     }
     return render(request,'team/risk_mapping.html',context)   
 def pia_examine(request):
-    pk=3
-    activity=Activity.objects.get(id=pk)
+    print(userid)
+    print(activityID)
+
+    # activityid=UserHasActivity.objects.filter(user_id = userid)
     return render(request, 'team/pia_examine.html',locals())
     
     
