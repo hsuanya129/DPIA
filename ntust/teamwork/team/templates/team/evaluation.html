@@ -26,37 +26,41 @@
     		<th>pii</th>
     		<th>value</th>
     		<th>asset</th>
-    		<th>risk</th>
-    		<th>probability</th>
-    		<th>description</th>
-    		<th>applicable</th>
+        <th>applicable</th>
+        <th>risk</th>
+        <th>probability</th>
+        <th>description</th>
   		</tr>
-  		{% for evaluation in evaluation_all %}
+
+  		{% for group in evaluation_all %}
   		<tr>
-        {% if evaluation.risk == "Disappearance of Pii" %}
-    		<td rowspan="3">{{ evaluation.process.name }}</td>
-    		<td rowspan="3">{{ evaluation.pii.name }}</td>
-    		<td rowspan="3">{{ evaluation.pii.value }}</td>
+    		<td rowspan="4">{{ group.process.name }}</td>
+    		<td rowspan="4">{{ group.pii.name }}</td>
+    		<td rowspan="4">{{ group.pii.value }}</td>
 
-
-    		{% if evaluation.participant_id is None %}
-    		<td rowspan="3">{{ evaluation.system.name }}</td>
+    		{% if group.participant_id is None %}
+    		<td rowspan="4">{{ group.system.name }}</td>
     		{% else %}
-    		<td rowspan="3">{{ evaluation.participant.name }}</td>
+    		<td rowspan="4">{{ group.participant.name }}</td>
     		{% endif %}
+        <td rowspan="4"><input type="checkbox" name="applicable{{ group.id }}"></td> 
+    		
+        {% for item in evaluation_item_all %}
+        {% if item.evaluation_id == group.id %}
+        <tr>
+        <td>{{ item.risk }}</td>  
+        <td><select name="probability{{ item.id }}" required="required">
+  				  <option value ="1">1</option>
+  				  <option value ="2">2</option>
+  				  <option value="3">3</option>
+  				  <option value="4">4</option>
+				  </select></td>
+        <td><input type="textarea" name="description{{ item.id }}"></td>
+        </tr>
         {% endif %}
-    		<td>{{ evaluation.risk }}</td>
-    		<td><select name="probability{{ evaluation.id }}" required="required">
-  				<option value ="1">1</option>
-  				<option value ="2">2</option>
-  				<option value="3">3</option>
-  				<option value="4">4</option>
-				</select></td>
-    		<td><input type="textarea" name="description{{ evaluation.id }}"></td>
-        {% if evaluation.risk == "Disappearance of Pii" %}
-    		<td rowspan="3"><input type="checkbox" name="applicable{{ evaluation.group_risk_id }}"></td>
-        {% endif %}
-  		</tr>
+        {% endfor %}	
+
+      </tr>
   		{% endfor %}
   		
   	</table>
