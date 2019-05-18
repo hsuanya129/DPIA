@@ -6,102 +6,125 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 <link rel="stylesheet" href="/static/css/main.css" />
-<noscript><link rel="stylesheet" href="/static/css/noscript.css" /></noscript>
+<noscript>
+	<link rel="stylesheet" href="/static/css/noscript.css" /></noscript>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
-body, h1,h2,h3,h4,h5,h6 {font-family: "Montserrat", sans-serif}
-.w3-row-padding img {margin-bottom: 12px}
-/* Set the width of the sidebar to 120px */
-.w3-sidebar {width: 120px;background: #222;}
-/* Add a left margin to the "page content" that matches the width of the sidebar (120px) */
-#main {margin-left: 120px}
-/* Remove margins from "page content" on small screens */
-@media only screen and (max-width: 600px) {#main {margin-left: 0}}
+	body,
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		font-family: "Montserrat", sans-serif
+	}
+
+	.w3-row-padding img {
+		margin-bottom: 12px
+	}
+
+	/* Set the width of the sidebar to 120px */
+	.w3-sidebar {
+		width: 120px;
+		background: #222;
+	}
+
+	/* Add a left margin to the "page content" that matches the width of the sidebar (120px) */
+	#main {
+		margin-left: 120px
+	}
+
+	/* Remove margins from "page content" on small screens */
+	@media only screen and (max-width: 600px) {
+		#main {
+			margin-left: 0
+		}
+	}
 </style>
 
 
 
 <title>利益相關者</title>
-	<script>
-		function add_new_data() {
-		 // 先取得目前的row數
-		 var num = document.getElementById("mytable").rows.length;
-		 //建立新的tr 因為是從0開始算 所以目前的row數剛好為目前要增加的第幾個tr
-		 var Tr = document.getElementById("mytable").insertRow(num);
-		 //建立新的td 而Tr.cells.length就是這個tr目前的td數
-		 Td = Tr.insertCell(Tr.cells.length);
-		 //而這個就是要填入td中的innerHTML
-		 Td.innerHTML='<input name="name" type="text">';
-		 //這裡也可以用不同的變數來辨別不同的td (我是用同一個比較省事XD)
-		 Td = Tr.insertCell(Tr.cells.length);
-		 Td.innerHTML='<input name="role" type="text">';
-		 //記得td數目要一樣 不然會亂掉~
-		 Td = Tr.insertCell(Tr.cells.length);
-		 Td.innerHTML='<input name="email" type="text">';
-		 Td = Tr.insertCell(Tr.cells.length);
-		 Td.innerHTML='<input name="part" type="text">';
-		 Td = Tr.insertCell(Tr.cells.length);
-		 Td.innerHTML='<input name="feedback" type="text">';
-		 Td = Tr.insertCell(Tr.cells.length);
-		 Td.innerHTML='<button onclick="remove_data()">刪除欄位';
-		}
-	</script>
-	<script>
-		function remove_data() {
+<script>
+	function add_new_data() {
+		// 先取得目前的row數
+		var num = document.getElementById("mytable").rows.length;
+		//建立新的tr 因為是從0開始算 所以目前的row數剛好為目前要增加的第幾個tr
+		var Tr = document.getElementById("mytable").insertRow(num);
+		//建立新的td 而Tr.cells.length就是這個tr目前的td數
+		Td = Tr.insertCell(Tr.cells.length);
+		//而這個就是要填入td中的innerHTML
+		Td.innerHTML = '<input name="name" type="text">';
+		//這裡也可以用不同的變數來辨別不同的td (我是用同一個比較省事XD)
+		Td = Tr.insertCell(Tr.cells.length);
+		Td.innerHTML = '<input name="role" type="text">';
+		//記得td數目要一樣 不然會亂掉~
+		Td = Tr.insertCell(Tr.cells.length);
+		Td.innerHTML = '<input name="email" type="text">';
+		Td = Tr.insertCell(Tr.cells.length);
+		Td.innerHTML = '<input name="part" type="text">';
+		Td = Tr.insertCell(Tr.cells.length);
+		Td.innerHTML = '<input name="feedback" type="text">';
+		Td = Tr.insertCell(Tr.cells.length);
+		Td.innerHTML = '<button onclick="remove_data()">刪除欄位';
+	}
+</script>
+<script>
+	function remove_data() {
 		//先取得目前的row數
 		var num = document.getElementById("mytable").rows.length;
 		//防止把標題跟原本的第一個刪除
-		if(num >2){
-		var td = event.target.parentNode;
-		var tr = td.parentNode;
-		tr.parentNode.removeChild(tr);
-			}
+		if (num > 2) {
+			var td = event.target.parentNode;
+			var tr = td.parentNode;
+			tr.parentNode.removeChild(tr);
 		}
-	</script>
+	}
+</script>
 
 
 
 <body class="">
 
-  <!-- Contact Section -->
-  <div class="w3-padding-64 w3-content w3text-light-grey" >
-  <form action="/action_page.php" target="_blank">
+	<!-- Contact Section -->
+	<div class="w3-padding-64 w3-content w3text-light-grey">
+		<form action="" method="post">
+			<h1>描述利益相關者</h1>
 
-  	<h1>描述利益相關者</h1>
-	    
-		{% csrf_token %}
-		<table id = "mytable">
-		  <tr>
-		    <td>姓名</td>
-		    <td>角色</td>
-		    <td>Email</td>
-		    <td>參與專案部分</td>
-		    <td>回饋</td>
-		    <td> </td>
-		  </tr>
-		  <tr>
-		    <td><input name="name" type="text"></td>
-		    <td><input name="role" type="text"></td>
-		    <td><input name="email" type="text"></td>
-		    <td><input name="part" type="text"></td>
-		    <td><input name="feedback" type="textarea"></td>
-		    <td><button type="button" onclick="remove_data()">刪除欄位</button></td>	
-		  </tr>
+			{% csrf_token %}
+			<table id="mytable">
+				<tr>
+					<td>姓名</td>
+					<td>角色</td>
+					<td>Email</td>
+					<td>參與專案部分</td>
+					<td>回饋</td>
+					<td> </td>
+				</tr>
+				<tr>
+					<td><input name="name" type="text"></td>
+					<td><input name="role" type="text"></td>
+					<td><input name="email" type="text"></td>
+					<td><input name="part" type="text"></td>
+					<td><input name="feedback" type="textarea"></td>
+					<td><button type="button" onclick="remove_data()">刪除欄位</button></td>
+				</tr>
 
-		</table>
+			</table>
 
 			<button type="button" onclick="add_new_data()">新增欄位</button>
 			<input type="submit" name="ok" value="提交">
-		
-	
-		
-	<!-- Footer -->
+
+
+
+			<!-- Footer -->
 			<footer id="footer">
-						
+
 			</footer>
-	</form>	
-    <div>
+		</form>
+		<div>
 </body>
 
 
