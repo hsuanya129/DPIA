@@ -2,24 +2,65 @@
 <html>
 <head>
 	<title>BUILDPIA</title>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript">
+	var postdata;
+	function takeValue() {
+    	var $text;
+		$(document).ready(function(){
+	  	$(".choose").click(function() {
+    	var $row = $(this).closest("tr");    // Find the row
+    	$text = $row.find(".nr").text(); // Find the text
+    	// console.log($text);
+    	var post = $text;
+    	// console.log(post);
+    	postdata = {
+    		takedValue : post,
+    	};
+		});
+	  });
+		$.ajaxSetup({
+	  	data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
+		});
+	}
+	function takesValue() {
+		takenValue(JSON.stringify(postdata));
+		console.log(postdata);
+		document.getElementById("ch_form").submit();
+     }
+	function takenValue(postdata) {
+	  console.log(postdata)
+      $.ajax({
+        type: 'post',
+        url: '../choose_pia/',
+        data: { 'postdata': postdata },
+        dataType: 'json'
+      });
+      console.log(postdata);
+     }
+	</script>
 </head>
 <body>
-<table class = "table">
+<form action="/team/choose_pia/" method="post" id="ch_form">
+<table id="table">
 	<tr>
 		<th>專案名稱</th>
 		<th>負責人</th>
 		<th>專案簡述</th>
+		<th></th>
 	</tr>
 
 	{% for userHasActivity in user_has_activity %}
 	<tr>
-		<td>{{ userHasActivity.activity.name }}</td>
+		<td class="nr">{{ userHasActivity.activity.name }}</td>
 		<td>{{ userHasActivity.activity.pia_manager_name }}</td>
 		<td>{{ userHasActivity.activity.description }}</td>
+		<td><input type="button" class="choose" onclick="takeValue()" value="選擇"></td>
 	</tr>
 	{% endfor %}
-	<a href="/team/pia_examine"><button>選取</button></a>
 </table>
+	<br><input type="button" onclick="takesValue()" value="下一步">
+</form>
 <br></br>
 <a href="/team/new_pia"><button>新增PIA</button></a>
 <!-- <button><a href="/team/new_pia/">新增PIA</a></button> -->
