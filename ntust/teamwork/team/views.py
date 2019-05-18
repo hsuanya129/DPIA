@@ -427,15 +427,15 @@ def pia_examine(request):
     # activityid=UserHasActivity.objects.filter(user_id = userid)
     return render(request, 'team/pia_examine.html',locals())
 def choose_pia(request):
-    # if request.method == "POST":
-    takeValue = request.POST.get('postdata')
-    print(takeValue)
-    takeValue = json.loads(takeValue)
-    print(takeValue)
-    # pk = request.GET.get('$text')
-    # print(pk)
-    return render(request, 'team/pia_examine.html',locals())
-    return HttpResponseRedirect('team/pia_examine/')
+    if request.method == "POST":
+        data = request.POST.get('data')
+        json_data = json.loads(data)
+        # print(takeValue_data)
+        # takeValue = json.loads(takeValue_data)
+        # print(takeValue)
+        # pk = request.GET.get('$text')
+        # print(pk)
+        return HttpResponseRedirect('team/pia_examine/')
 
 
 

@@ -5,39 +5,32 @@
 	<script type="text/javascript" src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
 	<script type="text/javascript">
 	var postdata;
-	function takeValue() {
-    	var $text;
-		$(document).ready(function(){
-	  	$(".choose").click(function() {
-    	var $row = $(this).closest("tr");    // Find the row
-    	$text = $row.find(".nr").text(); // Find the text
-    	// console.log($text);
-    	var post = $text;
-    	// console.log(post);
+	function takeValue(obj) {
+	  	var count = obj.name;
+	  	console.log(count);
+	  	var text = document.getElementById(count).innerHTML;
     	postdata = {
-    		takedValue : post,
+    		takedValue : text,
     	};
-		});
-	  });
-		$.ajaxSetup({
-	  	data: { csrfmiddlewaretoken: '{{ csrf_token }}' },
-		});
+	  	console.log(JSON.stringify(postdata));
+    	document.getElementById("data").value = JSON.stringify(postdata);
 	}
-	function takesValue() {
-		takenValue(JSON.stringify(postdata));
-		console.log(postdata);
-		document.getElementById("ch_form").submit();
-     }
-	function takenValue(postdata) {
-	  console.log(postdata)
-      $.ajax({
-        type: 'post',
-        url: '../choose_pia/',
-        data: { 'postdata': postdata },
-        dataType: 'json'
-      });
-      console.log(postdata);
-     }
+	// function takesValue() {
+	// 	document.getElementById("data").value = JSON.stringify({takedValue : "test"});
+	// 	// takenValue(JSON.stringify({takedValue : "test"}));
+	// 	console.log(JSON.stringify({takedValue : "test"}));
+	// 	document.getElementById("ch_form").submit();
+ //     }
+	// function takenValue(postdata) {
+	//   console.log(postdata)
+ //      $.ajax({
+ //        type: 'post',
+ //        url: '../choose_pia/',
+ //        data: { 'postdata': JSON.stringify({takedValue : "test"}) },
+ //        dataType: 'json'
+ //      });
+ //      console.log(postdata);
+ //     }
 	</script>
 </head>
 <body>
@@ -52,14 +45,15 @@
 
 	{% for userHasActivity in user_has_activity %}
 	<tr>
-		<td class="nr">{{ userHasActivity.activity.name }}</td>
+		<td id={{ forloop.counter }} class="nr">{{ userHasActivity.activity.name }}</td>
 		<td>{{ userHasActivity.activity.pia_manager_name }}</td>
 		<td>{{ userHasActivity.activity.description }}</td>
-		<td><input type="button" class="choose" onclick="takeValue()" value="選擇"></td>
+		<td><input name={{ forloop.counter }} type="button" class="choose" onclick="takeValue(this)" value="選擇"></td>
 	</tr>
 	{% endfor %}
+	<input type="text" id="data" name="data" hidden>
 </table>
-	<br><input type="button" onclick="takesValue()" value="下一步">
+	<br><input type="submit" value="下一步">
 </form>
 <br></br>
 <a href="/team/new_pia"><button>新增PIA</button></a>
