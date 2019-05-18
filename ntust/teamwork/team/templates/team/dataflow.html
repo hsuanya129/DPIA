@@ -4,27 +4,52 @@
 <head>
   <title>Dataflow</title>
   <style type="text/css">
-    /* CSS for the traditional context menu */  
-    div.box{width:250px;padding:10px;margin:10px;border:3px dashed #ccc;}
-    div.box span{color:Black;font-weight: bold;font-family:"Microsoft JhengHei", Arial, serif;}
-    div.content{width:250px;margin:0px;padding-left: 0px;border:0px solid #ff6666;}
-    text{width:250px;height:100px;margin:0px;border:0px solid #6699cc;font-family:"Microsoft JhengHei", Arial, serif;}
-    .button {
-    display: inline-block;
-    text-align: center;
-    vertical-align: middle;
-    padding: 1px 5px;
-    border: 1px solid #b3b3b3;
-    border-radius: 70px;
-    background: #ffffff;
-    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
-    background: -moz-linear-gradient(top, #ffffff, #ffffff);
-    background: linear-gradient(to bottom, #ffffff, #ffffff);
-    font: normal normal bold 15px arial;
-    color: #111111;
-    text-decoration: none;
+    /* CSS for the traditional context menu */
+    div.box {
+      width: 250px;
+      padding: 10px;
+      margin: 10px;
+      border: 3px dashed #ccc;
     }
-/*    .button:hover,
+
+    div.box span {
+      color: Black;
+      font-weight: bold;
+      font-family: "Microsoft JhengHei", Arial, serif;
+    }
+
+    div.content {
+      width: 250px;
+      margin: 0px;
+      padding-left: 0px;
+      border: 0px solid #ff6666;
+    }
+
+    text {
+      width: 250px;
+      height: 100px;
+      margin: 0px;
+      border: 0px solid #6699cc;
+      font-family: "Microsoft JhengHei", Arial, serif;
+    }
+
+    .button {
+      display: inline-block;
+      text-align: center;
+      vertical-align: middle;
+      padding: 1px 5px;
+      border: 1px solid #b3b3b3;
+      border-radius: 70px;
+      background: #ffffff;
+      background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
+      background: -moz-linear-gradient(top, #ffffff, #ffffff);
+      background: linear-gradient(to bottom, #ffffff, #ffffff);
+      font: normal normal bold 15px arial;
+      color: #111111;
+      text-decoration: none;
+    }
+
+    /*    .button:hover,
     .button:focus {
     border: 0px solid #ffffff;
     color: #111111;
@@ -652,38 +677,38 @@
         case "add_output": addNodeAndLink(fromnode, "Lane5"); break;
         case "add_system": addNodeAndLink(fromnode, "Lane2"); break;
         case "add_participants": addNodeAndLink(fromnode, "Lane1"); break;
-        case "add_value3": getNodeValue(fromnode) ; break;
-        case "add_value5":  getNodeValue(fromnode) ; break;
+        case "add_value3": getNodeValue(fromnode); break;
+        case "add_value5": getNodeValue(fromnode); break;
 
       }
       diagram.currentTool.stopTool();
     }
 
-    var nodeValue,nodeData;
-    function getNodeValue(parameter){
+    var nodeValue, nodeData;
+    function getNodeValue(parameter) {
 
-      if ((typeof parameter) == "string"){
-        nodeValue=parameter;
+      if ((typeof parameter) == "string") {
+        nodeValue = parameter;
 
-        if ( nodeData != null){
+        if (nodeData != null) {
 
-        var postdata = {
-          event: "addValue",
-          process: nodeData.parent,
-          name: nodeData.text,
-          value:nodeValue
+          var postdata = {
+            event: "addValue",
+            process: nodeData.parent,
+            name: nodeData.text,
+            value: nodeValue
+          }
+          saveTemp(JSON.stringify(postdata));
+
+          nodeData = null;
+          nodeValue = null;
         }
-        saveTemp(JSON.stringify(postdata));
 
-          nodeData=null;
-          nodeValue=null;
-        }
-
-      }else{
-        nodeData=parameter.node.data;
-        document.getElementById("popup").style.display= "block";
+      } else {
+        nodeData = parameter.node.data;
+        document.getElementById("popup").style.display = "block";
       }
-      
+
     }
 
     // A custom command, for changing the color of the selected node(s).
@@ -726,15 +751,15 @@
       return nodesWithSameParent;
     }
 
-    function findNodesInSameLane(nodes){
+    function findNodesInSameLane(nodes) {
       let nodesInSameLane = {};
-      for (let i =0; i < nodes.length; i++){
+      for (let i = 0; i < nodes.length; i++) {
         let x = nodes[i];
-        if (x.group){
-          nodesInSameLane[x.group]=nodesInSameLane[x.group] ? nodesInSameLane[x.group] :[];
+        if (x.group) {
+          nodesInSameLane[x.group] = nodesInSameLane[x.group] ? nodesInSameLane[x.group] : [];
           nodesInSameLane[x.group].push(x);
         }
-        
+
       }
       return nodesInSameLane;
     }
@@ -779,7 +804,7 @@
             // console.log(parentNode)
             m.set(node, "loc", `${nodeWithSameParentAndGroup[0].loc.split(" ")[0]} ${parseFloat(parentNode.loc.split(" ")[1])}`);
             break;
-            
+
           // 兩個時與第一個節點等x 跟父節點y+-15
           case 2:
             if (index % 2 == 0) {
@@ -823,7 +848,35 @@
 
       }, "resetNodeLayOut")
     }
+    function Buildkey(num) {
+        document.myForm.fruit.selectedIndex = 0;
+        for (ctr = 0; ctr < key[num].length; ctr++) {
+          document.myForm.fruit.options[ctr] = new Option(key[num][ctr], key[num][ctr]);
+        }
+        document.myForm.fruit.length = key[num].length;
+      }
 
+      function formReset() {
+        document.getElementById("db").reset()
+      }
+      // 收缩展开效果 
+      $(function () {
+        $(".test").hide();  // 默认隐藏状态
+        $(":button").click(function () {
+          $(".test").toggle('slow');  // 改变显隐状态
+          $(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
+        })
+      })
+      function makeSvg() {
+        var newWindow = window.open("","newWindow");
+        if (!newWindow) return;
+        var newDocument = newWindow.document;
+        var sgv = myDiagram.makeSvg({
+          document: newDocument,
+
+        });
+        newDocument.body.appendChild(sgv);
+      }
 
     key = new Array(3);
     key[0] = new Array(3);
@@ -842,24 +895,7 @@
     key[2][1] = "2";
     key[2][2] = "3";
 
-    function Buildkey(num) {
-      document.myForm.fruit.selectedIndex = 0;
-      for (ctr = 0; ctr < key[num].length; ctr++) {
-        document.myForm.fruit.options[ctr] = new Option(key[num][ctr], key[num][ctr]);
-      }
-      document.myForm.fruit.length = key[num].length;
-    }
-    function formReset() {
-      document.getElementById("db").reset()
-    }
-    // 收缩展开效果 
-    $(function(){
-    $(".test").hide();  // 默认隐藏状态
-    $(":button").click(function() {
-        $(".test").toggle('slow');  // 改变显隐状态
-        $(this).val($(this).val()=="+"?"-":"+"); // 改变按钮的文字说明
-    })
-  })
+    
   </script>
 </head>
 
@@ -888,31 +924,34 @@
     <!-- <button id="SaveButton" onclick="save()">Save</button>
     <button onclick="load()">Load</button> -->
     <br />
-    <a href="/team/evaluation"><button>下一步</button></a>
-    <!-- <textarea id="mySavedModel" style="width:100%;height:300px"></textarea> -->
+    <a href="/team/evaluation"><button id="svgButton" onclick="makeSvg()">下一步</button> </a> <!-- <textarea
+        id="mySavedModel" style="width:100%;height:300px"></textarea> -->
   </div>
   <div class="popup"
     style="position:absolute;top:0;left:1;width:18vw;height:10vh;z-index: 999;background-color:#FFBB73;display: none;border-width:3px;border-style:solid;border-color:black;padding:5px;"
     id="popup">
     <!-- <form id="db"> -->
-      Level Of Impact:
-      <select id="postValue">
-        <option name="postValue" value="1">1</option>
-        <option name="postValue" value="2">2</option>
-        <option name="postValue" value="3">3</option>
-        <option name="postValue" value="4">4</option>
-      </select>
-      <button id="close" onclick="getNodeValue(getElementById('postValue').value),getElementById('popup').style.display='none'">確定</button>
-      <input type="reset" value="清除">
+    Level Of Impact:
+    <select id="postValue">
+      <option name="postValue" value="1">1</option>
+      <option name="postValue" value="2">2</option>
+      <option name="postValue" value="3">3</option>
+      <option name="postValue" value="4">4</option>
+    </select>
+    <button id="close"
+      onclick="getNodeValue(getElementById('postValue').value),getElementById('popup').style.display='none'">確定</button>
+    <input type="reset" value="清除">
     <!-- </form> -->
   </div>
   <div class="box">
-<!--     <span>点击按钮实现展开和收起输入框的切换：</span> -->
+    <!--     <span>点击按钮实现展开和收起输入框的切换：</span> -->
     <div class="content">
-        <span>被遺忘權</span>  <input type="button" class="button" value="+">
-        <div class="test"><text>被遺忘權（英語：right to be forgotten）是一種在歐盟內部存在的人權概念。簡而言之，即人們有權利要求移除有關於自己的負面信息或過時的個人身分資訊搜尋結果；但因為產生了與言論自由間的衝突，與可能產生網際網路審查的疑慮，因此引發了爭議，且法律框架仍不明確，當前只有在歐盟實行。[1][2]應當注意，應用時有很嚴格的前提條件。 </text></div>
-    </div>   
-</div>
+      <span>被遺忘權</span> <input type="button" class="button" value="+">
+      <div class="test"><text>被遺忘權（英語：right to be
+          forgotten）是一種在歐盟內部存在的人權概念。簡而言之，即人們有權利要求移除有關於自己的負面信息或過時的個人身分資訊搜尋結果；但因為產生了與言論自由間的衝突，與可能產生網際網路審查的疑慮，因此引發了爭議，且法律框架仍不明確，當前只有在歐盟實行。[1][2]應當注意，應用時有很嚴格的前提條件。
+        </text></div>
+    </div>
+  </div>
 
 </body>
 
