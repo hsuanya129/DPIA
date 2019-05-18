@@ -1,70 +1,98 @@
+
 <!DOCTYPE html>
 <html>
-<head>
-	<title>Evaluation</title>
-  <style>
-    table, th, td {
-      border: 1px solid black;
+<title>Evaluation</title>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="/static/css/main.css" />
+<style>
+      table, th, td {
+      border: 2px solid w3text-grey;
       border-collapse: collapse;
     }
     th, td {
       padding: 5px;
       text-align: left;    
     }
+body, h1,h2,h3,h4,h5,h6 {font-family: "Montserrat", sans-serif}
+.w3-row-padding img {margin-bottom: 12px}
+/* Set the width of the sidebar to 120px */
+.w3-sidebar {width: 100px;background: #222;}
+/* Add a left margin to the "page content" that matches the width of the sidebar (120px) */
+#main {margin-left: 100px}
+/* Remove margins from "page content" on small screens */
+@media only screen and (max-width: 600px) {#main {margin-left: 0}}
 </style>
-</head>
-<body>
-<!-- 	evaluation id / process / pii / value / participant/System / risk
-	{% for evaluation in evaluation_all %}
-		<p> {{ evaluation.id }}, {{ evaluation.process.name }} , {{ evaluation.pii.name }} , {{ evaluation.pii.value }} , {{ evaluation.participant.name }} , {{ evaluation.system }}  , {{ evaluation.risk }}  </p>
-	{% endfor %} -->
 
-	<table>
-		<form action="../evaluation/" method="post">
-  		<tr>
-    		<th>process</th> 
-    		<th>pii</th>
-    		<th>value</th>
-    		<th>asset</th>
-        <th>applicable</th>
-        <th>risk</th>
-        <th>probability</th>
-        <th>description</th>
-  		</tr>
+  
 
-  		{% for group in evaluation_all %}
-  		<tr>
-    		<td rowspan="4">{{ group.process.name }}</td>
-    		<td rowspan="4">{{ group.pii.name }}</td>
-    		<td rowspan="4">{{ group.pii.value }}</td>
 
-    		{% if group.participant_id is None %}
-    		<td rowspan="4">{{ group.system.name }}</td>
-    		{% else %}
-    		<td rowspan="4">{{ group.participant.name }}</td>
-    		{% endif %}
-        <td rowspan="4"><input type="checkbox" name="applicable{{ group.id }}"></td> 
-    		
+
+
+<body class="">
+<p>
+<input id="milk" class="w3-check" type="checkbox" checked="checked">
+  <!-- Contact Section -->
+  <div class="w3-padding-64 w3-content w3text-light-grey" >
+
+      
+   <table>
+    <form action="../evaluation/" method="post">
+      <tr>
+        <td>process</td> 
+        <td>pii</td>
+        <td>value</td>
+        <td>asset</td>
+        <td>applicable</td>
+        <td>risk</td>
+        <td>probability</td>
+        <td>description</td>
+        <td></td>
+      </tr>
+
+      {% for group in evaluation_all %}
+      <tr>
+        <td rowspan="4">{{ group.process.name }}</td>
+        <td rowspan="4">{{ group.pii.name }}</td>
+        <td rowspan="4">{{ group.pii.value }}</td>
+
+        {% if group.participant_id is None %}
+        <td rowspan="4">{{ group.system.name }}</td>
+        {% else %}
+        <td rowspan="4">{{ group.participant.name }}</td>
+        {% endif %}
+        <td rowspan="4"><input  type="checkbox"  name="applicable{{ group.id }}" >Y</td> 
+   
         {% for item in evaluation_item_all %}
         {% if item.evaluation_id == group.id %}
         <tr>
         <td>{{ item.risk }}</td>  
         <td><select name="probability{{ item.id }}" required="required">
-  				  <option value ="1">1</option>
-  				  <option value ="2">2</option>
-  				  <option value="3">3</option>
-  				  <option value="4">4</option>
-				  </select></td>
-        <td><input type="textarea" name="description{{ item.id }}"></td>
-        </tr>
+            <option value ="1">1</option>
+            <option value ="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select></td>
+        <td><input type="text" name="description{{ item.id }}"></td>
+
+         </tr>
+      </tr>
         {% endif %}
-        {% endfor %}	
+        {% endfor %}  
 
       </tr>
-  		{% endfor %}
-  		
-  	</table>
-  	<input type="submit" name="" value="下一步">
-  </form>
+      {% endfor %}
+      
+    </table>
+    <input type="submit" name="" value="下一步">
+  </form> 
+  <!-- Footer -->
+      <footer id="footer">
+          
+      </footer>
+
+    <div>
 </body>
+
+
 </html>

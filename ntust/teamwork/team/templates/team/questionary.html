@@ -1,62 +1,57 @@
 
-<!DOCTYPE HTML>
-
+<!DOCTYPE html>
 <html>
-	<head>
-		<title>問卷</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="/static/css/main.css" />
-		<noscript><link rel="stylesheet" href="/static/css/noscript.css" /></noscript>
-	</head>
-	<body class="is-preload">
+<title>問卷</title>
+<meta charset="UTF-8">
 
-		<!-- Wrapper -->
-			<div id="wrapper">
-				<!-- Header -->
-					<header id="header">
-						
-						<div class="content"
-							<div class="inner">
-								<form action="" method="post">
-									{% csrf_token %}
-									<h1>{{ qn_type.name }}</h1>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="/static/css/main.css" />
+<noscript><link rel="stylesheet" href="/static/css/noscript.css" /></noscript>
 
-									{% for unit in qn_list %} 
-									<!-- unit 代表是該list中的單位，不要用qn1list 因為他只是qn1_list中的一個單位，或你可以叫qn -->
-									{{ unit.description }}
-									<br>
-									{% if qn_type.id == 3 %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body, h1,h2,h3,h4,h5,h6 {font-family: "Montserrat", sans-serif}
+.w3-row-padding img {margin-bottom: 12px}
+/* Set the width of the sidebar to 120px */
+.w3-sidebar {width: 120px;background: #222;}
+/* Add a left margin to the "page content" that matches the width of the sidebar (120px) */
+#main {margin-left: 120px}
+/* Remove margins from "page content" on small screens */
+@media only screen and (max-width: 600px) {#main {margin-left: 0}}
+</style>
+<body class="">
+
+
+  <div class="w3-padding-64 w3-content w3text-light-grey" id="wrapper">
+  	{% csrf_token %}
+    <h1 class="w3-text-light-grey">{{ qn_type.name }}</h1>
+    <hr style="width:1000px" class="w3-opacity">
+
+	    <form action="/action_page.php" target="_blank">
+	 
+	
+	  {% for unit in qn_list %} 
+		<!-- unit 代表是該list中的單位，不要用qn1list 因為他只是qn1_list中的一個單位，或你可以叫qn -->
+		<p>{{ unit.description }}</p>
+							
+									
+									{% if qn_type.id != 3 %}
+									<input class="w3-input w3-padding-16" type="text" name="answer{{ unit.inner_id }}"><br>
+									
+									{% else %}
 									<input type="radio" name="answer{{ unit.inner_id }}" value="yes"> 是
 									<input type="radio" name="answer{{ unit.inner_id }}" value="no"> 否<br>
-									{% else %}
-									<input type="textarea" style="width:300px;height:100px" name="answer{{ unit.inner_id }}"><br>
 									{% endif %}	
 									{% endfor %}
+    <hr style="width:1000px" class="w3-opacity">
+									<input style="width:100px" type="submit" vaule="送出">   							
 
-									<input type="submit" vaule="送出">
+			  
+			    </p>
+			    </form>
+		
+					</div>
 
-								</form> 
-							</div>
-						</div>
-						
-										
-					</header>
-
-
-			
-
-			</div>
-
-		<!-- BG -->
-			<div id="bg"></div>
-
-		<!-- Scripts -->
-			<script src="/static/js/jquery.min.js"></script>
-			<script src="/static/js/browser.min.js"></script>
-			<script src="/static/js/breakpoints.min.js"></script>
-			<script src="/static/js/util.js"></script>
-			<script src="/static/js/main.js"></script>
-
-	</body>
+</body>
 </html>
