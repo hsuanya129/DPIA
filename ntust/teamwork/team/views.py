@@ -28,7 +28,7 @@ def login_sign(request):
                 userid = user.id
                 user_has_activity = UserHasActivity.objects.filter(user_id = userid) #擷取出此user有的activity
                 activityID = UserHasActivity.objects.filter(user_id = userid)
-                print(activityID)
+                # print(activityID)
                 return render(request,'team/choose_pia.html/',locals())
             else:
                 # return render(request,'team/home.html',locals())
@@ -103,7 +103,7 @@ def stakeholder(request):
     return render(request, 'team/stakeholder.html', locals())
 def new(request):
     global userid,activityID
-    print(userid)
+    # print(userid)
     user_pk = userid #it's for user's id
     if request.method == 'POST':
         name = request.POST.get('pia_name','')
@@ -116,7 +116,7 @@ def new(request):
         new_pia = Activity.objects.create(name=name,pia_manager_name=piam_name,pia_manager_email=piam_email,activity_manager_name=activity_manager_name,activity_manager_email=activity_manager_email,date=today,description=description)
         UserHasActivity.objects.create(user_id=user_pk,activity_id=new_pia.id)
         activityID = new_pia.id
-        print(activityID)
+        # print(activityID)
         return HttpResponseRedirect('/team/questionary/1')
         # return render(request,'team/questionary/1', locals())
     return render(request,'team/new_pia.html', locals())
@@ -421,13 +421,21 @@ def risk_mapping(request):
     }
     return render(request,'team/risk_mapping.html',context)   
 def pia_examine(request):
-    print(userid)
-    print(activityID)
+    # print(userid)
+    # print(activityID)
 
     # activityid=UserHasActivity.objects.filter(user_id = userid)
     return render(request, 'team/pia_examine.html',locals())
-    
-    
+def choose_pia(request):
+    if request.method == "POST":
+        data = request.POST.get('data')
+        json_data = json.loads(data)
+        # print(takeValue_data)
+        # takeValue = json.loads(takeValue_data)
+        # print(takeValue)
+        # pk = request.GET.get('$text')
+        # print(pk)
+        return HttpResponseRedirect('team/pia_examine/')
 
 
 

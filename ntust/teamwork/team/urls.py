@@ -17,4 +17,5 @@ urlpatterns = [
 	url(r'^evaluation/',views.evaluation, name='evaluation'),
 	url(r'^risk_mapping/',views.risk_mapping, name='risk_mapping'),
 	url(r'^pia_examine/',views.pia_examine, name='pia_examine'),
+	url(r'^choose_pia/',views.choose_pia, name='choose_pia'),
 ]
