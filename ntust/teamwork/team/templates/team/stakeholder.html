@@ -30,11 +30,11 @@
 
 	/* Add a left margin to the "page content" that matches the width of the sidebar (120px) */
 	#main {
-		margin-left: 120px
+		margin-left: 100px
 	}
 
 	/* Remove margins from "page content" on small screens */
-	@media only screen and (max-width: 600px) {
+	@media only screen and (max-width: 800px) {
 		#main {
 			margin-left: 0
 		}
@@ -65,7 +65,7 @@
 		Td = Tr.insertCell(Tr.cells.length);
 		Td.innerHTML = '<input name="feedback" type="text">';
 		Td = Tr.insertCell(Tr.cells.length);
-		Td.innerHTML = '<button onclick="remove_data()">刪除欄位';
+		Td.innerHTML = '<button onclick="remove_data()">刪除';
 	}
 </script>
 <script>
@@ -86,44 +86,36 @@
 <body style="font-family:Microsoft JhengHei";>
 
 	<!-- Contact Section -->
-	<div class="w3-padding-64 w3-content w3text-light-grey" >
-		<form action="" method="post">
+	<div class="w3-padding-32 w3-content w3text-light-grey" >
+		<form>
 			<h1>	<span style="font-family:Microsoft JhengHei;">描述利益相關者</span></h1>
-<p></p>
+			<p></p>
+			
 			{% csrf_token %}
 			<table id="mytable" >
-				<tr>
-				
-					<td rowspan="2" ><button  height:200%;type="button"  onclick="remove_data()">刪除</button></td>
-					<td width="250"align="center"><span style="font-size:20px;">姓名</span></td>
-					<td width="250"align="center"><span style="font-size:20px;">角色</span></td>
-					<td  width="500" align="center"><span style="font-size:20px;">Email</span></td>
+				<tr>	
+					<td width=120px align="center"><span style="font-size:20px;">姓名</span></td>
+					<td width=150px align="center"><span style="font-size:20px;">角色</span></td>
+					<td  width=260px align="center"><span style="font-size:20px;">Email</span></td>
+					<td  width=250px align="center"><span style="font-size:20px;">參與專案部分</span></td>
+					<td  width=250px align="center"><span style="font-size:20px;">回饋</span></td>
+					<td></td>
 				</tr>
 				<tr>
-					<td width="250"><input name="name" type="text"></td>
-					<td width="250"><input name="role" type="text"></td>
+					<td ><input height="250" name="name" type="text"></td>
+					<td ><input name="role" type="text"></td>
 					<td ><input name="email" type="text"></td>
-			
+					<td ><input style="height:100px;"name="part" type="text"></td>	
+
+					<td ><input style="height:100px;"name="feedback" type="text">
+
+			<td ><button  ;type="button"  onclick="remove_data()">刪除</button></td>
 				</tr>
 				<tr>
-					<td colspan="6" align="center"><span style="font-size:20px;">參與專案部分</span></td>
-			
-				</tr>
-
-				<tr>
-					<td colspan="6" ><input name="part" type="text"></td>	
-
-				</tr>
-
-				<tr>
-				<td  colspan="6" align="center"><span style="font-size:20px;">回饋</span></td>
-
-				</tr>
-				<tr>
-				
-					<td colspan="6" ><input name="feedback" type="text">
 					
+			
 				</tr>
+
 
 			</table>
 

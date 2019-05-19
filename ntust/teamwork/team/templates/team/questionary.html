@@ -178,7 +178,7 @@
 
 
 			{% if qn_type.id != 3 %}
-			<input class="w3-input w3-padding-16" type="text" name="answer{{ unit.inner_id }}">
+			<input class="w3-input w3-padding-16" type="text" name="answer{{ unit.inner_id }}"><P></P>
 
 			{% else %}
 			<label class="container"> <input type="radio"name="answer{{ unit.inner_id }}" value="yes"> 是
@@ -196,10 +196,10 @@
 
 	</div>
 	  <div class="box">
-    Level Of Impact:
+   
     <!--     <span>点击按钮实现展开和收起输入框的切换：</span> -->
-    <div class="content">
-      <span>第一級</span> <input type="button" class="button" value="+">
+    <div class="content"> Level Of Impact：
+       <input type="button" class="button" value="+" >
       <div class="test"><text>可公開訪問的PII（例如，在電話簿，地址簿或選擇列表中)</text></div>
     </div>
   </div>

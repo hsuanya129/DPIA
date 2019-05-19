@@ -1,32 +1,34 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>Risk mapping</title>
 	<style>
     td.graph{
+   	  width:100px;
+      height:100px;
       border: 2px solid gray;
       border-collapse: collapse;
     }
     th, td {
       /*padding: 50px;*/
-      width:100px;
-      height:100px;
+      height: 50px;
       text-align: center;    
     }
 	</style>
 </head>
-<body>
+<body align="center" style="font-family:Microsoft JhengHei";>
 
 	{% for group in evaluation_all %}
 
-	<table>
+	<table align="center">
 		{% if group.participant %}
 
-		<caption>程序:{{ group.process.name }} 個人隱私資料:{{ group.pii.name }} 人員:{{ group.participant.name }} </caption>
+		<h2>程序：{{ group.process.name }}　　　個人隱私資料：{{ group.pii.name }}　　　人員：{{ group.participant.name }} </h2>
 
 		{% else %}
 
-		<caption>程序:{{ group.process.name }} 個人隱私資料:{{ group.pii.name }} 系統:{{ group.system.name }} </caption>
+		<h2>程序：{{ group.process.name }}　　　個人隱私資料：{{ group.pii.name }}　　　系統：{{ group.system.name }} </h2>
 
 		{% endif %}
 
@@ -114,7 +116,7 @@
 	{% endfor %}
 	<br>
 	<br>
-	<hr align="left" width="60%">
+	<hr align="center" width="70%">
 	<br>
 	<br>
 	{% endfor %}
