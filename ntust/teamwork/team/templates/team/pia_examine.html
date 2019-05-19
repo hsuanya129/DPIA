@@ -12,15 +12,13 @@
 		<th>專案簡述</th>
 		<th>專案建立時間</th>
 	</tr>
-	{% for a in activity_project %}
 	<tr>
-		<td>{{ a.name }}</td>
-		<td>{{ a.pia_manager_name }}</td>
-		<td>{{ a.pia_manager_email }}</td>
-		<td>{{ a.description }}</td>
-		<th>{{ a.date }}</th>
+		<td>{{ activity_project.name }}</td>
+		<td>{{ activity_project.pia_manager_name }}</td>
+		<td>{{ activity_project.pia_manager_email }}</td>
+		<td>{{ activity_project.description }}</td>
+		<th>{{ activity_project.date }}</th>
 	</tr>
-	{% endfor %}
 </table>
 <br></br>
 <a href="/team/login_sign"><button>返回</button></a>

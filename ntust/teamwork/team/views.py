@@ -430,8 +430,7 @@ def choose_pia(request):
         activityID = pkk
         print(pkk)
         print(activityID)
-        activity_project = Activity.objects.filter(id = activityID)
-        # activity_project = Activity.objects.filter(id = activityID)
+        activity_project = Activity.objects.get(id = activityID)
         return render(request,'team/pia_examine.html/',locals())
 def pia_examine(request):
     # user_has_activity = Activity.objects.filter(id = activityID)
