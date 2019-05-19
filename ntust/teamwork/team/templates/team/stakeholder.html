@@ -11,14 +11,11 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
-	body,
-	h1,
-	h2,
-	h3,
-	h4,
-	h5,
-	h6 {
-		font-family: "Montserrat", sans-serif
+	
+	
+	button tr td {
+  		border: solid grey ;
+		font-family:Microsoft JhengHei;
 	}
 
 	.w3-row-padding img {
@@ -86,35 +83,51 @@
 
 
 
-<body class="">
+<body style="font-family:Microsoft JhengHei";>
 
 	<!-- Contact Section -->
-	<div class="w3-padding-64 w3-content w3text-light-grey">
+	<div class="w3-padding-64 w3-content w3text-light-grey" >
 		<form action="" method="post">
-			<h1>描述利益相關者</h1>
-
+			<h1>	<span style="font-family:Microsoft JhengHei;">描述利益相關者</span></h1>
+<p></p>
 			{% csrf_token %}
-			<table id="mytable">
+			<table id="mytable" >
 				<tr>
-					<td>姓名</td>
-					<td>角色</td>
-					<td>Email</td>
-					<td>參與專案部分</td>
-					<td>回饋</td>
-					<td> </td>
+				
+					<td rowspan="2" ><button  height:200%;type="button"  onclick="remove_data()">刪除</button></td>
+					<td width="250"align="center"><span style="font-size:20px;">姓名</span></td>
+					<td width="250"align="center"><span style="font-size:20px;">角色</span></td>
+					<td  width="500" align="center"><span style="font-size:20px;">Email</span></td>
 				</tr>
 				<tr>
-					<td><input name="name" type="text"></td>
-					<td><input name="role" type="text"></td>
-					<td><input name="email" type="text"></td>
-					<td><input name="part" type="text"></td>
-					<td><input name="feedback" type="textarea"></td>
-					<td><button type="button" onclick="remove_data()">刪除欄位</button></td>
+					<td width="250"><input name="name" type="text"></td>
+					<td width="250"><input name="role" type="text"></td>
+					<td ><input name="email" type="text"></td>
+			
+				</tr>
+				<tr>
+					<td colspan="6" align="center"><span style="font-size:20px;">參與專案部分</span></td>
+			
+				</tr>
+
+				<tr>
+					<td colspan="6" ><input name="part" type="text"></td>	
+
+				</tr>
+
+				<tr>
+				<td  colspan="6" align="center"><span style="font-size:20px;">回饋</span></td>
+
+				</tr>
+				<tr>
+				
+					<td colspan="6" ><input name="feedback" type="text">
+					
 				</tr>
 
 			</table>
 
-			<button type="button" onclick="add_new_data()">新增欄位</button>
+			<button type="button" onclick="add_new_data()">新增</button>
 			<input type="submit" name="ok" value="提交">
 
 

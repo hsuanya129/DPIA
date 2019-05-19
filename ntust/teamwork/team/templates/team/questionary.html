@@ -11,6 +11,71 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
+/* The container */
+.container {
+  display: block;
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default radio button */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Create a custom radio button */
+.checkmark {
+  position: absolute;
+  top: 3px;
+  left: 0px;
+  height: 15px;
+  width: 15px;
+  background-color: #fff;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: grey;
+}
+
+/* When the radio button is checked, add a blue background */
+.container input:checked ~ .checkmark {
+
+  background-color: grey;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.container .checkmark:after {
+ 	top: 4px;
+	left: 4px;
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: white;
+}
 	body,
 	h1,
 	h2,
@@ -18,7 +83,7 @@
 	h4,
 	h5,
 	h6 {
-		font-family: "Montserrat", sans-serif
+		font-family: "Microsoft JhengHei" 
 	}
 
 	.w3-row-padding img {
@@ -109,15 +174,17 @@
 
 			{% for unit in qn_list %}
 			<!-- unit 代表是該list中的單位，不要用qn1list 因為他只是qn1_list中的一個單位，或你可以叫qn -->
-			<p>{{ unit.description }}</p>
+			<a>{{ unit.description }}</a>
 
 
 			{% if qn_type.id != 3 %}
-			<input class="w3-input w3-padding-16" type="text" name="answer{{ unit.inner_id }}"><br>
+			<input class="w3-input w3-padding-16" type="text" name="answer{{ unit.inner_id }}">
 
 			{% else %}
-			<input type="radio" name="answer{{ unit.inner_id }}" value="yes"> 是
-			<input type="radio" name="answer{{ unit.inner_id }}" value="no"> 否<br>
+			<label class="container"> <input type="radio"name="answer{{ unit.inner_id }}" value="yes"> 是
+  					<span class="checkmark"></span></label>
+			<label class="container"><input type="radio" name="answer{{ unit.inner_id }}" value="no"> 否
+					<span class="checkmark"></span></label>
 			{% endif %}
 			{% endfor %}
 			<hr style="width:1000px" class="w3-opacity">
