@@ -175,6 +175,7 @@ class Stakeholder(models.Model):
 class Swimlane(models.Model):
     swimlane_json = JSONField(blank=True, null=True) 
     activity = models.ForeignKey(Activity, models.DO_NOTHING)
+    svg = models.TextField()
 
     def __str__(self):
         return "activity id:"+str(self.activity)
