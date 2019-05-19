@@ -108,6 +108,7 @@
 		var position = "{{ group.id }}" + value + probability;
 		var text = document.getElementById(position).innerHTML;
 		document.getElementById(position).innerHTML = " {{ item.risk }}";
+		console.log(position+" {{ item.risk }}");
 	</script>
 
 	{% endif %}

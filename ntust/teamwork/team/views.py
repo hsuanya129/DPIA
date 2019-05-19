@@ -206,7 +206,7 @@ def addNode(saveTemp,pk):
 
     elif (saveTemp["asset_type"]=="Lane3" or saveTemp["asset_type"]=="Lane5") :
         if len(Pii.objects.filter(activity_id=pk, name=saveTemp["name"])) ==0:
-            Pii.objects.create(activity_id=pk, name=saveTemp["name"])
+            Pii.objects.create(activity_id=pk, name=saveTemp["name"],value=1)
         pii = Pii.objects.get(activity_id=pk, name=saveTemp["name"])
         process = Process.objects.get(activity_id=pk, name=saveTemp["process"])
         if len(ProcessHasPii.objects.filter(process_id =process.id,pii_id=pii.id)) ==0:
