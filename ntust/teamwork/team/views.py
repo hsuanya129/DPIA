@@ -111,9 +111,9 @@ def new(request):
         piam_email = request.POST.get('piam_email','')
         activity_manager_name = request.POST.get('activitym_name','')
         activity_manager_email = request.POST.get('activitym_email','')
-        today = datetime.date.today()
+        # today = datetime.date.today()
         description = request.POST.get('description','')
-        new_pia = Activity.objects.create(name=name,pia_manager_name=piam_name,pia_manager_email=piam_email,activity_manager_name=activity_manager_name,activity_manager_email=activity_manager_email,date=today,description=description)
+        new_pia = Activity.objects.create(name=name,pia_manager_name=piam_name,pia_manager_email=piam_email,activity_manager_name=activity_manager_name,activity_manager_email=activity_manager_email,description=description)
         UserHasActivity.objects.create(user_id=user_pk,activity_id=new_pia.id)
         activityID = new_pia.id
         # print(activityID)
@@ -339,7 +339,7 @@ def addValue(saveTemp,pk):
     pii.save()
 
 def evaluation(request):
-    pk=3
+    pk=activityID
 
     #在此收到evaluation頁面的post請求，並將頁面中使用者填入的資料輸入至資料庫中
     if request.method == "POST":
@@ -414,7 +414,7 @@ def evaluation(request):
 
 
 def risk_mapping(request):
-    pk=3
+    pk=activityID
     context ={
         'evaluation_item_all':EvaluationItem.objects.all(),
         'evaluation_all':Evaluation.objects.filter(activity_id = pk,applicable=True)
@@ -423,13 +423,10 @@ def risk_mapping(request):
 def choose_pia(request):
     if request.method == "POST":
         data = request.POST.get('data')
-        print(data)
         json_data = json.loads(data)
         pk = json_data['takedValue']
         pkk = int(float(pk))
         activityID = pkk
-        print(pkk)
-        print(activityID)
         activity_project = Activity.objects.get(id = activityID)
         return render(request,'team/pia_examine.html/',locals())
 def pia_examine(request):

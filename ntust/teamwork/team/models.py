@@ -8,7 +8,8 @@
 from django.db import models
 from django_mysql.models import Bit1BooleanField
 from django_mysql.models import JSONField
-
+from django.utils import timezone
+from datetime import datetime
 class Activity(models.Model):
     name = models.TextField()
     pia_manager_name = models.TextField()
@@ -16,7 +17,7 @@ class Activity(models.Model):
     activity_manager_name = models.TextField()
     activity_manager_email = models.TextField()
     description = models.TextField()
-    date = models.DateTimeField()
+    date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.name
