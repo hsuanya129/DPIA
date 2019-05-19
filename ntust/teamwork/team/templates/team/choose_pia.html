@@ -37,6 +37,7 @@
 <form action="/team/choose_pia/" method="post" id="ch_form">
 <table id="table">
 	<tr>
+		<th>專案ID</th>
 		<th>專案名稱</th>
 		<th>負責人</th>
 		<th>專案簡述</th>
@@ -45,7 +46,8 @@
 
 	{% for userHasActivity in user_has_activity %}
 	<tr>
-		<td id={{ forloop.counter }} class="nr">{{ userHasActivity.activity.name }}</td>
+		<td id={{ forloop.counter }} class="nr">{{ userHasActivity.activity.id }}</td>
+		<td>{{ userHasActivity.activity.name }}</td>
 		<td>{{ userHasActivity.activity.pia_manager_name }}</td>
 		<td>{{ userHasActivity.activity.description }}</td>
 		<td><input name={{ forloop.counter }} type="button" class="choose" onclick="takeValue(this)" value="選擇"></td>

@@ -12,13 +12,13 @@
 		<th>專案簡述</th>
 		<th>專案建立時間</th>
 	</tr>
-	{% for userHasActivity in activityid %}
+	{% for a in activity_project %}
 	<tr>
-		<td>{{ userHasActivity.activity.name }}</td>
-		<td>{{ userHasActivity.activity.pia_manager_name }}</td>
-		<td>{{ userHasActivity.activity.pia_manager_email }}</td>
-		<td>{{ userHasActivity.activity.description }}</td>
-		<th>{{ userHasActivity.activity.date }}</th>
+		<td>{{ a.name }}</td>
+		<td>{{ a.pia_manager_name }}</td>
+		<td>{{ a.pia_manager_email }}</td>
+		<td>{{ a.description }}</td>
+		<th>{{ a.date }}</th>
 	</tr>
 	{% endfor %}
 </table>

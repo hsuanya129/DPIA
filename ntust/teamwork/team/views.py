@@ -27,7 +27,7 @@ def login_sign(request):
                 user = User.objects.get(account=account,password=password)
                 userid = user.id
                 user_has_activity = UserHasActivity.objects.filter(user_id = userid) #擷取出此user有的activity
-                activityID = UserHasActivity.objects.filter(user_id = userid)
+                # activityID = UserHasActivity.objects.filter(user_id = userid)
                 # print(activityID)
                 return render(request,'team/choose_pia.html/',locals())
             else:
@@ -420,23 +420,22 @@ def risk_mapping(request):
         'evaluation_all':Evaluation.objects.filter(activity_id = pk,applicable=True)
     }
     return render(request,'team/risk_mapping.html',context)   
-def pia_examine(request):
-    # print(userid)
-    # print(activityID)
-
-    # activityid=UserHasActivity.objects.filter(user_id = userid)
-    return render(request, 'team/pia_examine.html',locals())
 def choose_pia(request):
     if request.method == "POST":
         data = request.POST.get('data')
+        print(data)
         json_data = json.loads(data)
-        # print(takeValue_data)
-        # takeValue = json.loads(takeValue_data)
-        # print(takeValue)
-        # pk = request.GET.get('$text')
-        # print(pk)
-        return HttpResponseRedirect('team/pia_examine/')
-
+        pk = json_data['takedValue']
+        pkk = int(float(pk))
+        activityID = pkk
+        print(pkk)
+        print(activityID)
+        activity_project = Activity.objects.filter(id = activityID)
+        # activity_project = Activity.objects.filter(id = activityID)
+        return render(request,'team/pia_examine.html/',locals())
+def pia_examine(request):
+    # user_has_activity = Activity.objects.filter(id = activityID)
+    return render(request, 'team/pia_examine.html',locals())
 
 
 
