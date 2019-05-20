@@ -108,7 +108,7 @@
 		}
 	}
 	    div.box {
-      width: 250px;
+      width: 300px;
       padding: 10px;
       margin: 10px;
       border: 3px dashed #ccc;
@@ -122,14 +122,14 @@
     }
 
     div.content {
-      width: 250px;
+      width: 270px;
       margin: 0px;
       padding-left: 0px;
       border: 0px solid #ff6666;
     }
 
     text {
-      width: 250px;
+      width: 270px;
       height: 100px;
       margin: 0px;
       border: 0px solid #6699cc;
@@ -137,6 +137,36 @@
     }
 
     .button {
+      display: inline-block;
+      text-align: center;
+      vertical-align: middle;
+      padding: 1px 5px;
+      border: 1px solid #b3b3b3;
+      border-radius: 70px;
+      background: #ffffff;
+      background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
+      background: -moz-linear-gradient(top, #ffffff, #ffffff);
+      background: linear-gradient(to bottom, #ffffff, #ffffff);
+      font: normal normal bold 15px arial;
+      color: #111111;
+      text-decoration: none;
+    }
+        .button2 {
+      display: inline-block;
+      text-align: center;
+      vertical-align: middle;
+      padding: 1px 5px;
+      border: 1px solid #b3b3b3;
+      border-radius: 70px;
+      background: #ffffff;
+      background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
+      background: -moz-linear-gradient(top, #ffffff, #ffffff);
+      background: linear-gradient(to bottom, #ffffff, #ffffff);
+      font: normal normal bold 15px arial;
+      color: #111111;
+      text-decoration: none;
+    }
+            .button3 {
       display: inline-block;
       text-align: center;
       vertical-align: middle;
@@ -161,6 +191,20 @@
 	          $(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
 	        })
 	      })
+    $(function () {
+          $(".test2").hide();  // 默认隐藏状态
+          $(".button2").click(function () {
+            $(".test2").toggle('slow');  // 改变显隐状态
+            $(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
+          })
+        })
+    $(function () {
+          $(".test3").hide();  // 默认隐藏状态
+          $(".button3").click(function () {
+            $(".test3").toggle('slow');  // 改变显隐状态
+            $(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
+          })
+        })
   </script>
 <body class="">
 
@@ -196,11 +240,24 @@
 
 	</div>
 	  <div class="box">
-    Level Of Impact:
-    <!--     <span>点击按钮实现展开和收起输入框的切换：</span> -->
+    GDPR重點:
     <div class="content">
-      <span>第一級</span> <input type="button" class="button" value="+">
-      <div class="test"><text>可公開訪問的PII（例如，在電話簿，地址簿或選擇列表中)</text></div>
+      <span>以資料為主體</span> <input type="button" class="button" value="+">
+      <div class="test"><text>GDPR主要是為了要取代歐盟在1995年推出的歐盟個人資料保護指令，當科技持續發展的同時，舊時的法規有時候已經無法因應新興的科技風險，勢必要重新調整相關的法規，藉此讓相關的企業或組織，可以實施適切的安全性措施，保護歐盟民眾的個人可識別資料安全性。</text></div>
+    </div>
+  </div>
+        <div class="box">
+    GDPR重點:
+    <div class="content">
+      <span>個資的蒐集、處理和利用，必須先徵求當事人的同意</span> <input type="button" class="button3" value="+">
+      <div class="test3"><text>GDPR不僅要求要提供簡明易懂的個資使用同意書，連撤銷個資使用的同意書，也必須一樣簡明易懂且容易撤銷。</text></div>
+    </div>
+  </div>
+  <div class="box">
+    GDPR重點:
+    <div class="content">
+      <span>被遺忘權</span> <input type="button" class="button2" value="+">
+      <div class="test2"><text>被遺忘權是近年來歐洲對於隱私保護一再強調的重點項目之一，像是，歐洲法院過去已經有不少的判例要求，包括Google在內的搜尋引擎業者，必須把「不相關」或「過期」的個人資訊結果中，移除相關的連結。</text></div>
     </div>
   </div>
 </body>

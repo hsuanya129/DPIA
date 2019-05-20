@@ -6,7 +6,50 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="/static/css/main.css" />
 <style>
+div.box {
+      width: 300px;
+      padding: 10px;
+      margin: 10px;
+      border: 3px dashed #ccc;
+      float:left;
+    }
 
+    div.box span {
+      color: Black;
+      font-weight: bold;
+      font-family: "Microsoft JhengHei", Arial, serif;
+    }
+
+    div.content {
+      width: 270px;
+      margin: 0px;
+      padding-left: 0px;
+      border: 0px solid #ff6666;
+    }
+
+    text {
+      width: 270px;
+      height: 100px;
+      margin: 0px;
+      border: 0px solid #6699cc;
+      font-family: "Microsoft JhengHei", Arial, serif;
+    }
+
+    .button {
+      display: inline-block;
+      text-align: center;
+      vertical-align: middle;
+      padding: 1px 5px;
+      border: 1px solid #b3b3b3;
+      border-radius: 70px;
+      background: #ffffff;
+      background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
+      background: -moz-linear-gradient(top, #ffffff, #ffffff);
+      background: linear-gradient(to bottom, #ffffff, #ffffff);
+      font: normal normal bold 15px arial;
+      color: #111111;
+      text-decoration: none;
+    }
 /* The container */
 .container {
   display: block;
@@ -91,7 +134,16 @@ body, h1,h2,h3,h4,h5,h6 {font-family: "Microsoft JhengHei"}
 /* Remove margins from "page content" on small screens */
 @media only screen and (max-width: 600px) {#main {margin-left: 0}}
 </style>
-
+<script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+        $(function () {
+        $(".test").hide();  // 默认隐藏状态
+        $(".button").click(function () {
+          $(".test").toggle('slow');  // 改变显隐状态
+          $(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
+        })
+      })
+</script>
 <p>
 
   <!-- Contact Section -->
@@ -158,6 +210,17 @@ body, h1,h2,h3,h4,h5,h6 {font-family: "Microsoft JhengHei"}
       </footer>
 
     <div>
+  <div class="box">
+    重大影響:
+    <!--     <span>点击按钮实现展开和收起输入框的切换：</span> -->
+    <div class="content">
+      <span>重大影響</span> <input type="button" class="button" value="+">
+      <div class="test"><text>資料主體可能會遇到重大後果，儘管存在實際和嚴重的困難，但他們應該能夠克服這些後果。 例如：<br>
+ - 身體：嚴重的身體疾病造成長期傷害（由於護理不當導致健康狀況惡化，或無視禁忌症），例如在襲擊後發生身體完整，在家中發生意外，工作等。<br>
+ - 物品：挪用沒有補償的錢，有針對性的，獨特的和非經常性的，失去的機會（住房貸款，拒絕學習，實習或就業，考試禁令），失去住房，失業等;<br>
+ - 道德：嚴重的心理疾病（抑鬱，發展恐懼症），侵犯隱私的感覺，不可逆轉的損害，敲詐勒索的受害者，網絡欺凌和騷擾等。</text></div>
+    </div>
+  </div>
 </body>
 
 
