@@ -12,18 +12,16 @@
 		<th>專案簡述</th>
 		<th>專案建立時間</th>
 	</tr>
-	{% for userHasActivity in activityid %}
 	<tr>
-		<td>{{ userHasActivity.activity.name }}</td>
-		<td>{{ userHasActivity.activity.pia_manager_name }}</td>
-		<td>{{ userHasActivity.activity.pia_manager_email }}</td>
-		<td>{{ userHasActivity.activity.description }}</td>
-		<th>{{ userHasActivity.activity.date }}</th>
+		<td>{{ activity_project.name }}</td>
+		<td>{{ activity_project.pia_manager_name }}</td>
+		<td>{{ activity_project.pia_manager_email }}</td>
+		<td>{{ activity_project.description }}</td>
+		<th>{{ activity_project.date }}</th>
 	</tr>
-	{% endfor %}
 </table>
 <br></br>
-<a href="/team/login_sign"><button>返回</button></a>
+<a href="/team/"><button>返回</button></a>
 <!-- <button><a href="/team/new_pia/">新增PIA</a></button> -->
 </body>
 </html>

@@ -3,14 +3,14 @@
 
 <head>
   <title>Dataflow</title>
-  <style type="text/css" >
+  <style type="text/css">
     /* CSS for the traditional context menu */
     div.box {
       width: 250px;
       padding: 10px;
       margin: 10px;
       border: 3px dashed #ccc;
-      float:left;
+      float: left;
     }
 
     div.box span {
@@ -49,7 +49,8 @@
       color: #111111;
       text-decoration: none;
     }
-        .button2 {
+
+    .button2 {
       display: inline-block;
       text-align: center;
       vertical-align: middle;
@@ -64,7 +65,8 @@
       color: #111111;
       text-decoration: none;
     }
-        .button3 {
+
+    .button3 {
       display: inline-block;
       text-align: center;
       vertical-align: middle;
@@ -79,7 +81,8 @@
       color: #111111;
       text-decoration: none;
     }
-        .button4 {
+
+    .button4 {
       display: inline-block;
       text-align: center;
       vertical-align: middle;
@@ -94,6 +97,7 @@
       color: #111111;
       text-decoration: none;
     }
+
     #contextMenu {
       z-index: 10002;
       position: absolute;
@@ -609,9 +613,8 @@
           old_name: e.parameter
         }
         saveTemp(JSON.stringify(postdata));
-        save();
       });
-
+      
       myDiagram.addModelChangedListener(function (evt) {
         // ignore unimportant Transaction events
         if (!evt.isTransactionFinished) return;
@@ -632,7 +635,6 @@
               asset_type: node.group
             }
             saveTemp(JSON.stringify(postdata));
-            save();
 
           } else if (e.change === go.ChangedEvent.Remove) {
             //console.log(evt.propertyName + " removed node: " + e.oldValue.key);
@@ -644,7 +646,6 @@
               asset_type: node.group
             }
             saveTemp(JSON.stringify(postdata));
-            save();
           }
         });
       });
@@ -664,11 +665,18 @@
 
     function save() {
       // document.getElementById("mySavedModel").value = myDiagram.model.toJson();
+      var svg = myDiagram.makeSvg();
+      var s = new XMLSerializer();
+      var svg_string = s.serializeToString(svg);
       myDiagram.isModified = false;
+      var postdata={
+        swimlane: myDiagram.model.toJson(),
+        svg: svg_string
+      }
       jQuery.ajax({
         method: 'POST',
         url: '../dataflow_saveLane/',
-        data: { 'postdata': myDiagram.model.toJson() },
+        data: { 'postdata': JSON.stringify(postdata) },
         dataType: 'json'
       });
     }
@@ -869,55 +877,46 @@
       }, "resetNodeLayOut")
     }
     function Buildkey(num) {
-        document.myForm.fruit.selectedIndex = 0;
-        for (ctr = 0; ctr < key[num].length; ctr++) {
-          document.myForm.fruit.options[ctr] = new Option(key[num][ctr], key[num][ctr]);
-        }
-        document.myForm.fruit.length = key[num].length;
+      document.myForm.fruit.selectedIndex = 0;
+      for (ctr = 0; ctr < key[num].length; ctr++) {
+        document.myForm.fruit.options[ctr] = new Option(key[num][ctr], key[num][ctr]);
       }
+      document.myForm.fruit.length = key[num].length;
+    }
 
-      function formReset() {
-        document.getElementById("db").reset()
-      }
-      // 收缩展开效果 
-      $(function () {
-        $(".test").hide();  // 默认隐藏状态
-        $(".button").click(function () {
-          $(".test").toggle('slow');  // 改变显隐状态
-          $(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
-        })
+    function formReset() {
+      document.getElementById("db").reset()
+    }
+    // 收缩展开效果 
+    $(function () {
+      $(".test").hide();  // 默认隐藏状态
+      $(".button").click(function () {
+        $(".test").toggle('slow');  // 改变显隐状态
+        $(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
       })
-      $(function () {
-        $(".test2").hide();  // 默认隐藏状态
-        $(".button2").click(function () {
-          $(".test2").toggle('slow');  // 改变显隐状态
-          $(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
-        })
+    })
+    $(function () {
+      $(".test2").hide();  // 默认隐藏状态
+      $(".button2").click(function () {
+        $(".test2").toggle('slow');  // 改变显隐状态
+        $(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
       })
-      $(function () {
-        $(".test3").hide();  // 默认隐藏状态
-        $(".button3").click(function () {
-          $(".test3").toggle('slow');  // 改变显隐状态
-          $(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
-        })
+    })
+    $(function () {
+      $(".test3").hide();  // 默认隐藏状态
+      $(".button3").click(function () {
+        $(".test3").toggle('slow');  // 改变显隐状态
+        $(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
       })
-      $(function () {
-        $(".test4").hide();  // 默认隐藏状态
-        $(".button4").click(function () {
-          $(".test4").toggle('slow');  // 改变显隐状态
-          $(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
-        })
+    })
+    $(function () {
+      $(".test4").hide();  // 默认隐藏状态
+      $(".button4").click(function () {
+        $(".test4").toggle('slow');  // 改变显隐状态
+        $(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
       })
-      function makeSvg() {
-        var newWindow = window.open("","newWindow");
-        if (!newWindow) return;
-        var newDocument = newWindow.document;
-        var sgv = myDiagram.makeSvg({
-          document: newDocument,
+    })
 
-        });
-        newDocument.body.appendChild(sgv);
-      }
 
     key = new Array(3);
     key[0] = new Array(3);
@@ -936,7 +935,7 @@
     key[2][1] = "2";
     key[2][2] = "3";
 
-    
+
   </script>
 </head>
 
@@ -965,7 +964,8 @@
     <!-- <button id="SaveButton" onclick="save()">Save</button>
     <button onclick="load()">Load</button> -->
     <br />
-    <a href="/team/evaluation"><button id="svgButton" onclick="makeSvg()">下一步</button> </a> <!-- <textarea
+    <a href="/team/evaluation/"<button id="svgButton" onclick="save()" >下一步</button></a>
+    <!-- <textarea
         id="mySavedModel" style="width:100%;height:300px"></textarea> -->
   </div>
   <div class="popup"
@@ -999,18 +999,19 @@
       <div class="test2"><text>需要合法訪問權限的PII（例如受限制的公共文件或分發列表的成員）</text></div>
     </div>
   </div>
-    <div class="box">
+  <div class="box">
     Level Of Impact:
     <div class="content">
       <span>第三級</span> <input type="button" class="button3" value="+">
       <div class="test3"><text>未經授權披露可能影響PII負責人聲譽的PII（例如有關收入，社會福利，財產稅或處罰的信息）</text></div>
     </div>
   </div>
-    <div class="box">
+  <div class="box">
     Level Of Impact:
     <div class="content">
       <span>第四級</span> <input type="button" class="button4" value="+">
-      <div class="test4"><text>未經授權披露，修改，丟失或破壞的PII可能影響PII負責人的存在或健康，自由和生命（例如有關機構承諾，判決，人員審查，健康數據，無法償還債務的信息，或者 PII負責人有可能成為刑事案件的受害者）</text></div>
+      <div class="test4"><text>未經授權披露，修改，丟失或破壞的PII可能影響PII負責人的存在或健康，自由和生命（例如有關機構承諾，判決，人員審查，健康數據，無法償還債務的信息，或者
+          PII負責人有可能成為刑事案件的受害者）</text></div>
     </div>
   </div>
 </body>
