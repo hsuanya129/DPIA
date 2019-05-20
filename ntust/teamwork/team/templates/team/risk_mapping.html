@@ -1,34 +1,87 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 	<title>Risk mapping</title>
 	<style>
     td.graph{
-   	  width:100px;
-      height:100px;
       border: 2px solid gray;
       border-collapse: collapse;
     }
     th, td {
       /*padding: 50px;*/
-      height: 50px;
+      width:100px;
+      height:100px;
       text-align: center;    
     }
+    div.box {
+      width: 250px;
+      padding: 10px;
+      margin: 10px;
+      border: 3px dashed #ccc;
+      float:left;
+    }
+
+    div.box span {
+      color: Black;
+      font-weight: bold;
+      font-family: "Microsoft JhengHei", Arial, serif;
+    }
+
+    div.content {
+      width: 250px;
+      margin: 0px;
+      padding-left: 0px;
+      border: 0px solid #ff6666;
+    }
+
+    text {
+      width: 250px;
+      height: 100px;
+      margin: 0px;
+      border: 0px solid #6699cc;
+      font-family: "Microsoft JhengHei", Arial, serif;
+    }
+
+    .button {
+      display: inline-block;
+      text-align: center;
+      vertical-align: middle;
+      padding: 1px 5px;
+      border: 1px solid #b3b3b3;
+      border-radius: 70px;
+      background: #ffffff;
+      background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
+      background: -moz-linear-gradient(top, #ffffff, #ffffff);
+      background: linear-gradient(to bottom, #ffffff, #ffffff);
+      font: normal normal bold 15px arial;
+      color: #111111;
+      text-decoration: none;
+    }
+
 	</style>
 </head>
-<body align="center" style="font-family:Microsoft JhengHei";>
+<script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+        $(function () {
+        $(".test").hide();  // 默认隐藏状态
+        $(".button").click(function () {
+          $(".test").toggle('slow');  // 改变显隐状态
+          $(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
+        })
+      })
+</script>
+<body>
 
 	{% for group in evaluation_all %}
 
-	<table align="center">
+	<table>
 		{% if group.participant %}
 
-		<h2>程序：{{ group.process.name }}　　　個人隱私資料：{{ group.pii.name }}　　　人員：{{ group.participant.name }} </h2>
+		<caption>程序:{{ group.process.name }} 個人隱私資料:{{ group.pii.name }} 人員:{{ group.participant.name }} </caption>
 
 		{% else %}
 
-		<h2>程序：{{ group.process.name }}　　　個人隱私資料：{{ group.pii.name }}　　　系統：{{ group.system.name }} </h2>
+		<caption>程序:{{ group.process.name }} 個人隱私資料:{{ group.pii.name }} 系統:{{ group.system.name }} </caption>
 
 		{% endif %}
 
@@ -110,16 +163,25 @@
 		var position = "{{ group.id }}" + value + probability;
 		var text = document.getElementById(position).innerHTML;
 		document.getElementById(position).innerHTML = " {{ item.risk }}";
+		console.log(position+" {{ item.risk }}");
 	</script>
 
 	{% endif %}
 	{% endfor %}
 	<br>
 	<br>
-	<hr align="center" width="70%">
+	<hr align="left" width="60%">
 	<br>
 	<br>
 	{% endfor %}
+  <div class="box">
+    Risk Mapping:
+    <!--     <span>点击按钮实现展开和收起输入框的切换：</span> -->
+    <div class="content">
+      <span>Risk Mapping</span> <input type="button" class="button" value="+">
+      <div class="test"><text>圖表說明了良好的安全實踐，並根據之前步驟中的評估對每個實例進行了整合。</text></div>
+    </div>
+  </div>
 </body>
 
 </html>

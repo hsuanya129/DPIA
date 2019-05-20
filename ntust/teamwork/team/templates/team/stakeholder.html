@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 <title>利益相關者</title>
 <meta charset="UTF-8">
@@ -6,13 +7,14 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 <link rel="stylesheet" href="/static/css/main.css" />
-<noscript>
-	<link rel="stylesheet" href="/static/css/noscript.css" /></noscript>
+<noscript>	<link rel="stylesheet" href="/static/css/noscript.css" /></noscript>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
 	
-	
+
+
+	}
 	button tr td {
   		border: solid grey ;
 		font-family:Microsoft JhengHei;
@@ -53,17 +55,17 @@
 		//建立新的td 而Tr.cells.length就是這個tr目前的td數
 		Td = Tr.insertCell(Tr.cells.length);
 		//而這個就是要填入td中的innerHTML
-		Td.innerHTML = '<input name="name" type="text">';
+		Td.innerHTML = '<input  name="name" type="text">';
 		//這裡也可以用不同的變數來辨別不同的td (我是用同一個比較省事XD)
 		Td = Tr.insertCell(Tr.cells.length);
 		Td.innerHTML = '<input name="role" type="text">';
 		//記得td數目要一樣 不然會亂掉~
 		Td = Tr.insertCell(Tr.cells.length);
-		Td.innerHTML = '<input name="email" type="text">';
+		Td.innerHTML = '<input  name="email" type="text">';
 		Td = Tr.insertCell(Tr.cells.length);
-		Td.innerHTML = '<input name="part" type="text">';
+		Td.innerHTML = '<input style="height:100px; name="part" type="text">';
 		Td = Tr.insertCell(Tr.cells.length);
-		Td.innerHTML = '<input name="feedback" type="text">';
+		Td.innerHTML = '<input style="height:100px;  name="feedback" type="text">';
 		Td = Tr.insertCell(Tr.cells.length);
 		Td.innerHTML = '<button onclick="remove_data()">刪除';
 	}
@@ -94,20 +96,21 @@
 			{% csrf_token %}
 			<table id="mytable" >
 				<tr>	
-					<td width=120px align="center"><span style="font-size:20px;">姓名</span></td>
+					<td width=150px align="center"><span style="font-size:20px;">姓名</span></td>
 					<td width=150px align="center"><span style="font-size:20px;">角色</span></td>
 					<td  width=260px align="center"><span style="font-size:20px;">Email</span></td>
-					<td  width=250px align="center"><span style="font-size:20px;">參與專案部分</span></td>
-					<td  width=250px align="center"><span style="font-size:20px;">回饋</span></td>
+					<td  width=180px align="center"><span style="font-size:20px;">參與專案部分</span></td>
+					<td  width=180px align="center"><span style="font-size:20px;">回饋</span></td>
 					<td></td>
 				</tr>
 				<tr>
 					<td ><input height="250" name="name" type="text"></td>
 					<td ><input name="role" type="text"></td>
 					<td ><input name="email" type="text"></td>
-					<td ><input style="height:100px;"name="part" type="text"></td>	
+					<td align="center"> <input style="height:100px ;"name="part" type="text"  >
 
-					<td ><input style="height:100px;"name="feedback" type="text">
+
+					<td align="center"><input style="height:100px;"name="feedback" type="text">
 
 			<td ><button  ;type="button"  onclick="remove_data()">刪除</button></td>
 				</tr>
