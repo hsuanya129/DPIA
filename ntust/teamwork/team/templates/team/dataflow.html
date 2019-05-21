@@ -566,7 +566,8 @@
           $(go.Shape, { toArrow: "Standard" })
         );
       // define some sample graphs in some of the lanes
-      // 
+      
+      
       load();
       // document.getElementById("mySavedModel").value = myDiagram.model.toJson();
 
@@ -683,8 +684,7 @@
 
     function load() {
       jQuery.getJSON('../dataflow_get/', function (getdata) {
-        myDiagram.model = go.Model.fromJson(getdata);
-        // document.getElementById("mySavedModel").value = myDiagram.model.toJson();
+      myDiagram.model = go.Model.fromJson(getdata);
       })
     }
     function cxcommand(event, val) {
