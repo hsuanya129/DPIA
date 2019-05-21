@@ -22,6 +22,16 @@
 	  	console.log(JSON.stringify(postdata));
     	document.getElementById("data").value = JSON.stringify(postdata);
 	}
+
+
+		$(function(){
+		    $("#gotop").click(function(){
+		        jQuery("html,body").animate({
+		            scrollTop:0
+		        },200);
+		    });
+		});
+
 	</script>
 
 	<style>
@@ -53,6 +63,14 @@
 			margin-left: 0
 		}
 	}
+
+	.gotop{
+        color:#FFF;
+        position:fixed;
+        bottom:5vh;
+        right:23vh;
+        cursor:pointer;
+    }
 </style>
 
 </head>
@@ -88,10 +106,13 @@
 						<td align="center"><input name={{ forloop.counter }} type="button" class="choose" onclick="takeValue(this),form.submit()" value="檢視"></td>
 					</tr>
 					{% endfor %}
-					<input type="text" id="data" name="data" hidden>
+					<input type="hidden" id="data" name="data" >
 			</table>
 		</form>
 
+<div class="gotop" id="gotop">
+   			 <i class="fa fa-arrow-circle-up fa-3x" ></i>
+		</div>
 
 	</div>
 </body>
