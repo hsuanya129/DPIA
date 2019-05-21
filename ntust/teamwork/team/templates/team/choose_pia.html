@@ -9,6 +9,7 @@
 <noscript>	<link rel="stylesheet" href="/static/css/noscript.css" /></noscript>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script type="text/javascript">
 	var postdata;
 	function takeValue(obj) {
@@ -60,8 +61,11 @@
 
 <body  class="is-preload"  style="font-family:Microsoft JhengHei";>
 	<div class="w3-padding-32 w3-content w3text-light-grey" >
+		<h1>	<span style="font-family:Microsoft JhengHei;">PIA專案列表</span>
+		 <a href="/team/new_pia"><button  style="float: right;">新增PIA</button></a>
+		 </h1>
 		<form action="/team/choose_pia/" method="post" id="ch_form">
-		<h1>	<span style="font-family:Microsoft JhengHei;">PIA專案列表</span> 	<button  style="float: right; href="/team/new_pia">新增PIA</button></h1>
+
 
 
 			<table id="mytable">
@@ -84,10 +88,10 @@
 						<td align="center"><input name={{ forloop.counter }} type="button" class="choose" onclick="takeValue(this),form.submit()" value="檢視"></td>
 					</tr>
 					{% endfor %}
-					
+					<input type="text" id="data" name="data" hidden>
 			</table>
 		</form>
-<a  type="text" id="data" name="data" hidden>
+
 
 	</div>
 </body>
