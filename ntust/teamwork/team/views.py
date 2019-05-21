@@ -504,11 +504,11 @@ def choose_pia(request):
         json_data = json.loads(data)
         pk = json_data['takedValue']
         pkk = int(float(pk))
+        global activityID
         activityID = pkk
         activity_project = Activity.objects.get(id=activityID)
-        pia_examine()
-        return render(request, 'team/pia_examine.html/', locals())
-
+    
+    return HttpResponseRedirect('/team/pia_examine/')
 
 def pia_examine(request):
     pk = activityID
