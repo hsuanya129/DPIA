@@ -506,9 +506,17 @@ def choose_pia(request):
         pkk = int(float(pk))
         activityID = pkk
         activity_project = Activity.objects.get(id=activityID)
+        pia_examine()
         return render(request, 'team/pia_examine.html/', locals())
 
 
 def pia_examine(request):
-    # user_has_activity = Activity.objects.filter(id = activityID)
+    pk = activityID
+    activity = Activity.objects.get(id=pk)
+    question_1 = Question.objects.filter(questionary_type=1)
+    stakeholder_all = Stakeholder.objects.filter(id=pk)
+    answer_all = Answer.objects.filter(activity_id=pk)
+    evaluation_all = Evaluation.objects.filter(activity_id=pk,applicable=True)
+    evaluation_item_all = EvaluationItem.objects.all()
+    swimlane = Swimlane.objects.get(activity_id=pk)
     return render(request, 'team/pia_examine.html', locals())
