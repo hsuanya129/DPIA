@@ -40,6 +40,9 @@ def login_sign(request):
             return render(request, 'team/sign.html', locals())
     return render(request, 'team/home.html', locals())
 
+def activity_list(request):
+    user_has_activity = UserHasActivity.objects.filter(user_id=userid)
+    return render(request, 'team/choose_pia.html/', locals())
 
 def questionary(request, questionary_type_id=None):
 

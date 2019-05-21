@@ -38,7 +38,7 @@
 	{% for answer in answer_all %}
 	{% if answer.question.id == question.id %}
 	<h2>{{ question.description }}</h2>
-	<h4>{{ answer.context }}</h4>>
+	<h4>{{ answer.context }}</h4>
 	{% endif %}
 	{% endfor %}
 	{% endfor %}
@@ -67,11 +67,19 @@
 	<h1>Dataflow</h1>
 	<h2>Swimlane svg</h2>
 	<h4>{{ swimlane.svg }}</h4>
+	<p id="svg"></p>
+	<script type="text/javascript">
+		// var parser = new DOMParser();
+		// var doc = parser.parseFromString(stringContainingXMLSource, "{{ swimlane.svg }}");
+		// console.log(doc);
+		var svg = document.getElementById("svg");
+		svg.innerHTML = "{{ swimlane.svg }}";
+	</script>
 
 
 
 	<h1>適用評估之項目</h1>
-	<table>
+	<table style="border: 2px solid black">
 	  <tr>
         <td align="center"><span style="font-size:20px;">Process</td> 
         <td align="center"><span style="font-size:20px;">Pii</td>
@@ -88,9 +96,9 @@
         <td align="center" rowspan="4">{{ evaluation.pii.value }}</td>
 
         {% if evaluation.participant_id is None %}
-        <td  align="center" rowspan="4">{{ group.system.name }}</td>
+        <td  align="center" rowspan="4">{{ evaluation.system.name }}</td>
         {% else %}
-        <td align="center" rowspan="4">{{ group.participant.name }}</td>
+        <td align="center" rowspan="4">{{ evaluation.participant.name }}</td>
         {% endif %}
 
         {% for item in evaluation_item_all %}
@@ -109,7 +117,7 @@
 	<h1>評估項目之風險表</h1>
 	{% for group in evaluation_all %}
 
-	<table>
+	<table >
 		{% if group.participant %}
 
 		<caption>程序:{{ group.process.name }} 個人隱私資料:{{ group.pii.name }} 人員:{{ group.participant.name }} </caption>
@@ -215,7 +223,7 @@
 
 </table>
 <br></br>
-<a href="/team/"><button>返回</button></a>
+<a href="/team/activity_list/"><button>返回</button></a>
 <!-- <button><a href="/team/new_pia/">新增PIA</a></button> -->
 </body>
 </html>
