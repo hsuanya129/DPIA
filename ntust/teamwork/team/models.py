@@ -87,7 +87,7 @@ class Evaluation(models.Model):
     participant = models.ForeignKey(Participant, models.DO_NOTHING)
     system = models.ForeignKey(System, models.DO_NOTHING)
     value = models.IntegerField(blank=True, null=True)
-    applicable = models.BooleanField(default=0)
+
 
 
     def __str__(self):
@@ -101,7 +101,7 @@ class EvaluationItem(models.Model):
     risk = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     evaluation = models.ForeignKey(Evaluation, models.DO_NOTHING)
-
+    applicable = models.BooleanField(default=0)
     def __str__(self):
         return self.id
 

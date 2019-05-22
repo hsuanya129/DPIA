@@ -66,15 +66,8 @@
 
 	<h1>Dataflow</h1>
 	<h2>Swimlane svg</h2>
-	<h4>{{ swimlane.svg }}</h4>
-	<p id="svg"></p>
-	<script type="text/javascript">
-		// var parser = new DOMParser();
-		// var doc = parser.parseFromString(stringContainingXMLSource, "{{ swimlane.svg }}");
-		// console.log(doc);
-		var svg = document.getElementById("svg");
-		svg.innerHTML = "{{ swimlane.svg }}";
-	</script>
+	<div>{{ swimlane.svg | safe }}</div>
+
 
 
 

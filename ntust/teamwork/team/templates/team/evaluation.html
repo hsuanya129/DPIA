@@ -153,14 +153,14 @@ body, h1,h2,h3,h4,h5,h6 {font-family: "Microsoft JhengHei"}
    <table  >
     <form action="../evaluation/" method="post">
       <tr>
-        <td align="center"><span style="font-size:20px;">Process</td> 
-        <td align="center"><span style="font-size:20px;">Pii</td>
-        <td align="center"><span style="font-size:20px;">Value</td>
-        <td align="center"><span style="font-size:20px;">Asset</td>
-        <td align="center"><span style="font-size:20px;">Applicable</td>
-        <td align="center"><span style="font-size:20px;">Risk</td>
-        <td align="center"><span style="font-size:20px;">Probability</td>
-        <td align="center"><span style="font-size:20px;">Description</td>
+        <td align="center"><span style="font-size:20px;">程序</td> 
+        <td align="center"><span style="font-size:20px;">隱私資料</td>
+        <td align="center"><span style="font-size:20px;">嚴重性</td>
+        <td align="center"><span style="font-size:20px;">系統/人員</td>
+        <td align="center"><span style="font-size:20px;">適用性</td>
+        <td align="center"><span style="font-size:20px;">風險</td>
+        <td align="center"><span style="font-size:20px;">可能性</td>
+        <td align="center"><span style="font-size:20px;">描述</td>
       
       </tr>
 
@@ -176,15 +176,16 @@ body, h1,h2,h3,h4,h5,h6 {font-family: "Microsoft JhengHei"}
         <td align="center" rowspan="3">{{ group.participant.name }}</td>
         {% endif %}
 
-        <td align="center" rowspan="3"> 
-            <label class="container">
-            <input type="checkbox"   name="applicable{{ group.id }}">
-            <span class="checkmark"></span>
-            </label>
-        </td> 
 
         {% for item in evaluation_item_all %}
         {% if item.evaluation_id == group.id %}
+
+        <td align="center" > 
+            <label class="container">
+            <input type="checkbox"   name="applicable{{ item.id }}">
+            <span class="checkmark"></span>
+            </label>
+        </td>
         
         <td>{{ item.risk }}</td>  
         <td><select name="probability{{ item.id }}" required="required">
