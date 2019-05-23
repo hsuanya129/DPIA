@@ -179,30 +179,29 @@
       color: #111111;
       text-decoration: none;
     }
+    .text2{
+    /*  width:100px;*/
+/*      text-align: center;*/
+      color:white;
+    }
+    .text2:hover .hover{
+      display:block;
+    }
+    .hover{
+      border:dotted;
+      border-color:#DDDDDD;
+      position: absolute;
+      left:-270px;
+      width:250px;
+      display:none;
+      background-color:#444444;
+    }
+    .belosed{
+      color:  #DDDDDD;
+    }
 </style>
   <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script id="code">
-	$(function () {
-	        $(".test").hide();  // 默认隐藏状态
-	        $(".button").click(function () {
-	          $(".test").toggle('slow');  // 改变显隐状态
-	          $(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
-	        })
-	      })
-    $(function () {
-          $(".test2").hide();  // 默认隐藏状态
-          $(".button2").click(function () {
-            $(".test2").toggle('slow');  // 改变显隐状态
-            $(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
-          })
-        })
-    $(function () {
-          $(".test3").hide();  // 默认隐藏状态
-          $(".button3").click(function () {
-            $(".test3").toggle('slow');  // 改变显隐状态
-            $(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
-          })
-        })
   </script>
 
   
@@ -218,9 +217,82 @@
 
 			{% for unit in qn_list %}
 			<!-- unit 代表是該list中的單位，不要用qn1list 因為他只是qn1_list中的一個單位，或你可以叫qn -->
-			<a>{{ unit.description }}</a>
-
-
+        {% if unit.id == 1 %}
+        <div class="text" style="display:inline">
+            <span>壹、因應GDPR中 <div class="text2" style="display:inline;"><a href="https://gdpr-info.eu/art-15-gdpr/">被訪問權</a>
+            <div class="hover">
+              <div class="belosed">「被訪問權」法規:<br>
+              數據主體有權從數據控制者那裡獲取信息，以確認數據控制者是否要對與他們相關的個人數據進行處理，處理地點，處理目的。此外，控制者應以電子格式免費提供一份個人數據的副本;
+              </div>
+            </div>
+          </div>的方針：</span>
+        </div>
+        {% elif unit.id == 2%}
+        <div class="text" style="display:inline">
+            <span>貳、因應GDPR中 <div class="text2" style="display:inline;"><a href="https://gdpr-info.eu/art-16-gdpr/">被修正權</a>
+            <div class="hover">
+              <div class="belosed">「被修正權」法規:<br>
+              資料主體對於不正確之個人資料可要求修正，對於不無整之個人資料可要求使其完整。
+              </div>
+            </div>
+          </div>的方針：</span>
+        </div>
+        {% elif unit.id == 3%}
+        <div class="text" style="display:inline">
+            <span>參、因應GDPR中 <div class="text2" style="display:inline;"><a href="https://gdpr-info.eu/art-17-gdpr/">被遺忘權</a>
+            <div class="hover">
+              <div class="belosed">歐盟對於「被遺忘權」的定義為：<br>
+              即資料當事人(data subject)在特定條件下，有要求資料控制者（datacontroller）刪除其個人資料之權利，而且這裡的刪除規定相當嚴格，指的是通知進行資料處理的第三方資料當事人要求刪除任何個人資料的連結（links）、複本（copy）或是再製（replication）。舉例來說，你有要求搜尋引擎刪除與你相關資料的權利。<br>
+              </div>
+            </div>
+          </div>的方針：</span>
+        </div>
+        {% elif unit.id == 4%}
+        <div class="text" style="display:inline">
+            <span>肆、因應GDPR中使用者擁有 <div class="text2" style="display:inline;"><a href="https://gdpr-info.eu/art-18-gdpr/">限制資料處理</a>
+            <div class="hover">
+              <div class="belosed">於下列情事者，資料主體應有權限制控管者之處理：<br>
+              1.資料主體質疑其個人資料之正確性，而給予控管者驗證該個人資料正確性之期間；<br>
+              2.處理係違法的，且資料主體拒絕刪除該個人資料並要求限制其使用者；<br>
+              3.控管者就其處理之目的不再需要該個人資料，但該個人資料為資料主體建立、行使或防禦法律上請求所必須者；<br>
+              處理依據第一項被限制時，該個人資料，除儲存外，應僅限基於資料主體之同意、或為建立、行使或防禦法律上請求、或為保護他人或法人之權利、或基於歐盟法或會員國法律所定重要公共利益之理由，始得處理。<br>
+              </div>
+            </div>
+          </div>的權利之配套措施：</span>
+        </div>
+        {% elif unit.id == 5%}
+        <div class="text" style="display:inline">
+            <span>伍、因應GDPR中使用者擁有 <div class="text2" style="display:inline;"><a href="https://gdpr-info.eu/art-19-gdpr/">被告知</a>
+            <div class="hover">
+              <div class="belosed">「被告知」的法規:<br>
+              除經證明不可能為通知，或通知須花費過鉅之勞費者外，控管者應就第16條、第17條第1項及第18條所定之任何更正或刪除個人資料或限制處理向個人資料受揭露之各接收者為通知。控管者應依資料主體之要求向資料主體告知接收者。
+              </div>
+            </div>
+          </div>的權益之配套措施：</span>
+        </div>
+        {% elif unit.id == 6%}
+        <div class="text" style="display:inline">
+            <span>陸、因應GDPR中 <div class="text2" style="display:inline;"><a href="https://gdpr-info.eu/art-20-gdpr/">被資料可攜</a>
+            <div class="hover">
+              <div class="belosed">「被資料可攜」法規:<br>
+              1. 資料主體應有權以有結構的、通常使用的、機器可讀的形式，接收其提供予控管者之資料，並有權將之傳輸給其他控管者，而不受其提供個人資料之控管者之妨礙<br>
+              2. 依據第一項行使其資料可攜性之權利者，如技術許可時，資料主體應有權使該個人資料由一控管者直接傳輸予其他控管者。<br>
+              </div>
+            </div>
+          </div>的方針：</span>
+        </div>
+        {% else %}
+        <div class="text" style="display:inline">
+            <span>柒、因應GDPR中 <div class="text2" style="display:inline;"><a href="https://gdpr-info.eu/art-21-gdpr/">被拒絕權</a>
+            <div class="hover">
+              <div class="belosed">「被拒絕權」的法規:<br>
+              1.為直接行銷目的處理個人資料時，該資料主體有權隨時拒絕為行銷目的所涉及其個人資料之處理，包括與該直接行銷有關範圍內之建檔。<br>
+              2.當資料主體拒絕為直接行銷目的而處理個人資料時，該個人資料不得再基於該目的而為處理。<br>
+              </div>
+            </div>
+          </div>的方針：</span>
+        </div>
+        {% endif %}
 			{% if qn_type.id != 3 %}
 			<input class="w3-input w3-padding-16" type="text" required="required" name="answer{{ unit.inner_id }}">
       <P></P>   
@@ -239,27 +311,6 @@
 		</form>
 
 	</div>
-	  <div class="box">
-    GDPR重點:
-    <div class="content">
-      <span>以資料為主體</span> <input type="button" class="button" value="+">
-      <div class="test"><text>GDPR主要是為了要取代歐盟在1995年推出的歐盟個人資料保護指令，當科技持續發展的同時，舊時的法規有時候已經無法因應新興的科技風險，勢必要重新調整相關的法規，藉此讓相關的企業或組織，可以實施適切的安全性措施，保護歐盟民眾的個人可識別資料安全性。</text></div>
-    </div>
-  </div>
-        <div class="box">
-    GDPR重點:
-    <div class="content">
-      <span>個資的蒐集、處理和利用，必須先徵求當事人的同意</span> <input type="button" class="button3" value="+">
-      <div class="test3"><text>GDPR不僅要求要提供簡明易懂的個資使用同意書，連撤銷個資使用的同意書，也必須一樣簡明易懂且容易撤銷。</text></div>
-    </div>
-  </div>
-  <div class="box">
-    GDPR重點:
-    <div class="content">
-      <span>被遺忘權</span> <input type="button" class="button2" value="+">
-      <div class="test2"><text>被遺忘權是近年來歐洲對於隱私保護一再強調的重點項目之一，像是，歐洲法院過去已經有不少的判例要求，包括Google在內的搜尋引擎業者，必須把「不相關」或「過期」的個人資訊結果中，移除相關的連結。</text></div>
-    </div>
-  </div>
 </body>
 
 </html>
