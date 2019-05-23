@@ -76,11 +76,11 @@ def questionary(request, questionary_type_id=None):
 
         if questionary_type_id == '1':
 
-            return HttpResponseRedirect(base_url + 'team/stakeholder')
+            return HttpResponseRedirect(base_url + 'team/dataflow')
 
         elif questionary_type_id == '3' or '2':
 
-            return render(request, 'team/stakeholder.html', locals())
+            return render(request, 'team/dataflow', locals())
         # if questionary_type_id == '1' or '2':
 
         #     return HttpResponseRedirect(base_url + 'team/questionary/' + str(int(questionary_type_id)+1))
@@ -108,7 +108,7 @@ def stakeholder(request):
         feedback = request.POST['feedback']
         Stakeholder.objects.create(
             name=name, role=role, email=email, part=part, feedback=feedback, activity_id=activityID)
-        return HttpResponseRedirect(base_url + 'team/dataflow')
+        return HttpResponseRedirect(base_url + 'team/questionary/1')
     return render(request, 'team/stakeholder.html', locals())
 
 
@@ -129,7 +129,7 @@ def new(request):
         UserHasActivity.objects.create(user_id=user_pk, activity_id=new_pia.id)
         activityID = new_pia.id
         # print(activityID)
-        return HttpResponseRedirect('/team/questionary/1')
+        return HttpResponseRedirect('/team/stakeholder')
         # return render(request,'team/questionary/1', locals())
     return render(request, 'team/new_pia.html', locals())
 
@@ -417,29 +417,30 @@ def evaluation(request):
 
         # 將各evaluation item中的資料匯入成list 使之方便存入至資料庫
         for group in Evaluation.objects.filter(activity_id=pk):
+            applicable_list.append(request.POST.get(
+                'applicable' + str(group.id)))
 
             for item in EvaluationItem.objects.filter(evaluation_id=group.id):
-                applicable_list.append(request.POST.get(
-                'applicable' + str(item.id)))
                 probability_list.append(
                     request.POST.get('probability' + str(item.id)))
                 description_list.append(
                     request.POST.get('description' + str(item.id)))
 
         # 以上方list所存之資料為依據 匯入至資料庫
-
+        i = 0
         j = 0
         for group in Evaluation.objects.filter(activity_id=pk):
+            print(applicable_list[i])
+            if applicable_list[i] == "on":
+                group.applicable = True
+                group.save()
 
             for item in EvaluationItem.objects.filter(evaluation_id=group.id):
-                if applicable_list[j] == "on":
-                    item.applicable = True
-
                 item.probability = probability_list[j]
                 item.description = description_list[j]
                 item.save()
                 j += 1
-  
+            i += 1
         return HttpResponseRedirect('/team/risk_mapping')
 
     # 在此創立evalation物件
