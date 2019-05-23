@@ -11,11 +11,9 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
-	
-	
 	button tr td {
-  		border: solid grey ;
-		font-family:Microsoft JhengHei;
+		border: solid grey;
+		font-family: Microsoft JhengHei;
 	}
 
 	.w3-row-padding img {
@@ -39,27 +37,31 @@
 			margin-left: 0
 		}
 	}
-	    .text2{
-    /*  width:100px;*/
-/*      text-align: center;*/ 
-      color:white;
-    }
-    .text2:hover .hover{
-      display:block;
-    }
-    .hover{
-      border:dotted;
-      border-color:#DDDDDD;
-      position: absolute;
-      left:1%;
-      width:250px;
-      display:none;
-      background-color:#444444;
-    }
-    .belosed{
-      font-size:15px;
-      color:  #DDDDDD;
-    }
+
+	.text2 {
+		/*  width:100px;*/
+		/*      text-align: center;*/
+		color: white;
+	}
+
+	.text2:hover .hover {
+		display: block;
+	}
+
+	.hover {
+		border: dotted;
+		border-color: #DDDDDD;
+		position: absolute;
+		left: 1%;
+		width: 250px;
+		display: none;
+		background-color: #444444;
+	}
+
+	.belosed {
+		font-size: 15px;
+		color: #DDDDDD;
+	}
 </style>
 
 
@@ -82,9 +84,9 @@
 		Td = Tr.insertCell(Tr.cells.length);
 		Td.innerHTML = '<input name="email" type="text">';
 		Td = Tr.insertCell(Tr.cells.length);
-		Td.innerHTML = '<input style="height:100px;" name="part" type="text">';
+		Td.innerHTML = '<textarea style="height:100px;" name="part" type="text">';
 		Td = Tr.insertCell(Tr.cells.length);
-		Td.innerHTML = '<input style="height:100px;" name="feedback" type="text">';
+		Td.innerHTML = '<textarea style="height:100px;" name="feedback" type="text">';
 		Td = Tr.insertCell(Tr.cells.length);
 		Td.innerHTML = '<button onclick="remove_data()">刪除';
 	}
@@ -104,56 +106,57 @@
 
 
 
-<body style="font-family:Microsoft JhengHei";>
+<body style="font-family:Microsoft JhengHei" ;>
 
 	<!-- Contact Section -->
-	<div class="w3-padding-64 w3-content w3text-light-grey" >
+	<div class="w3-padding-64 w3-content w3text-light-grey">
 		<form action="" method="post">
-			<h1>	
-		<div class="text" style="display:inline">
-            <span style="font-family:Microsoft JhengHei;">描述<div class="text2" style="display:inline;"><a>利益相關者<a/>
-            <div class="hover">
-              <div class="belosed">利益相關者定義:<br>
-              1.可能影響，受其影響或認為自己受決策或活動影響的個人或組織(包括PII負責人，管理層，監管機構和客戶。)<br>
-              2.與利益相關者協商是PIA的組成部分。
-              </div>
-            </div>
-          </div></span></div></h1>
-        <!-- </div><span style="font-family:Microsoft JhengHei;">描述利益相關者</span> -->
-<p></p>
+			<h1>
+				<div class="text" style="display:inline">
+					<span style="font-family:Microsoft JhengHei;">描述<div class="text2" style="display:inline;"><a>利益相關者<a />
+								<div class="hover">
+									<div class="belosed">利益相關者定義:<br>
+										1.可能影響，受其影響或認為自己受決策或活動影響的個人或組織(包括PII負責人，管理層，監管機構和客戶。)<br>
+										2.與利益相關者協商是PIA的組成部分。
+									</div>
+								</div>
+						</div></span></div>
+			</h1>
+			<!-- </div><span style="font-family:Microsoft JhengHei;">描述利益相關者</span> -->
+			<p></p>
 			{% csrf_token %}
-			<table id="mytable" >
-				
-				<tr>	
+			<table id="mytable">
+
+				<tr>
 					<td width=120px align="center"><span style="font-size:20px;">姓名</span></td>
 					<td width=150px align="center"><span style="font-size:20px;">角色</span></td>
-					<td  width=260px align="center"><span style="font-size:20px;">Email</span></td>
-					<td  width=250px align="center"><span style="font-size:20px;">參與專案部分</span></td>
-					<td  width=250px align="center"><span style="font-size:20px;">回饋</span></td>
+					<td width=260px align="center"><span style="font-size:20px;">Email</span></td>
+					<td width=250px align="center"><span style="font-size:20px;">參與專案部分</span></td>
+					<td width=250px align="center"><span style="font-size:20px;">回饋</span></td>
 					<td></td>
 				</tr>
 				<tr>
-					<td ><input height="250" name="name" type="text"></td>
-					<td ><input name="role" type="text"></td>
-					<td ><input name="email" type="text"></td>
-					<td ><input style="height:100px;"name="part" type="text"></td>	
+					<td><input height="250" name="name" type="text" ></td>
+					<td><input name="role" type="text"></td>
+					<td><input name="email" type="text"></td>
+					<td><textarea style="height:100px;" name="part" type="text"></textarea></td>
 
-					<td ><input style="height:100px;"name="feedback" type="text">
-
-			<td ><button  ;type="button"  onclick="remove_data()">刪除</button></td>
+					<td><textarea style="height:100px;" name="feedback" type="text"></textarea>
+					<td>
+						<button ;type="button" onclick="remove_data()">刪除</button></td>
 				</tr>
 				<tr>
-					
-			
+
+
 				</tr>
 
 
-	
+
 
 			</table>
 
 			<button type="button" onclick="add_new_data()">新增</button>
-			<input type="submit" name="ok" value="提交">
+			<input type="submit" name="ok" value="提交" style="float: right;">
 
 
 
