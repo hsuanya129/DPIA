@@ -462,11 +462,11 @@ def evaluation(request):
                         evaluation = Evaluation.objects.create(
                             activity_id=pk, pii_id=pii.id, system_id=system.id, value=pii.value, process_id=process.id)
                         EvaluationItem.objects.create(
-                            risk="Disappearance of Pii", evaluation_id=evaluation.id)
+                            risk="Disappearance of Pii", evaluation_id=evaluation.id ,activity_id=pk)
                         EvaluationItem.objects.create(
-                            risk="Illeagal of uasge", evaluation_id=evaluation.id)
+                            risk="Illeagal of uasge", evaluation_id=evaluation.id,activity_id=pk)
                         EvaluationItem.objects.create(
-                            risk="Unwanted modified Pii", evaluation_id=evaluation.id)
+                            risk="Unwanted modified Pii", evaluation_id=evaluation.id,activity_id=pk)
 
                     for process_has_participant in ProcessHasParticipant.objects.filter(process_id=process.id):
                         participant = Participant.objects.get(
@@ -474,18 +474,18 @@ def evaluation(request):
                         evaluation = Evaluation.objects.create(
                             activity_id=pk, pii_id=pii.id, participant_id=participant.id, value=pii.value, process_id=process.id)
                         EvaluationItem.objects.create(
-                            risk="Disappearance of Pii", evaluation_id=evaluation.id)
+                            risk="Disappearance of Pii", evaluation_id=evaluation.id,activity_id=pk)
                         EvaluationItem.objects.create(
-                            risk="Illeagal of uasge", evaluation_id=evaluation.id)
+                            risk="Illeagal of uasge", evaluation_id=evaluation.id,activity_id=pk)
                         EvaluationItem.objects.create(
-                            risk="Unwanted modified Pii", evaluation_id=evaluation.id)
+                            risk="Unwanted modified Pii", evaluation_id=evaluation.id,activity_id=pk)
 
         context = {
             'process_all': process_all,
             'process_has_pii_all': ProcessHasPii.objects.all(),
             'process_has_participant': ProcessHasParticipant.objects.all(),
             'evaluation_all': Evaluation.objects.filter(activity_id=pk),
-            'evaluation_item_all': EvaluationItem.objects.all()
+            'evaluation_item_all': EvaluationItem.objects.filter(activity_id=pk)
         }
 
         return render(request, 'team/evaluation.html', context)
@@ -510,7 +510,7 @@ def risk_mapping(request):
     context = {
         'pii_all' : Pii.objects.filter(activity_id=pk),
         'pii_list' : pii_list,
-        'item_all' : EvaluationItem.objects.all()
+        'item_all' : EvaluationItem.objects.filter(applicable=True,activity_id=pk)
     }
     return render(request, 'team/risk_mapping.html',context)
 
@@ -533,7 +533,7 @@ def pia_examine(request):
     question_1 = Question.objects.filter(questionary_type=1)
     stakeholder_all = Stakeholder.objects.filter(id=pk)
     answer_all = Answer.objects.filter(activity_id=pk)
-    evaluation_all = Evaluation.objects.filter(activity_id=pk,applicable=True)
-    evaluation_item_all = EvaluationItem.objects.all()
+    evaluation_all = Evaluation.objects.filter(activity_id=pk)
+    evaluation_item_all = EvaluationItem.objects.filter(applicable=True)
     swimlane = Swimlane.objects.get(activity_id=pk)
     return render(request, 'team/pia_examine.html', locals())
