@@ -531,7 +531,7 @@ def pia_examine(request):
     pk = activityID
     activity = Activity.objects.get(id=pk)
     question_1 = Question.objects.filter(questionary_type=1)
-    stakeholder_all = Stakeholder.objects.filter(id=pk)
+    stakeholder_all = Stakeholder.objects.filter(activity_id=pk)
     answer_all = Answer.objects.filter(activity_id=pk)
     evaluation_all = Evaluation.objects.filter(activity_id=pk)
     evaluation_item_all = EvaluationItem.objects.filter(applicable=True)
