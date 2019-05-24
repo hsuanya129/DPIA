@@ -10,7 +10,6 @@
       padding: 10px;
       margin: 10px;
       border: 3px dashed #ccc;
-      float: left;
     }
 
     div.box span {
@@ -151,6 +150,7 @@
       margin-left: 0px;
       margin-top: 0px;
     }
+
   </style>
   {% load static %}
   <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -566,8 +566,8 @@
           $(go.Shape, { toArrow: "Standard" })
         );
       // define some sample graphs in some of the lanes
-      
-      
+
+
       load();
       // document.getElementById("mySavedModel").value = myDiagram.model.toJson();
 
@@ -615,7 +615,7 @@
         }
         saveTemp(JSON.stringify(postdata));
       });
-      
+
       myDiagram.addModelChangedListener(function (evt) {
         // ignore unimportant Transaction events
         if (!evt.isTransactionFinished) return;
@@ -670,7 +670,7 @@
       var s = new XMLSerializer();
       var svg_string = s.serializeToString(svg);
       myDiagram.isModified = false;
-      var postdata={
+      var postdata = {
         swimlane: myDiagram.model.toJson(),
         svg: svg_string
       }
@@ -684,7 +684,7 @@
 
     function load() {
       jQuery.getJSON('../dataflow_get/', function (getdata) {
-      myDiagram.model = go.Model.fromJson(getdata);
+        myDiagram.model = go.Model.fromJson(getdata);
       })
     }
     function cxcommand(event, val) {
@@ -959,14 +959,8 @@
       </ul>
     </div>
 
-
-    <!-- <button onclick="relayoutLanes()">Layout</button> -->
-    <!-- <button id="SaveButton" onclick="save()">Save</button>
-    <button onclick="load()">Load</button> -->
     <br />
-    <a href="/team/evaluation/"><button id="svgButton" onclick="save()" >下一步</button></a>
-    <!-- <textarea
-        id="mySavedModel" style="width:100%;height:300px"></textarea> -->
+ 
   </div>
   <div class="popup"
     style="position:absolute;top:0;left:1;width:18vw;height:10vh;z-index: 999;background-color:white;display: none;border-width:3px;border-style:solid;border-color:black;padding:5px;"
@@ -983,34 +977,45 @@
       onclick="getNodeValue(getElementById('postValue').value),getElementById('popup').style.display='none'">確定</button>
     <!-- </form> -->
   </div>
-  <div class="box">
-    Level Of Impact:
-    <!--     <span>点击按钮实现展开和收起输入框的切换：</span> -->
-    <div class="content">
-      <span>第一級</span> <input type="button" class="button" value="+">
-      <div class="test"><text>可公開訪問的PII（例如，在電話簿，地址簿或選擇列表中)</text></div>
+
+  <div style="border:2px red solid;">
+    <div style="border:2px blue solid;">
+      <p >節點雙擊兩下可編輯文字，Input及Output的Node右鍵新增Level of Impact</p>
+      <a href="/team/evaluation/"><button id="svgButton" onclick="save()" style="inline-block">下一步</button></a>
     </div>
-  </div>
-  <div class="box">
-    Level Of Impact:
-    <div class="content">
-      <span>第二級</span> <input type="button" class="button2" value="+">
-      <div class="test2"><text>需要合法訪問權限的PII（例如受限制的公共文件或分發列表的成員）</text></div>
-    </div>
-  </div>
-  <div class="box">
-    Level Of Impact:
-    <div class="content">
-      <span>第三級</span> <input type="button" class="button3" value="+">
-      <div class="test3"><text>未經授權披露可能影響PII負責人聲譽的PII（例如有關收入，社會福利，財產稅或處罰的信息）</text></div>
-    </div>
-  </div>
-  <div class="box">
-    Level Of Impact:
-    <div class="content">
-      <span>第四級</span> <input type="button" class="button4" value="+">
-      <div class="test4"><text>未經授權披露，修改，丟失或破壞的PII可能影響PII負責人的存在或健康，自由和生命（例如有關機構承諾，判決，人員審查，健康數據，無法償還債務的信息，或者
-          PII負責人有可能成為刑事案件的受害者）</text></div>
+
+    <div style="border:2px black solid;">
+      <div class="box">
+        Level Of Impact:
+        <!--     <span>点击按钮实现展开和收起输入框的切换：</span> -->
+        <div class="content">
+
+          <span>第一級</span> <input type="button" class="button" value="+">
+          <div class="test"><text>可公開訪問的PII（例如，在電話簿，地址簿或選擇列表中)</text></div>
+        </div>
+      </div>
+      <div class="box" >
+        Level Of Impact:
+        <div class="content">
+          <span>第二級</span> <input type="button" class="button2" value="+">
+          <div class="test2"><text>需要合法訪問權限的PII（例如受限制的公共文件或分發列表的成員）</text></div>
+        </div>
+      </div>
+      <div class="box">
+        Level Of Impact:
+        <div class="content">
+          <span>第三級</span> <input type="button" class="button3" value="+">
+          <div class="test3"><text>未經授權披露可能影響PII負責人聲譽的PII（例如有關收入，社會福利，財產稅或處罰的信息）</text></div>
+        </div>
+      </div>
+      <div class="box">
+        Level Of Impact:
+        <div class="content">
+          <span>第四級</span> <input type="button" class="button4" value="+">
+          <div class="test4"><text>未經授權披露，修改，丟失或破壞的PII可能影響PII負責人的存在或健康，自由和生命（例如有關機構承諾，判決，人員審查，健康數據，無法償還債務的信息，或者
+              PII負責人有可能成為刑事案件的受害者）</text></div>
+        </div>
+      </div>
     </div>
   </div>
 </body>
