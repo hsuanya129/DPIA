@@ -417,30 +417,29 @@ def evaluation(request):
 
         # 將各evaluation item中的資料匯入成list 使之方便存入至資料庫
         for group in Evaluation.objects.filter(activity_id=pk):
-            applicable_list.append(request.POST.get(
-                'applicable' + str(group.id)))
 
             for item in EvaluationItem.objects.filter(evaluation_id=group.id):
+                applicable_list.append(request.POST.get(
+                'applicable' + str(item.id)))
                 probability_list.append(
                     request.POST.get('probability' + str(item.id)))
                 description_list.append(
                     request.POST.get('description' + str(item.id)))
 
         # 以上方list所存之資料為依據 匯入至資料庫
-        i = 0
+
         j = 0
         for group in Evaluation.objects.filter(activity_id=pk):
-            print(applicable_list[i])
-            if applicable_list[i] == "on":
-                group.applicable = True
-                group.save()
 
             for item in EvaluationItem.objects.filter(evaluation_id=group.id):
+                if applicable_list[j] == "on":
+                    item.applicable = True
+
                 item.probability = probability_list[j]
                 item.description = description_list[j]
                 item.save()
                 j += 1
-            i += 1
+  
         return HttpResponseRedirect('/team/risk_mapping')
 
     # 在此創立evalation物件
@@ -490,7 +489,6 @@ def evaluation(request):
         }
 
         return render(request, 'team/evaluation.html', context)
-
 
 def risk_mapping(request):
     pk = activityID
