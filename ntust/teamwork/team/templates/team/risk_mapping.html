@@ -25,19 +25,11 @@
 			float: left;
 		}
 
-		/*div.mapping_div {
-      float:right;
-    }*/
 		div.mapping_div {
 			width: 700px;
 			float:right;
 			position: fixed;
 			font-family: "Microsoft JhengHei", Arial, serif;
-			/*color:#FFF;
-        
-        bottom:5vh;
-        right:23vh;
-        cursor:pointer;*/
 		}
 
 		div.box span {
@@ -108,23 +100,43 @@
 		var mapping = document.getElementById("mapping");
 		mapping.innerHTML = "";
 		mapping_string = "";
+		mapping_d="<b>Disappearance of Pii : </b><br/>";
+		mapping_i="<b>Illeagal of uasge : </b><br/>";
+		mapping_u="<b>Unwanted modified Pii : </b><br/>";
 		{% for item in item_all %}
 		for (i = 1; i < pii_data_split.length; i++) {
 			if ("{{ item.id }}" == pii_data_split[i] && "{{ item.probability }}" == probability) {
 				if ("{{item.evaluation.participant.name}}" != "") {
 					console.log("{{item.evaluation.particpant_id}}")
-					obj = "風險: " + "{{ item.risk }}" + " 流程: " + "{{item.evaluation.process.name}}" + " 個人隱私資料: " + "{{item.evaluation.pii.name}}" + " 人員: " + "{{item.evaluation.participant.name}}<br/>" + " 描述: " + "{{item.description}}<br/>";
-					mapping_string = mapping_string.concat(obj);
+					obj = "    流程: " + "{{item.evaluation.process.name}}" + "  個人隱私資料: " + "{{item.evaluation.pii.name}}" + "  人員: " + "{{item.evaluation.participant.name}}" + "  描述: " + "{{item.description}}<br/>";
+					// mapping_string = mapping_string.concat(obj);
 				} else {
-					obj = "風險: " + "{{ item.risk }}" + " 流程: " + "{{item.evaluation.process.name}}" + " 個人隱私資料: " + "{{item.evaluation.pii.name}}" + " 系統: " + "{{item.evaluation.system.name}}<br/>" + " 描述: " + "{{item.description}}<br/>";
-					mapping_string = mapping_string.concat(obj);
+					obj = "    流程: " + "{{item.evaluation.process.name}}" + "  個人隱私資料: " + "{{item.evaluation.pii.name}}" + "  系統: " + "{{item.evaluation.system.name}}" + "  描述: " + "{{item.description}}<br/>";
+					// mapping_string = mapping_string.concat(obj);
+				}
+				if ("{{item.risk}}" == "Disappearance of Pii"){
+					mapping_d = mapping_d.concat(obj);
+
+				}else if("{{item.risk}}" == "Illeagal of uasge"){
+					mapping_i = mapping_i.concat(obj);
+				}else{
+					mapping_u = mapping_u.concat(obj);
 				}
 
-				// console.log(typeof(mapping_context));
 			}
 		}
 		{% endfor %}
-		mapping.innerHTML = (mapping_string)
+		if (mapping_d!="<b>Disappearance of Pii : </b><br/>"){
+			mapping_string = mapping_string .concat(mapping_d);
+		}
+		if (mapping_i!="<b>Illeagal of uasge : </b><br/>"){
+			mapping_string = mapping_string .concat(mapping_i);
+		}
+		if (mapping_u!="<b>Unwanted modified Pii : </b><br/>"){
+			mapping_string = mapping_string .concat(mapping_u);
+		}
+		mapping_string = mapping_string.replace(/ /g, '\u00a0');
+		mapping.innerHTML = mapping_string;
 
 
 

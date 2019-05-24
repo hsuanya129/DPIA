@@ -529,6 +529,21 @@ def choose_pia(request):
 
 def pia_examine(request):
     pk = activityID
+
+    # for risk_mapping
+    i=0
+    pii_list=list()#用來存pii中，有evaluation適用的, pii_list[i]表示為在第i個pii中，有applicable的evaluation_item的id
+    for pii in Pii.objects.filter(activity_id=pk):
+        pii_list.append(pii.name)
+        for evaluation in Evaluation.objects.filter(activity_id=pk):
+            for item in EvaluationItem.objects.filter(evaluation_id=evaluation.id):
+                if (item.evaluation.pii.id == pii.id and item.applicable== True):
+                    pii_list[i]=pii_list[i]+","+str(item.id)
+
+        print(pii_list[i])
+        i+=1
+    # for risk_mapping
+    
     activity = Activity.objects.get(id=pk)
     question_1 = Question.objects.filter(questionary_type=1)
     stakeholder_all = Stakeholder.objects.filter(activity_id=pk)
@@ -536,4 +551,7 @@ def pia_examine(request):
     evaluation_all = Evaluation.objects.filter(activity_id=pk)
     evaluation_item_all = EvaluationItem.objects.filter(applicable=True)
     swimlane = Swimlane.objects.get(activity_id=pk)
+    pii_all = Pii.objects.filter(activity_id=pk)
+    pii_list = pii_list
+    item_all = EvaluationItem.objects.filter(applicable=True,activity_id=pk)
     return render(request, 'team/pia_examine.html', locals())
