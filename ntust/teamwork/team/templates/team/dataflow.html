@@ -667,7 +667,7 @@
 
     function save() {
       // document.getElementById("mySavedModel").value = myDiagram.model.toJson();
-      var svg = myDiagram.makeSvg();
+      var svg = myDiagram.makeSvg({scale: 1});
       var s = new XMLSerializer();
       var svg_string = s.serializeToString(svg);
       myDiagram.isModified = false;
