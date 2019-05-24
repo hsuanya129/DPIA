@@ -294,7 +294,7 @@
         </div>
         {% endif %}
 			{% if qn_type.id != 3 %}
-			<input class="w3-input w3-padding-16" type="text" required="required" name="answer{{ unit.inner_id }}">
+      <input class="w3-input w3-padding-16" type="text" required="required" name="answer{{ unit.inner_id }}" style="margin:5px;">
       <P></P>   
 			{% else %}
 			<label class="container"> <input type="radio"name="answer{{ unit.inner_id }}" value="yes"> 是
@@ -304,7 +304,7 @@
 			{% endif %}
 			{% endfor %}
 			<hr style="width:1000px" class="w3-opacity">
-			<input style="width:100px" type="submit" vaule="送出">
+			<input style="width:100px;float: right" type="submit" vaule="送出">
 
 
 			</p>
