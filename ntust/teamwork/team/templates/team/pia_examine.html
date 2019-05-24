@@ -24,8 +24,9 @@
     }
 
     div.mapping_div {
-      width: 700px;
-      float:right;
+      /*width: 700px;*/
+      z-index:999;
+      /*float:right;*/
       position: fixed;
       font-family: "Microsoft JhengHei", Arial, serif;
     }
@@ -115,18 +116,18 @@
     var mapping = document.getElementById("mapping");
     mapping.innerHTML = "";
     mapping_string = "";
-    mapping_d="<b>Disappearance of Pii : </b><br/>";
-    mapping_i="<b>Illeagal of uasge : </b><br/>";
-    mapping_u="<b>Unwanted modified Pii : </b><br/>";
+    mapping_d="Disappearance of Pii : \n";
+    mapping_i="Illeagal of uasge : \n";
+    mapping_u="Unwanted modified Pii : \n";
     {% for item in item_all %}
     for (i = 1; i < pii_data_split.length; i++) {
       if ("{{ item.id }}" == pii_data_split[i] && "{{ item.probability }}" == probability) {
         if ("{{item.evaluation.participant.name}}" != "") {
           console.log("{{item.evaluation.particpant_id}}")
-          obj = "    流程: " + "{{item.evaluation.process.name}}" + "  個人隱私資料: " + "{{item.evaluation.pii.name}}" + "  人員: " + "{{item.evaluation.participant.name}}" + "  描述: " + "{{item.description}}<br/>";
+          obj = "    流程: " + "{{item.evaluation.process.name}}" + "  個人隱私資料: " + "{{item.evaluation.pii.name}}" + "  人員: " + "{{item.evaluation.participant.name}}\n" + "    描述: " + "{{item.description}}\n";
           // mapping_string = mapping_string.concat(obj);
         } else {
-          obj = "    流程: " + "{{item.evaluation.process.name}}" + "  個人隱私資料: " + "{{item.evaluation.pii.name}}" + "  系統: " + "{{item.evaluation.system.name}}" + "  描述: " + "{{item.description}}<br/>";
+          obj = "    流程: " + "{{item.evaluation.process.name}}" + "  個人隱私資料: " + "{{item.evaluation.pii.name}}" + "  系統: " + "{{item.evaluation.system.name}}\n" + "    描述: " + "{{item.description}}\n";
           // mapping_string = mapping_string.concat(obj);
         }
         if ("{{item.risk}}" == "Disappearance of Pii"){
@@ -141,26 +142,32 @@
       }
     }
     {% endfor %}
-    if (mapping_d!="<b>Disappearance of Pii : </b><br/>"){
+    if (mapping_d!="Disappearance of Pii : \n"){
       mapping_string = mapping_string .concat(mapping_d);
     }
-    if (mapping_i!="<b>Illeagal of uasge : </b><br/>"){
+    if (mapping_i!="Illeagal of uasge : \n"){
       mapping_string = mapping_string .concat(mapping_i);
     }
-    if (mapping_u!="<b>Unwanted modified Pii : </b><br/>"){
+    if (mapping_u!="Unwanted modified Pii : \n"){
       mapping_string = mapping_string .concat(mapping_u);
     }
-    mapping_string = mapping_string.replace(/ /g, '\u00a0');
-    mapping.innerHTML = mapping_string;
-
+    // mapping_string = mapping_string.replace(/ /g, '\u00a0');
+    // mapping.innerHTML = mapping_string;
+    alert(mapping_string);
 
 
   }
+        //   function show_alert() {
+        //     alert("Hello! I am an alert box!");
+        // }
 </script>
 </head>
-<body>
-<table class = "table" font-family: "Microsoft JhengHei" >
-	<h1>專案基本資料</h1>
+<body style="background-color:#F5F5F5;">
+<!-- <div style="border-color:blue; border-style:solid;text-align:center;background-color:#DDDDDD;"> -->
+  <div style="width:80%;margin: 0 auto;background-color:#FFFFFF;text-align:center;box-shadow:3px 3px 12px gray;padding:3px;font-family:Microsoft JhengHei">
+<!--   <table class = "table" font-family: "Microsoft JhengHei" > -->
+  <h1 style="color:#191970;font-family:Microsoft JhengHei;" align="center">專案基本資料</h1>
+  <hr width="60%" align=center style="border-bottom:#191970 3px solid;border-left:#191970 3px solid;border-top:#191970 3px solid;border-right:#191970 3px solid;">
 	<h2>專案名稱</h2>
 	<h4>{{ activity.name }}</h4>
 	<h2>PIA負責人姓名</h2>
@@ -175,8 +182,9 @@
 	<h4>{{ activity.description }}</h4>
 	<h2>專案建立日期</h2>
 	<h4>{{ activity.date }}</h4>
-	<hr>
-	<h1>專案GDPR適法性評估</h1>
+  <br>
+	<h1 style="color:#191970">專案GDPR適法性評估</h1>
+  <hr width="60%" align=center style="border-bottom:#191970 3px solid;border-left:#191970 3px solid;border-top:#191970 3px solid;border-right:#191970 3px solid;">
 	{% for question in question_1 %}
 	{% for answer in answer_all %}
 	{% if answer.question.id == question.id %}
@@ -185,10 +193,14 @@
 	{% endif %}
 	{% endfor %}
 	{% endfor %}
-	<hr>
+  <br>
+  <br>
 
-	<h1>專案參與的利益相關者</h1>
-	<table class="stakeholder">
+<div>
+	<h1 style="color:#191970">專案參與的利益相關者</h1>
+  <hr width="60%" align=center style="border-bottom:#191970 3px solid;border-left:#191970 3px solid;border-top:#191970 3px solid;border-right:#191970 3px solid;">
+  <br>
+	<table table align="center" class="stakeholder">
 		<tr class="stakeholder">
 			<th class="stakeholder">姓名</th>
 			<th class="stakeholder">角色</th>
@@ -207,15 +219,23 @@
 		</tr>
 		{% endfor %}
 	</table>
+<br>
+  <br>
 
-	<h1>Dataflow</h1>
+	<h1 style="color:#191970">Dataflow</h1>
+  <hr width="60%" align=center style="border-bottom:#191970 3px solid;border-left:#191970 3px solid;border-top:#191970 3px solid;border-right:#191970 3px solid;">
+  <br>
 	<div>{{ swimlane.svg | safe }}</div>
 
 
 
+<br>
+  <br>
 
-	<h1>適用評估之項目</h1>
-	<table  class="stakeholder">
+	<h1 style="color:#191970">適用評估之項目</h1>
+  <hr width="60%" align=center style="border-bottom:#191970 3px solid;border-left:#191970 3px solid;border-top:#191970 3px solid;border-right:#191970 3px solid;">
+  <br>
+	<table table align="center" class="stakeholder">
 	  <tr>
         <td  class="stakeholder" align="center"><span style="font-size:20px;">流程</td> 
         <td  class="stakeholder" align="center"><span style="font-size:20px;">個人隱私資料</td>
@@ -249,10 +269,11 @@
       </tr>  
       {% endfor %}
 	</table>
+  <br>
+  <br>
 
-
-  <h1>風險圖</h1>
-
+  <h1 style="color:#191970">風險圖</h1>
+<hr width="60%" align=center style="border-bottom:#191970 3px solid;border-left:#191970 3px solid;border-top:#191970 3px solid;border-right:#191970 3px solid;">
   <div>
     <div align="left" style="display: inline-block; width: 700px;">
       {% for pii in pii_all %}
@@ -261,7 +282,7 @@
 
       {% if "," in pii_list_item and pii.name in pii_list_item %}
 
-      <table>
+      <table table align="center">
 
         <caption id="{{ pii.id }}caption"></caption>
 
@@ -384,21 +405,25 @@
 
       <br>
       <br>
-      <hr align="left" width="50%">
+      <hr align="center" width="70%">
       <br>
       <br>
       {% endif %}
       {% endfor %}
       {% endfor %}
+      <a href="/team/activity_list/"><button style="float:left;" >返回</button></a>
+      <br>
+      <br>
     </div>
+</div>
+
+</div>
+</div>
     <div id="mapping" class="mapping_div" style="display: inline-block;">
 
     </div>
-  </div>
 
-
-<br></br>
-<a href="/team/activity_list/"><button>返回</button></a>
 <!-- <button><a href="/team/new_pia/">新增PIA</a></button> -->
+<!-- </div> -->
 </body>
 </html>
