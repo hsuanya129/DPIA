@@ -102,6 +102,7 @@ class EvaluationItem(models.Model):
     description = models.TextField(blank=True, null=True)
     evaluation = models.ForeignKey(Evaluation, models.DO_NOTHING)
     applicable = models.BooleanField(default=0)
+    activity = models.ForeignKey(Activity, models.DO_NOTHING)
     def __str__(self):
         return self.id
 
