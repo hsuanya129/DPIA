@@ -13,6 +13,22 @@
       /*padding: 50px;*/
       text-align: center;    
     }
+    th.stakeholder{
+      padding: 10px;
+      border: 1px solid black;
+      border-collapse: collapse;
+      font-weight:bold;
+    }
+    td.stakeholder{
+      padding: 5px;
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+    table.stakeholder{
+      padding: 10px;
+      border: 2px solid black;
+      border-collapse: collapse;
+    }
 	</style>
 </head>
 <body>
@@ -43,63 +59,63 @@
 	{% endfor %}
 	{% endfor %}
 	<hr>
+
 	<h1>專案參與的利益相關者</h1>
-	{% for stakeholder in stakeholder_all %}
-	<h2>姓名</h2>
-	<h4>{{ stakeholder.name }}</h4>
-	<hr>
-	<h2>角色</h2>
-	<h4>{{ stakeholder.role }}</h4>
-	<hr>
-	<h2>信箱</h2>
-	<h4>{{ stakeholder.email }}</h4>
-	<hr>
-	<h2>參與專案部分</h2>
-	<h4>{{ stakeholder.part }}</h4>
-	<hr>
-	<h2>回饋</h2>
-	<h4>{{ stakeholder.feedback }}</h4>
-	<hr>
-	{% endfor %}
+	<table class="stakeholder">
+		<tr class="stakeholder">
+			<th class="stakeholder">姓名</th>
+			<th class="stakeholder">角色</th>
+			<th class="stakeholder">信箱</th>
+			<th class="stakeholder">參與專案部分</th>
+			<th class="stakeholder">回饋</th>
+		</tr>
+		{% for stakeholder in stakeholder_all %}
 
-
+		<tr class="stakeholder">
+			<td class="stakeholder">{{ stakeholder.name }}</td>
+			<td class="stakeholder">{{ stakeholder.role }}</td>
+			<td class="stakeholder">{{ stakeholder.email }}</td>
+			<td class="stakeholder">{{ stakeholder.part }}</td>
+			<td class="stakeholder">{{ stakeholder.feedback }}</td>
+		</tr>
+		{% endfor %}
+	</table>
 
 	<h1>Dataflow</h1>
-	<h2>Swimlane svg</h2>
 	<div>{{ swimlane.svg | safe }}</div>
 
 
 
 
 	<h1>適用評估之項目</h1>
-	<table style="border: 2px solid black">
+	<table  class="stakeholder">
 	  <tr>
-        <td align="center"><span style="font-size:20px;">Process</td> 
-        <td align="center"><span style="font-size:20px;">Pii</td>
-        <td align="center"><span style="font-size:20px;">Value</td>
-        <td align="center"><span style="font-size:20px;">Asset</td>
-        <td align="center"><span style="font-size:20px;">Risk</td>
-        <td align="center"><span style="font-size:20px;">Probability</td>
-        <td align="center"><span style="font-size:20px;">Description</td>
+        <td  class="stakeholder" align="center"><span style="font-size:20px;">流程</td> 
+        <td  class="stakeholder" align="center"><span style="font-size:20px;">個人隱私資料</td>
+        <td  class="stakeholder" align="center"><span style="font-size:20px;">嚴重性</td>
+        <td  class="stakeholder" align="center"><span style="font-size:20px;">人員/系統</td>
+        <td  class="stakeholder" align="center"><span style="font-size:20px;">風險</td>
+        <td  class="stakeholder" align="center"><span style="font-size:20px;">可能性</td>
+        <td  class="stakeholder" align="center"><span style="font-size:20px;">描述</td>
       </tr>
       {% for evaluation in evaluation_all %}
       <tr>
-        <td align="center" rowspan="4">{{ evaluation.process.name }}</td>
-        <td align="center" rowspan="4">{{ evaluation.pii.name }}</td>
-        <td align="center" rowspan="4">{{ evaluation.pii.value }}</td>
+        <td align="center" rowspan="4"  class="stakeholder">{{ evaluation.process.name }}</td>
+        <td align="center" rowspan="4"  class="stakeholder">{{ evaluation.pii.name }}</td>
+        <td align="center" rowspan="4"  class="stakeholder">{{ evaluation.pii.value }}</td>
 
         {% if evaluation.participant_id is None %}
-        <td  align="center" rowspan="4">{{ evaluation.system.name }}</td>
+        <td  align="center" rowspan="4"  class="stakeholder">{{ evaluation.system.name }}</td>
         {% else %}
-        <td align="center" rowspan="4">{{ evaluation.participant.name }}</td>
+        <td align="center" rowspan="4"  class="stakeholder">{{ evaluation.participant.name }}</td>
         {% endif %}
 
         {% for item in evaluation_item_all %}
         {% if item.evaluation_id == evaluation.id %}
         <tr>
-        	<td>{{ item.risk }}</td>  
-        	<td>{{ item.probability }}</td>
-        	<td>{{ item.description }}</td>
+        	<td  class="stakeholder">{{ item.risk }}</td>  
+        	<td  class="stakeholder">{{ item.probability }}</td>
+        	<td  class="stakeholder">{{ item.description }}</td>
         </tr>
         {% endif %}
         {% endfor %}
