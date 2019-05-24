@@ -493,11 +493,27 @@ def evaluation(request):
 
 def risk_mapping(request):
     pk = activityID
+    # pk=166
+    i=0
+    pii_list=list()#用來存pii中，有evaluation適用的, pii_list[i]表示為在第i個pii中，有applicable的evaluation_item的id
+    for pii in Pii.objects.filter(activity_id=pk):
+        pii_list.append(pii.name)
+        for evaluation in Evaluation.objects.filter(activity_id=pk):
+            for item in EvaluationItem.objects.filter(evaluation_id=evaluation.id):
+                if (item.evaluation.pii.id == pii.id and item.applicable== True):
+                    pii_list[i]=pii_list[i]+","+str(item.id)
+
+        print(pii_list[i])
+        i+=1
+
+
+
     context = {
-        'evaluation_item_all': EvaluationItem.objects.all(),
-        'evaluation_all': Evaluation.objects.filter(activity_id=pk, applicable=True)
+        'pii_all' : Pii.objects.filter(activity_id=pk),
+        'pii_list' : pii_list,
+        'item_all' : EvaluationItem.objects.all()
     }
-    return render(request, 'team/risk_mapping.html', context)
+    return render(request, 'team/risk_mapping.html',context)
 
 
 def choose_pia(request):
