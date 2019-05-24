@@ -510,7 +510,7 @@ def risk_mapping(request):
     context = {
         'pii_all' : Pii.objects.filter(activity_id=pk),
         'pii_list' : pii_list,
-        'item_all' : EvaluationItem.objects.filter(applicable=True)
+        'item_all' : EvaluationItem.objects.filter(applicable=True,activity_id=pk)
     }
     return render(request, 'team/risk_mapping.html',context)
 
