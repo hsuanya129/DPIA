@@ -1,88 +1,95 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>Risk mapping</title>
 	<style>
-    td.graph{
-   	  width:100px;
-      height:100px;
-      border: 2px solid gray;
-      border-collapse: collapse;
-    }
-    th, td {
-      /*padding: 50px;*/
-      text-align: center;    
-    }
-    div.box {
-      width: 250px;
-      padding: 10px;
-      margin: 10px;
-      border: 3px dashed #ccc;
-      float:left;
-    }
-    /*div.mapping_div {
+		td.graph {
+			width: 100px;
+			height: 100px;
+			border: 2px solid gray;
+			border-collapse: collapse;
+		}
+
+		th,
+		td {
+			/*padding: 50px;*/
+			text-align: center;
+		}
+
+		div.box {
+			width: 250px;
+			padding: 10px;
+			margin: 10px;
+			border: 3px dashed #ccc;
+			float: left;
+		}
+
+		/*div.mapping_div {
       float:right;
     }*/
-    div.mapping_div{
-    	right: 0;
-    	position:fixed;
-        /*color:#FFF;
+		div.mapping_div {
+			width: 700px;
+			float:right;
+			position: fixed;
+			font-family: "Microsoft JhengHei", Arial, serif;
+			/*color:#FFF;
         
         bottom:5vh;
         right:23vh;
         cursor:pointer;*/
-    }
-    div.box span {
-      color: Black;
-      font-weight: bold;
-      font-family: "Microsoft JhengHei", Arial, serif;
-    }
+		}
 
-    div.content {
-      width: 250px;
-      margin: 0px;
-      padding-left: 0px;
-      border: 0px solid #ff6666;
-    }
+		div.box span {
+			color: Black;
+			font-weight: bold;
+			font-family: "Microsoft JhengHei", Arial, serif;
+		}
 
-    text {
-      width: 250px;
-      height: 100px;
-      margin: 0px;
-      border: 0px solid #6699cc;
-      font-family: "Microsoft JhengHei", Arial, serif;
-    }
+		div.content {
+			width: 250px;
+			margin: 0px;
+			padding-left: 0px;
+			border: 0px solid #ff6666;
+		}
 
-    .button {
-      display: inline-block;
-      text-align: center;
-      vertical-align: middle;
-      padding: 1px 5px;
-      border: 1px solid #b3b3b3;
-      border-radius: 70px;
-      background: #ffffff;
-      background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
-      background: -moz-linear-gradient(top, #ffffff, #ffffff);
-      background: linear-gradient(to bottom, #ffffff, #ffffff);
-      font: normal normal bold 15px arial;
-      color: #111111;
-      text-decoration: none;
-    }
+		text {
+			width: 250px;
+			height: 100px;
+			margin: 0px;
+			border: 0px solid #6699cc;
+			font-family: "Microsoft JhengHei", Arial, serif;
+		}
 
+		.button {
+			display: inline-block;
+			text-align: center;
+			vertical-align: middle;
+			padding: 1px 5px;
+			border: 1px solid #b3b3b3;
+			border-radius: 70px;
+			background: #ffffff;
+			background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
+			background: -moz-linear-gradient(top, #ffffff, #ffffff);
+			background: linear-gradient(to bottom, #ffffff, #ffffff);
+			font: normal normal bold 15px arial;
+			color: #111111;
+			text-decoration: none;
+		}
 	</style>
 </head>
 <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script type="text/javascript">
-        $(function () {
-        $(".test").hide();  // 默认隐藏状态
-        $(".button").click(function () {
-          $(".test").toggle('slow');  // 改变显隐状态
-          $(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
-        })
-      })
+	$(function () {
+		$(".test").hide();  // 默认隐藏状态
+		$(".button").click(function () {
+			$(".test").toggle('slow');  // 改变显隐状态
+			$(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
+		})
+	})
 </script>
 <script type="text/javascript">
-	window.show_risk=function(data){
+	window.show_risk = function (data) {
 		var pii_poisition = data.split(",");
 		var pii = pii_poisition[0];
 		var serverity = pii_poisition[1];
@@ -92,149 +99,182 @@
 		var pii_data;
 
 		{% for pii_list_item in pii_list %}
-			if ("{{pii_list_item}}".includes(pii_poisition[0])){
-				pii_data = "{{pii_list_item}}";
-			}
+		if ("{{pii_list_item}}".includes(pii_poisition[0])) {
+			pii_data = "{{pii_list_item}}";
+		}
 		{% endfor %}
 
 		var pii_data_split = pii_data.split(",");
 		var mapping = document.getElementById("mapping");
 		mapping.innerHTML = "";
-		mapping_string="";
+		mapping_string = "";
 		{% for item in item_all %}
-			for(i=1;i<pii_data_split.length;i++){
-				if ("{{ item.id }}" == pii_data_split[i] && "{{ item.probability }}" == probability){
-					if ("{{item.evaluation.participant.name}}"!=""){
-						console.log("{{item.evaluation.particpant_id}}")
-						obj ="風險: "+"{{ item.risk }}"+" 流程: "+"{{item.evaluation.process.name}}"+" 個人隱私資料: "+"{{item.evaluation.pii.name}}"+" 人員: "+"{{item.evaluation.participant.name}}<br/>"+" 描述: "+"{{item.description}}<br/>";
-						mapping_string=mapping_string.concat(obj);
-					} else {
-						obj = "風險: "+"{{ item.risk }}"+" 流程: "+"{{item.evaluation.process.name}}"+" 個人隱私資料: "+"{{item.evaluation.pii.name}}"+" 系統: "+"{{item.evaluation.system.name}}<br/>"+" 描述: "+"{{item.description}}<br/>";
-						mapping_string=mapping_string.concat(obj);
-					}
-					
-					// console.log(typeof(mapping_context));
+		for (i = 1; i < pii_data_split.length; i++) {
+			if ("{{ item.id }}" == pii_data_split[i] && "{{ item.probability }}" == probability) {
+				if ("{{item.evaluation.participant.name}}" != "") {
+					console.log("{{item.evaluation.particpant_id}}")
+					obj = "風險: " + "{{ item.risk }}" + " 流程: " + "{{item.evaluation.process.name}}" + " 個人隱私資料: " + "{{item.evaluation.pii.name}}" + " 人員: " + "{{item.evaluation.participant.name}}<br/>" + " 描述: " + "{{item.description}}<br/>";
+					mapping_string = mapping_string.concat(obj);
+				} else {
+					obj = "風險: " + "{{ item.risk }}" + " 流程: " + "{{item.evaluation.process.name}}" + " 個人隱私資料: " + "{{item.evaluation.pii.name}}" + " 系統: " + "{{item.evaluation.system.name}}<br/>" + " 描述: " + "{{item.description}}<br/>";
+					mapping_string = mapping_string.concat(obj);
 				}
+
+				// console.log(typeof(mapping_context));
 			}
+		}
 		{% endfor %}
-		mapping.innerHTML=(mapping_string)
+		mapping.innerHTML = (mapping_string)
 
 
-		
+
 	}
 </script>
+
 <body>
-	<div align="left">
-	{% for pii in pii_all %}
+	<div>
+		<div align="left" style="display: inline-block; width: 700px;">
+			{% for pii in pii_all %}
 
-	{% for pii_list_item in pii_list %}
+			{% for pii_list_item in pii_list %}
 
-		{% if "," in pii_list_item and pii.name in pii_list_item %}
-		
-		<table>
+			{% if "," in pii_list_item and pii.name in pii_list_item %}
 
-		<caption id="{{ pii.id }}caption"></caption>
+			<table>
 
-		<tr>
-			<td colspan="2" valign="bottom">Level of impact
-			</td>
-			<td colspan="3" valign="bottom"></td>
-		</tr>
-		<tr>
-			<td>4.Maximum
-			</td>
-			<td  class="graph" bgcolor="#e88866"><a href='javascript: show_risk("{{ pii.name }},4,1")' ><div id="{{ pii.id }}41"></div></a>
-			</td>
-			<td  class="graph" bgcolor="#ea5f2c"><a href='javascript: show_risk("{{ pii.name }},4,2")' ><div id="{{ pii.id }}42"></div></a>
-			</td>
-			<td  class="graph" bgcolor="#dd4040"><a href='javascript: show_risk("{{ pii.name }},4,3")' ><div id="{{ pii.id }}43"></div></a>
-			</td>
-			<td  class="graph" bgcolor="#ad1d1d"><a href='javascript: show_risk("{{ pii.name }},4,4")' ><div id="{{ pii.id }}44"></div></a>
-			</td>
-		</tr>
-		<tr>
-			<td>3.Significant
-			</td>
-			<td  class="graph" bgcolor="#d8d517"><a href='javascript: show_risk("{{ pii.name }},3,1")' ><div id="{{ pii.id }}31"></div></a>
-			</td>
-			<td  class="graph" bgcolor="#e88866"><a href='javascript: show_risk("{{ pii.name }},3,2")' ><div id="{{ pii.id }}32"></div></a>
-			</td>
-			<td class="graph" bgcolor="#ea5f2c"><a href='javascript: show_risk("{{ pii.name }},3,3")' ><div id="{{ pii.id }}33"></div></a>
-			</td>
-			<td  class="graph" bgcolor="#dd4040"><a href='javascript: show_risk("{{ pii.name }},3,4")' ><div id="{{ pii.id }}34"></div></a>
-			</td>
-		</tr>
-		<tr>
-			<td>2.Limited
-			</td>
-			<td  class="graph" bgcolor="#f7f588"><a href='javascript: show_risk("{{ pii.name }},2,1")' ><div id="{{ pii.id }}21"></div>
-			</a></td>
-			<td class="graph" bgcolor="#d8d517"><a href='javascript: show_risk("{{ pii.name }},2,2")' ><div id="{{ pii.id }}22"></div></a>
-			</td>
-			<td  class="graph" bgcolor="#e88866"><a href='javascript: show_risk("{{ pii.name }},2,3")' ><div id="{{ pii.id }}23"></div></a>
-			</td>
-			<td  class="graph" bgcolor="#ea5f2c"><a href='javascript: show_risk("{{ pii.name }},2,4")' ><div id="{{ pii.id }}24"></div></a>
-			</td>
-		</tr>
-		<tr>
-			<td>1.Negligible
-			</td>
-			<td  class="graph" bgcolor="#b5b8ce"><a href='javascript: show_risk("{{ pii.name }},1,1")' ><div id="{{ pii.id }}11"></div></a>
-			</td>
-			<td  class="graph" bgcolor="#f7f588"><a href='javascript: show_risk("{{ pii.name }},1,2")' ><div id="{{ pii.id }}12"></div></a>
-			</td>
-			<td  class="graph" bgcolor="#d8d517"><a href='javascript: show_risk("{{ pii.name }},1,3")' ><div id="{{ pii.id }}13"></div></a>
-			</td>
-			<td class="graph" bgcolor="#e88866"><a href='javascript: show_risk("{{ pii.name }},1,4")' ><div  id="{{ pii.id }}14"></div></a>
-			<td valign="bottom">Likelihood</td>
-			</td>
-		</tr>
-		<tr>
-			<td>
-			</td>
-			<td valign="top">1.Negligible
-			</td>
-			<td valign="top">2.Limited
-			</td>
-			<td valign="top">3.Significant
-			</td>
-			<td valign="top">4.Maximum
-			</td>
-		</tr>
-	</table>
-	<script type="text/javascript">
-		p=[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]; //to sum up counts of eva_item that applicable=true
-	</script>
-	{% for item in item_all %}
-	<script type="text/javascript">
-		var pii_element = "{{ pii_list_item }}".split(",");
-		document.getElementById("{{ pii.id }}"+'caption').innerHTML="個人隱私資料: "+pii_element[0];
-		for (i =1; i<pii_element.length;i+=1){
-			if (pii_element[i] == "{{ item.id }}"){
-				var position = "{{ item.evaluation.pii.value }}"+"{{ item.probability }}";
-				p[parseInt("{{ item.evaluation.pii.value }}")-1][parseInt("{{ item.probability }}")-1]+=1
+				<caption id="{{ pii.id }}caption"></caption>
 
-				document.getElementById("{{ pii.id }}"+position).innerHTML=p["{{ item.evaluation.pii.value }}"-1]["{{ item.probability }}"-1]}
+				<tr>
+					<td colspan="2" valign="bottom">Level of impact
+					</td>
+					<td colspan="3" valign="bottom"></td>
+				</tr>
+				<tr>
+					<td>4.Maximum
+					</td>
+					<td class="graph" bgcolor="#e88866"><a href='javascript: show_risk("{{ pii.name }},4,1")'>
+							<div id="{{ pii.id }}41"></div>
+						</a>
+					</td>
+					<td class="graph" bgcolor="#ea5f2c"><a href='javascript: show_risk("{{ pii.name }},4,2")'>
+							<div id="{{ pii.id }}42"></div>
+						</a>
+					</td>
+					<td class="graph" bgcolor="#dd4040"><a href='javascript: show_risk("{{ pii.name }},4,3")'>
+							<div id="{{ pii.id }}43"></div>
+						</a>
+					</td>
+					<td class="graph" bgcolor="#ad1d1d"><a href='javascript: show_risk("{{ pii.name }},4,4")'>
+							<div id="{{ pii.id }}44"></div>
+						</a>
+					</td>
+				</tr>
+				<tr>
+					<td>3.Significant
+					</td>
+					<td class="graph" bgcolor="#d8d517"><a href='javascript: show_risk("{{ pii.name }},3,1")'>
+							<div id="{{ pii.id }}31"></div>
+						</a>
+					</td>
+					<td class="graph" bgcolor="#e88866"><a href='javascript: show_risk("{{ pii.name }},3,2")'>
+							<div id="{{ pii.id }}32"></div>
+						</a>
+					</td>
+					<td class="graph" bgcolor="#ea5f2c"><a href='javascript: show_risk("{{ pii.name }},3,3")'>
+							<div id="{{ pii.id }}33"></div>
+						</a>
+					</td>
+					<td class="graph" bgcolor="#dd4040"><a href='javascript: show_risk("{{ pii.name }},3,4")'>
+							<div id="{{ pii.id }}34"></div>
+						</a>
+					</td>
+				</tr>
+				<tr>
+					<td>2.Limited
+					</td>
+					<td class="graph" bgcolor="#f7f588"><a href='javascript: show_risk("{{ pii.name }},2,1")'>
+							<div id="{{ pii.id }}21"></div>
+						</a></td>
+					<td class="graph" bgcolor="#d8d517"><a href='javascript: show_risk("{{ pii.name }},2,2")'>
+							<div id="{{ pii.id }}22"></div>
+						</a>
+					</td>
+					<td class="graph" bgcolor="#e88866"><a href='javascript: show_risk("{{ pii.name }},2,3")'>
+							<div id="{{ pii.id }}23"></div>
+						</a>
+					</td>
+					<td class="graph" bgcolor="#ea5f2c"><a href='javascript: show_risk("{{ pii.name }},2,4")'>
+							<div id="{{ pii.id }}24"></div>
+						</a>
+					</td>
+				</tr>
+				<tr>
+					<td>1.Negligible
+					</td>
+					<td class="graph" bgcolor="#b5b8ce"><a href='javascript: show_risk("{{ pii.name }},1,1")'>
+							<div id="{{ pii.id }}11"></div>
+						</a>
+					</td>
+					<td class="graph" bgcolor="#f7f588"><a href='javascript: show_risk("{{ pii.name }},1,2")'>
+							<div id="{{ pii.id }}12"></div>
+						</a>
+					</td>
+					<td class="graph" bgcolor="#d8d517"><a href='javascript: show_risk("{{ pii.name }},1,3")'>
+							<div id="{{ pii.id }}13"></div>
+						</a>
+					</td>
+					<td class="graph" bgcolor="#e88866"><a href='javascript: show_risk("{{ pii.name }},1,4")'>
+							<div id="{{ pii.id }}14"></div>
+						</a>
+					<td valign="bottom">Likelihood</td>
+					</td>
+				</tr>
+				<tr>
+					<td>
+					</td>
+					<td valign="top">1.Negligible
+					</td>
+					<td valign="top">2.Limited
+					</td>
+					<td valign="top">3.Significant
+					</td>
+					<td valign="top">4.Maximum
+					</td>
+				</tr>
+			</table>
+			<script type="text/javascript">
+				p = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]; //to sum up counts of eva_item that applicable=true
+			</script>
+			{% for item in item_all %}
+			<script type="text/javascript">
+				var pii_element = "{{ pii_list_item }}".split(",");
+				document.getElementById("{{ pii.id }}" + 'caption').innerHTML = "個人隱私資料: " + pii_element[0];
+				for (i = 1; i < pii_element.length; i += 1) {
+					if (pii_element[i] == "{{ item.id }}") {
+						var position = "{{ item.evaluation.pii.value }}" + "{{ item.probability }}";
+						p[parseInt("{{ item.evaluation.pii.value }}") - 1][parseInt("{{ item.probability }}") - 1] += 1
 
-		}
-	</script>
-	{% endfor %}
-	
-	<br>
-	<br>
-	<hr align="left" width="50%">
-	<br>
-	<br>
-	{% endif %}
-	{% endfor %}
-	{% endfor %}
-	</div>
-	<div id="mapping"  class="mapping_div" >
-		
+						document.getElementById("{{ pii.id }}" + position).innerHTML = p["{{ item.evaluation.pii.value }}" - 1]["{{ item.probability }}" - 1]
+					}
+
+				}
+			</script>
+			{% endfor %}
+
+			<br>
+			<br>
+			<hr align="left" width="50%">
+			<br>
+			<br>
+			{% endif %}
+			{% endfor %}
+			{% endfor %}
+		</div>
+		<div id="mapping" class="mapping_div" style="display: inline-block;">
+
+		</div>
 	</div>
 	<a href="/team/pia_examine/"><button>整體報告</button></a>
-
-  
 
 </body>
 
