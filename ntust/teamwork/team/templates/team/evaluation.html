@@ -133,6 +133,31 @@ body, h1,h2,h3,h4,h5,h6 {font-family: "Microsoft JhengHei"}
 #main {margin-left: 100px}
 /* Remove margins from "page content" on small screens */
 @media only screen and (max-width: 600px) {#main {margin-left: 0}}
+    .text2{
+    /*  width:100px;*/
+/*      text-align: center;*/
+      color:white;
+    }
+    .text2:hover .hover{
+      display:block;
+    }
+    .hover{
+      border:dotted;
+      border-color:white;
+      position: absolute;
+      width:250px;
+      display:none;
+      background-color:#444444;
+    }
+    .belosed{
+      text-align: left;
+      color:white;
+    }
+    .belosee{
+      text-align: left;
+      font-size:15px;
+      color:white;
+    }
 </style>
 <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script type="text/javascript">
@@ -148,8 +173,6 @@ body, h1,h2,h3,h4,h5,h6 {font-family: "Microsoft JhengHei"}
 
   <!-- Contact Section -->
   <div class="containerbox  w3-padding-64 w3-content w3text-light-grey" >
-
-      
    <table  >
     <form action="../evaluation/" method="post">
       <tr>
@@ -157,9 +180,26 @@ body, h1,h2,h3,h4,h5,h6 {font-family: "Microsoft JhengHei"}
         <td align="center"><span style="font-size:20px;">隱私資料</td>
         <td align="center"><span style="font-size:20px;">嚴重性</td>
         <td align="center"><span style="font-size:20px;">系統/人員</td>
-        <td align="center"><span style="font-size:20px;">適用性</td>
+        <td align="center"><span style="font-size:20px;">
+        <div class="text2"><span><a>適用性</a></span>
+            <div class="hover">
+              <div class="belosed">
+                    具有法律或類似重大影響的自動決策制定，旨在對產生"法律效力"的數據主體做出決定的處理自然人"或"同樣顯著影響自然人"。 例如，程序可能導致排斥或歧視個人。對個人影響很小或沒有影響的程序與此不符。
+              </div>
+            </div>
+        </div></td>
         <td align="center"><span style="font-size:20px;">風險</td>
-        <td align="center"><span style="font-size:20px;">可能性</td>
+        <td align="center"><span style="font-size:20px;">
+          <div class="text2"><span><a>可能性</a></span>
+            <div class="hover">
+              <div class="belosee">
+                    1(可能性微小):通過利用支持資產的屬性（例如：儲存在由標記閱讀器和訪問代碼保護的房間中的紙質文檔的盜竊），所選擇的風險源幾乎不可能實現。<br>
+                    2(可能性有限):通過利用支持資產的屬性（例如：儲存在由標記閱讀器保護的房間中的紙質文件的盜竊），所選擇的風險源似乎難以實現威脅。<br>
+                    3(顯著的可能性):所選擇的風險來源似乎有可能通過利用支持資產的屬性來實現威脅（例如：盜竊儲存在辦公室中的紙質文件，如果沒有首先在接待處登記就無法訪問)。<br>
+                    4(可能性極大):通過利用支持資產的屬性（例如：盜竊儲存在公共大廳的紙質文檔），選定的風險源非常容易實現。
+              </div>
+            </div>
+        </div></td>
         <td align="center"><span style="font-size:20px;">描述</td>
       
       </tr>
@@ -187,7 +227,33 @@ body, h1,h2,h3,h4,h5,h6 {font-family: "Microsoft JhengHei"}
             </label>
         </td>
         
-        <td>{{ item.risk }}</td>  
+        <td><!-- {{ item.risk }} -->
+          {% if item.risk == "Disappearance of Pii" %}
+          <div class="text2"><span><a>Disappearance of Pii</a></span>
+            <div class="hover">
+              <div class="belosee">
+                    例如:洪水、火、自然磨損造成的損壞、存儲設備故障等。
+              </div>
+            </div>
+        </div>
+          {% elif item.risk == "Illeagal of uasge" %}
+          <div class="text2"><span><a>Illeagal of uasge</a></span>
+            <div class="hover">
+              <div class="belosee">
+                    例如:從酒店房間盜竊筆記型電腦、通過扒手竊取專業手機、丟失電子存儲設備等。
+              </div>
+            </div>
+        </div>
+          {% else %}
+          <div class="text2"><span><a>Unwanted modified Pii</a></span>
+            <div class="hover">
+              <div class="belosee">
+                    例如:添加不兼容的硬件導致故障、刪除對應用程序正常運行至關重要的組件等。
+              </div>
+            </div>
+        </div>
+        {% endif %}
+        </td>  
         <td><select name="probability{{ item.id }}" required="required">
             <option value ="1">1</option>
             <option value ="2">2</option>
