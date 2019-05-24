@@ -20,7 +20,18 @@
       border: 3px dashed #ccc;
       float:left;
     }
-
+    /*div.mapping_div {
+      float:right;
+    }*/
+    div.mapping_div{
+    	right: 0;
+    	position:fixed;
+        /*color:#FFF;
+        
+        bottom:5vh;
+        right:23vh;
+        cursor:pointer;*/
+    }
     div.box span {
       color: Black;
       font-weight: bold;
@@ -70,20 +81,59 @@
         })
       })
 </script>
+<script type="text/javascript">
+	window.show_risk=function(data){
+		var pii_poisition = data.split(",");
+		var pii = pii_poisition[0];
+		var serverity = pii_poisition[1];
+		var probability = pii_poisition[2];
+
+		var pii_list = Array.from("{{ pii_list }}");
+		var pii_data;
+
+		{% for pii_list_item in pii_list %}
+			if ("{{pii_list_item}}".includes(pii_poisition[0])){
+				pii_data = "{{pii_list_item}}";
+			}
+		{% endfor %}
+
+		var pii_data_split = pii_data.split(",");
+		var mapping = document.getElementById("mapping");
+		mapping.innerHTML = "";
+		mapping_string="";
+		{% for item in item_all %}
+			for(i=1;i<pii_data_split.length;i++){
+				if ("{{ item.id }}" == pii_data_split[i] && "{{ item.probability }}" == probability){
+					if ("{{item.evaluation.participant.name}}"!=""){
+						console.log("{{item.evaluation.particpant_id}}")
+						obj ="風險: "+"{{ item.risk }}"+" 流程: "+"{{item.evaluation.process.name}}"+" 個人隱私資料: "+"{{item.evaluation.pii.name}}"+" 人員: "+"{{item.evaluation.participant.name}}<br/>"+" 描述: "+"{{item.description}}<br/>";
+						mapping_string=mapping_string.concat(obj);
+					} else {
+						obj = "風險: "+"{{ item.risk }}"+" 流程: "+"{{item.evaluation.process.name}}"+" 個人隱私資料: "+"{{item.evaluation.pii.name}}"+" 系統: "+"{{item.evaluation.system.name}}<br/>"+" 描述: "+"{{item.description}}<br/>";
+						mapping_string=mapping_string.concat(obj);
+					}
+					
+					// console.log(typeof(mapping_context));
+				}
+			}
+		{% endfor %}
+		mapping.innerHTML=(mapping_string)
+
+
+		
+	}
+</script>
 <body>
+	<div align="left">
+	{% for pii in pii_all %}
 
-	{% for group in evaluation_all %}
+	{% for pii_list_item in pii_list %}
 
-	<table>
-		{% if group.participant %}
+		{% if "," in pii_list_item and pii.name in pii_list_item %}
+		
+		<table>
 
-		<caption>程序:{{ group.process.name }} 個人隱私資料:{{ group.pii.name }} 人員:{{ group.participant.name }} </caption>
-
-		{% else %}
-
-		<caption>程序:{{ group.process.name }} 個人隱私資料:{{ group.pii.name }} 系統:{{ group.system.name }} </caption>
-
-		{% endif %}
+		<caption id="{{ pii.id }}caption"></caption>
 
 		<tr>
 			<td colspan="2" valign="bottom">Level of impact
@@ -93,49 +143,49 @@
 		<tr>
 			<td>4.Maximum
 			</td>
-			<td id="{{ group.id }}41" class="graph" bgcolor="#e88866">
+			<td  class="graph" bgcolor="#e88866"><a href='javascript: show_risk("{{ pii.name }},4,1")' ><div id="{{ pii.id }}41"></div></a>
 			</td>
-			<td id="{{ group.id }}42" class="graph" bgcolor="#ea5f2c">
+			<td  class="graph" bgcolor="#ea5f2c"><a href='javascript: show_risk("{{ pii.name }},4,2")' ><div id="{{ pii.id }}42"></div></a>
 			</td>
-			<td id="{{ group.id }}43" class="graph" bgcolor="#dd4040">
+			<td  class="graph" bgcolor="#dd4040"><a href='javascript: show_risk("{{ pii.name }},4,3")' ><div id="{{ pii.id }}43"></div></a>
 			</td>
-			<td id="{{ group.id }}44" class="graph" bgcolor="#ad1d1d">
+			<td  class="graph" bgcolor="#ad1d1d"><a href='javascript: show_risk("{{ pii.name }},4,4")' ><div id="{{ pii.id }}44"></div></a>
 			</td>
 		</tr>
 		<tr>
 			<td>3.Significant
 			</td>
-			<td id="{{ group.id }}31" class="graph" bgcolor="#d8d517">
+			<td  class="graph" bgcolor="#d8d517"><a href='javascript: show_risk("{{ pii.name }},3,1")' ><div id="{{ pii.id }}31"></div></a>
 			</td>
-			<td id="{{ group.id }}32" class="graph" bgcolor="#e88866">
+			<td  class="graph" bgcolor="#e88866"><a href='javascript: show_risk("{{ pii.name }},3,2")' ><div id="{{ pii.id }}32"></div></a>
 			</td>
-			<td id="{{ group.id }}33" class="graph" bgcolor="#ea5f2c">
+			<td class="graph" bgcolor="#ea5f2c"><a href='javascript: show_risk("{{ pii.name }},3,3")' ><div id="{{ pii.id }}33"></div></a>
 			</td>
-			<td id="{{ group.id }}34" class="graph" bgcolor="#dd4040">
+			<td  class="graph" bgcolor="#dd4040"><a href='javascript: show_risk("{{ pii.name }},3,4")' ><div id="{{ pii.id }}34"></div></a>
 			</td>
 		</tr>
 		<tr>
 			<td>2.Limited
 			</td>
-			<td id="{{ group.id }}21" class="graph" bgcolor="#f7f588">
+			<td  class="graph" bgcolor="#f7f588"><a href='javascript: show_risk("{{ pii.name }},2,1")' ><div id="{{ pii.id }}21"></div>
+			</a></td>
+			<td class="graph" bgcolor="#d8d517"><a href='javascript: show_risk("{{ pii.name }},2,2")' ><div id="{{ pii.id }}22"></div></a>
 			</td>
-			<td id="{{ group.id }}22" class="graph" bgcolor="#d8d517">
+			<td  class="graph" bgcolor="#e88866"><a href='javascript: show_risk("{{ pii.name }},2,3")' ><div id="{{ pii.id }}23"></div></a>
 			</td>
-			<td id="{{ group.id }}23" class="graph" bgcolor="#e88866">
-			</td>
-			<td id="{{ group.id }}24" class="graph" bgcolor="#ea5f2c">
+			<td  class="graph" bgcolor="#ea5f2c"><a href='javascript: show_risk("{{ pii.name }},2,4")' ><div id="{{ pii.id }}24"></div></a>
 			</td>
 		</tr>
 		<tr>
 			<td>1.Negligible
 			</td>
-			<td id="{{ group.id }}11" class="graph" bgcolor="#b5b8ce">
+			<td  class="graph" bgcolor="#b5b8ce"><a href='javascript: show_risk("{{ pii.name }},1,1")' ><div id="{{ pii.id }}11"></div></a>
 			</td>
-			<td id="{{ group.id }}12" class="graph" bgcolor="#f7f588">
+			<td  class="graph" bgcolor="#f7f588"><a href='javascript: show_risk("{{ pii.name }},1,2")' ><div id="{{ pii.id }}12"></div></a>
 			</td>
-			<td id="{{ group.id }}13" class="graph" bgcolor="#d8d517">
+			<td  class="graph" bgcolor="#d8d517"><a href='javascript: show_risk("{{ pii.name }},1,3")' ><div id="{{ pii.id }}13"></div></a>
 			</td>
-			<td id="{{ group.id }}14" class="graph" bgcolor="#e88866">
+			<td class="graph" bgcolor="#e88866"><a href='javascript: show_risk("{{ pii.name }},1,4")' ><div  id="{{ pii.id }}14"></div></a>
 			<td valign="bottom">Likelihood</td>
 			</td>
 		</tr>
@@ -152,38 +202,40 @@
 			</td>
 		</tr>
 	</table>
-
-	{% for item in evaluation_item_all %}
-
-	{% if group.id == item.evaluation_id %}
-
 	<script type="text/javascript">
-		var probability = "{{ item.probability }}";
-		var value = "{{ group.value }}";
-		var position = "{{ group.id }}" + value + probability;
-		var text = document.getElementById(position).innerHTML;
-		document.getElementById(position).innerHTML = " {{ item.risk }}";
-		console.log(position+" {{ item.risk }}");
-		console.log("{{ item.evaluation.pii.name }}")
+		p=[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]; //to sum up counts of eva_item that applicable=true
 	</script>
+	{% for item in item_all %}
+	<script type="text/javascript">
+		var pii_element = "{{ pii_list_item }}".split(",");
+		document.getElementById("{{ pii.id }}"+'caption').innerHTML="個人隱私資料: "+pii_element[0];
+		for (i =1; i<pii_element.length;i+=1){
+			if (pii_element[i] == "{{ item.id }}"){
+				var position = "{{ item.evaluation.pii.value }}"+"{{ item.probability }}";
+				p[parseInt("{{ item.evaluation.pii.value }}")-1][parseInt("{{ item.probability }}")-1]+=1
 
+				document.getElementById("{{ pii.id }}"+position).innerHTML=p["{{ item.evaluation.pii.value }}"-1]["{{ item.probability }}"-1]}
+
+		}
+	</script>
+	{% endfor %}
+	
+	<br>
+	<br>
+	<hr align="left" width="50%">
+	<br>
+	<br>
 	{% endif %}
 	{% endfor %}
-	<br>
-	<br>
-	<hr align="left" width="60%">
-	<br>
-	<br>
 	{% endfor %}
+	</div>
+	<div id="mapping"  class="mapping_div" >
+		
+	</div>
 	<a href="/team/pia_examine/"><button>整體報告</button></a>
-  <div class="box">
-    Risk Mapping:
-    <!--     <span>点击按钮实现展开和收起输入框的切换：</span> -->
-    <div class="content">
-      <span>Risk Mapping</span> <input type="button" class="button" value="+">
-      <div class="test"><text>圖表說明了良好的安全實踐，並根據之前步驟中的評估對每個實例進行了整合。</text></div>
-    </div>
-  </div>
+
+  
+
 </body>
 
 </html>
