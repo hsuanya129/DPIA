@@ -40,9 +40,11 @@ def login_sign(request):
             return render(request, 'team/sign.html', locals())
     return render(request, 'team/home.html', locals())
 
+
 def activity_list(request):
     user_has_activity = UserHasActivity.objects.filter(user_id=userid)
     return render(request, 'team/choose_pia.html/', locals())
+
 
 def questionary(request, questionary_type_id=None):
 
@@ -101,13 +103,15 @@ def questionary(request, questionary_type_id=None):
 
 def stakeholder(request):
     if 'ok' in request.POST:
-        name = request.POST['name']
-        role = request.POST['role']
-        email = request.POST['email']
-        part = request.POST['part']
-        feedback = request.POST['feedback']
-        Stakeholder.objects.create(
-            name=name, role=role, email=email, part=part, feedback=feedback, activity_id=activityID)
+
+        name_list = request.POST.getlist('name')
+        role_list = request.POST.getlist('role')
+        email_list = request.POST.getlist('email')
+        part_list = request.POST.getlist('part')
+        feedback_list = request.POST.getlist('feedback')
+        for count in range(len(name_list)):
+            Stakeholder.objects.create(
+                name=name_list[count], role=role_list[count], email=email_list[count], part=part_list[count], feedback=feedback_list[count], activity_id=activityID)
         return HttpResponseRedirect(base_url + 'team/questionary/1')
     return render(request, 'team/stakeholder.html', locals())
 
@@ -170,6 +174,7 @@ def dataflow_saveLane(request):
     swimlane_object_post.save()
 
     return render(request, 'team/dataflow.html')
+
 
 def dataflow_get(request):
     pk = activityID
@@ -420,7 +425,7 @@ def evaluation(request):
 
             for item in EvaluationItem.objects.filter(evaluation_id=group.id):
                 applicable_list.append(request.POST.get(
-                'applicable' + str(item.id)))
+                    'applicable' + str(item.id)))
                 probability_list.append(
                     request.POST.get('probability' + str(item.id)))
                 description_list.append(
@@ -439,7 +444,7 @@ def evaluation(request):
                 item.description = description_list[j]
                 item.save()
                 j += 1
-  
+
         return HttpResponseRedirect('/team/risk_mapping')
 
     # 在此創立evalation物件
@@ -462,11 +467,11 @@ def evaluation(request):
                         evaluation = Evaluation.objects.create(
                             activity_id=pk, pii_id=pii.id, system_id=system.id, value=pii.value, process_id=process.id)
                         EvaluationItem.objects.create(
-                            risk="Disappearance of Pii", evaluation_id=evaluation.id ,activity_id=pk)
+                            risk="Disappearance of Pii", evaluation_id=evaluation.id, activity_id=pk)
                         EvaluationItem.objects.create(
-                            risk="Illeagal of uasge", evaluation_id=evaluation.id,activity_id=pk)
+                            risk="Illeagal of uasge", evaluation_id=evaluation.id, activity_id=pk)
                         EvaluationItem.objects.create(
-                            risk="Unwanted modified Pii", evaluation_id=evaluation.id,activity_id=pk)
+                            risk="Unwanted modified Pii", evaluation_id=evaluation.id, activity_id=pk)
 
                     for process_has_participant in ProcessHasParticipant.objects.filter(process_id=process.id):
                         participant = Participant.objects.get(
@@ -474,11 +479,11 @@ def evaluation(request):
                         evaluation = Evaluation.objects.create(
                             activity_id=pk, pii_id=pii.id, participant_id=participant.id, value=pii.value, process_id=process.id)
                         EvaluationItem.objects.create(
-                            risk="Disappearance of Pii", evaluation_id=evaluation.id,activity_id=pk)
+                            risk="Disappearance of Pii", evaluation_id=evaluation.id, activity_id=pk)
                         EvaluationItem.objects.create(
-                            risk="Illeagal of uasge", evaluation_id=evaluation.id,activity_id=pk)
+                            risk="Illeagal of uasge", evaluation_id=evaluation.id, activity_id=pk)
                         EvaluationItem.objects.create(
-                            risk="Unwanted modified Pii", evaluation_id=evaluation.id,activity_id=pk)
+                            risk="Unwanted modified Pii", evaluation_id=evaluation.id, activity_id=pk)
 
         context = {
             'process_all': process_all,
@@ -490,29 +495,29 @@ def evaluation(request):
 
         return render(request, 'team/evaluation.html', context)
 
+
 def risk_mapping(request):
     pk = activityID
     # pk=166
-    i=0
-    pii_list=list()#用來存pii中，有evaluation適用的, pii_list[i]表示為在第i個pii中，有applicable的evaluation_item的id
+    i = 0
+    # 用來存pii中，有evaluation適用的, pii_list[i]表示為在第i個pii中，有applicable的evaluation_item的id
+    pii_list = list()
     for pii in Pii.objects.filter(activity_id=pk):
         pii_list.append(pii.name)
         for evaluation in Evaluation.objects.filter(activity_id=pk):
             for item in EvaluationItem.objects.filter(evaluation_id=evaluation.id):
-                if (item.evaluation.pii.id == pii.id and item.applicable== True):
-                    pii_list[i]=pii_list[i]+","+str(item.id)
+                if (item.evaluation.pii.id == pii.id and item.applicable == True):
+                    pii_list[i] = pii_list[i]+","+str(item.id)
 
         print(pii_list[i])
-        i+=1
-
-
+        i += 1
 
     context = {
-        'pii_all' : Pii.objects.filter(activity_id=pk),
-        'pii_list' : pii_list,
-        'item_all' : EvaluationItem.objects.filter(applicable=True,activity_id=pk)
+        'pii_all': Pii.objects.filter(activity_id=pk),
+        'pii_list': pii_list,
+        'item_all': EvaluationItem.objects.filter(applicable=True, activity_id=pk)
     }
-    return render(request, 'team/risk_mapping.html',context)
+    return render(request, 'team/risk_mapping.html', context)
 
 
 def choose_pia(request):
@@ -524,8 +529,9 @@ def choose_pia(request):
         global activityID
         activityID = pkk
         activity_project = Activity.objects.get(id=activityID)
-    
+
     return HttpResponseRedirect('/team/pia_examine/')
+
 
 def pia_examine(request):
     pk = activityID
