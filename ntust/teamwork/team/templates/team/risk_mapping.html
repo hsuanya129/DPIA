@@ -52,21 +52,39 @@
 			border: 0px solid #6699cc;
 			font-family: "Microsoft JhengHei", Arial, serif;
 		}
-
 		.button {
-			display: inline-block;
-			text-align: center;
-			vertical-align: middle;
-			padding: 1px 5px;
-			border: 1px solid #b3b3b3;
-			border-radius: 70px;
-			background: #ffffff;
-			background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
-			background: -moz-linear-gradient(top, #ffffff, #ffffff);
-			background: linear-gradient(to bottom, #ffffff, #ffffff);
-			font: normal normal bold 15px arial;
-			color: #111111;
-			text-decoration: none;
+		    display: inline-block;
+		    text-align: center;
+		    vertical-align: middle;
+		    padding: 12px 19px;
+		    border: 1px solid #d1cfd1;
+		    border-radius: 8px;
+		    background: #ffffff;
+		    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e0e0e0));
+		    background: -moz-linear-gradient(top, #ffffff, #e0e0e0);
+		    background: linear-gradient(to bottom, #ffffff, #e0e0e0);
+		    -webkit-box-shadow: #ffffff 0px 0px 0px 0px;
+		    -moz-box-shadow: #ffffff 0px 0px 0px 0px;
+		    box-shadow: #ffffff 0px 0px 0px 0px;
+		    text-shadow: #ffffff 0px 0px 0px;
+		    font: normal normal bold 20px arial;
+		    color: #5c5c5c;
+		    text-decoration: none;
+		}
+		.button:hover,
+		.button:focus {
+		    background: #ffffff;
+		    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
+		    background: -moz-linear-gradient(top, #ffffff, #ffffff);
+		    background: linear-gradient(to bottom, #ffffff, #ffffff);
+		    color: #5c5c5c;
+		    text-decoration: none;
+		}
+		.button:active {
+		    background: #999999;
+		    background: -webkit-gradient(linear, left top, left bottom, from(#999999), to(#e0e0e0));
+		    background: -moz-linear-gradient(top, #999999, #e0e0e0);
+		    background: linear-gradient(to bottom, #999999, #e0e0e0);
 		}
 	</style>
 </head>
@@ -103,49 +121,53 @@
 		mapping_d="<b>Disappearance of Pii : </b><br/>";
 		mapping_i="<b>Illeagal of uasge : </b><br/>";
 		mapping_u="<b>Unwanted modified Pii : </b><br/>";
-		{% for item in item_all %}
-		for (i = 1; i < pii_data_split.length; i++) {
-			if ("{{ item.id }}" == pii_data_split[i] && "{{ item.probability }}" == probability) {
-				if ("{{item.evaluation.participant.name}}" != "") {
-					console.log("{{item.evaluation.particpant_id}}")
-					obj = "    流程: " + "{{item.evaluation.process.name}}" + "  個人隱私資料: " + "{{item.evaluation.pii.name}}" + "  人員: " + "{{item.evaluation.participant.name}}" + "  描述: " + "{{item.description}}<br/>";
-					// mapping_string = mapping_string.concat(obj);
-				} else {
-					obj = "    流程: " + "{{item.evaluation.process.name}}" + "  個人隱私資料: " + "{{item.evaluation.pii.name}}" + "  系統: " + "{{item.evaluation.system.name}}" + "  描述: " + "{{item.description}}<br/>";
-					// mapping_string = mapping_string.concat(obj);
-				}
-				if ("{{item.risk}}" == "Disappearance of Pii"){
-					mapping_d = mapping_d.concat(obj);
+	    {% for item in item_all %}
+	    for (i = 1; i < pii_data_split.length; i++) {
+	      if ("{{ item.id }}" == pii_data_split[i] && "{{ item.probability }}" == probability) {
+	        if ("{{item.evaluation.participant.name}}" != "") {
+	          console.log("{{item.evaluation.particpant_id}}")
+	          obj = "    流程: " + "{{item.evaluation.process.name}}" + "  個人隱私資料: " + "{{item.evaluation.pii.name}}" + "  人員: " + "{{item.evaluation.participant.name}}\n" + "    描述: " + "{{item.description}}\n";
+	          // mapping_string = mapping_string.concat(obj);
+	        } else {
+	          obj = "    流程: " + "{{item.evaluation.process.name}}" + "  個人隱私資料: " + "{{item.evaluation.pii.name}}" + "  系統: " + "{{item.evaluation.system.name}}\n" + "    描述: " + "{{item.description}}\n";
+	          // mapping_string = mapping_string.concat(obj);
+	        }
+	        if ("{{item.risk}}" == "Disappearance of Pii"){
+	          mapping_d = mapping_d.concat(obj);
 
-				}else if("{{item.risk}}" == "Illeagal of uasge"){
-					mapping_i = mapping_i.concat(obj);
-				}else{
-					mapping_u = mapping_u.concat(obj);
-				}
+	        }else if("{{item.risk}}" == "Illeagal of uasge"){
+	          mapping_i = mapping_i.concat(obj);
+	        }else{
+	          mapping_u = mapping_u.concat(obj);
+	        }
 
-			}
-		}
-		{% endfor %}
-		if (mapping_d!="<b>Disappearance of Pii : </b><br/>"){
-			mapping_string = mapping_string .concat(mapping_d);
-		}
-		if (mapping_i!="<b>Illeagal of uasge : </b><br/>"){
-			mapping_string = mapping_string .concat(mapping_i);
-		}
-		if (mapping_u!="<b>Unwanted modified Pii : </b><br/>"){
-			mapping_string = mapping_string .concat(mapping_u);
-		}
-		mapping_string = mapping_string.replace(/ /g, '\u00a0');
-		mapping.innerHTML = mapping_string;
+	      }
+	    }
+	    {% endfor %}
+	    if (mapping_d!="Disappearance of Pii : \n"){
+	      mapping_string = mapping_string .concat(mapping_d);
+	    }
+	    if (mapping_i!="Illeagal of uasge : \n"){
+	      mapping_string = mapping_string .concat(mapping_i);
+	    }
+	    if (mapping_u!="Unwanted modified Pii : \n"){
+	      mapping_string = mapping_string .concat(mapping_u);
+	    }
+	    // mapping_string = mapping_string.replace(/ /g, '\u00a0');
+	    // mapping.innerHTML = mapping_string;
+	    alert(mapping_string);
 
 
 
 	}
 </script>
 
-<body>
-	<div>
-		<div align="left" style="display: inline-block; width: 700px;">
+<body style="background-color:#F5F5F5;">
+	<div style="width:80%;margin: 0 auto;background-color:#FFFFFF;text-align:center;box-shadow:3px 3px 12px gray;padding:3px;font-family:Microsoft JhengHei">
+		<h1 style="color:#191970">風險圖</h1>
+		<hr width="60%" align=center style="border-bottom:#191970 3px solid;border-left:#191970 3px solid;border-top:#191970 3px solid;border-right:#191970 3px solid;">
+		<br>
+		<div align="center" style="display: inline-block; width: 700px;">
 			{% for pii in pii_all %}
 
 			{% for pii_list_item in pii_list %}
@@ -275,18 +297,19 @@
 
 			<br>
 			<br>
-			<hr align="left" width="50%">
+			<hr align="center" width="70%">
 			<br>
 			<br>
 			{% endif %}
 			{% endfor %}
 			{% endfor %}
+			<a class="button" href="/team/pia_examine/"><!-- <button>整體報告</button> -->整體報告</a>
 		</div>
 		<div id="mapping" class="mapping_div" style="display: inline-block;">
 
 		</div>
 	</div>
-	<a href="/team/pia_examine/"><button>整體報告</button></a>
+
 
 </body>
 
