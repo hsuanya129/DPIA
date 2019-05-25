@@ -1,7 +1,16 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<title>Pia detail</title>
+  <title>Pia detail</title>
+  <style type="text/css">
+    #canvasDiv {
+      width: 80%;
+      margin: 0 auto;
+      text-align: center;
+      border: 2px solid gray;
+    }
+  </style>
   <style>
     td.graph {
       width: 100px;
@@ -10,7 +19,8 @@
       border-collapse: collapse;
     }
 
-    th,td {
+    th,
+    td {
       /*padding: 50px;*/
       text-align: center;
     }
@@ -25,7 +35,7 @@
 
     div.mapping_div {
       /*width: 700px;*/
-      z-index:999;
+      z-index: 999;
       /*float:right;*/
       position: fixed;
       font-family: "Microsoft JhengHei", Arial, serif;
@@ -68,363 +78,615 @@
       text-decoration: none;
     }
 
-    th.stakeholder{
+    th.stakeholder {
       padding: 10px;
       border: 1px solid black;
       border-collapse: collapse;
-      font-weight:bold;
+      font-weight: bold;
     }
-    td.stakeholder{
+
+    td.stakeholder {
       padding: 5px;
       border: 1px solid black;
       border-collapse: collapse;
     }
-    table.stakeholder{
+
+    table.stakeholder {
       padding: 10px;
       border: 2px solid black;
       border-collapse: collapse;
     }
-    .risk_mapping_text{
+
+    .risk_mapping_text {
       font-family: "Microsoft JhengHei", Arial, serif;
-      font-size:60px;
-      font-weight:bold;
+      font-size: 60px;
+      font-weight: bold;
     }
-    
+
+    .button1 {
+      display: inline-block;
+      text-align: center;
+      vertical-align: middle;
+      padding: 12px 19px;
+      border: 1px solid #d1cfd1;
+      border-radius: 8px;
+      background: #ffffff;
+      background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e0e0e0));
+      background: -moz-linear-gradient(top, #ffffff, #e0e0e0);
+      background: linear-gradient(to bottom, #ffffff, #e0e0e0);
+      -webkit-box-shadow: #ffffff 0px 0px 0px 0px;
+      -moz-box-shadow: #ffffff 0px 0px 0px 0px;
+      box-shadow: #ffffff 0px 0px 0px 0px;
+      text-shadow: #ffffff 0px 0px 0px;
+      font-family: "Microsoft JhengHei";
+      font: normal normal bold 20px;
+      color: #5c5c5c;
+      text-decoration: none;
+    }
+
+    .button1:hover,
+    .button1:focus {
+      background: #ffffff;
+      background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
+      background: -moz-linear-gradient(top, #ffffff, #ffffff);
+      background: linear-gradient(to bottom, #ffffff, #ffffff);
+      color: #5c5c5c;
+      text-decoration: none;
+    }
+
+    .button1:active {
+      background: #999999;
+      background: -webkit-gradient(linear, left top, left bottom, from(#999999), to(#e0e0e0));
+      background: -moz-linear-gradient(top, #999999, #e0e0e0);
+      background: linear-gradient(to bottom, #999999, #e0e0e0);
+    }
   </style>
-	<script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script type="text/javascript">
-  $(function () {
-    $(".test").hide();  // 默认隐藏状态
-    $(".button").click(function () {
-      $(".test").toggle('slow');  // 改变显隐状态
-      $(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
+  <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $(".test").hide();  // 默认隐藏状态
+      $(".button").click(function () {
+        $(".test").toggle('slow');  // 改变显隐状态
+        $(this).val($(this).val() == "+" ? "-" : "+"); // 改变按钮的文字说明
+      })
     })
-  })
-</script>
-<script type="text/javascript">
-  window.show_risk = function (data) {
-    var pii_poisition = data.split(",");
-    var pii = pii_poisition[0];
-    var serverity = pii_poisition[1];
-    var probability = pii_poisition[2];
+  </script>
 
-    var pii_list = Array.from("{{ pii_list }}");
-    var pii_data;
+  <script type="text/javascript">
+    window.show_risk = function (data) {
+      var pii_poisition = data.split(",");
+      var pii = pii_poisition[0];
+      var serverity = pii_poisition[1];
+      var probability = pii_poisition[2];
 
-    {% for pii_list_item in pii_list %}
-    if ("{{pii_list_item}}".includes(pii_poisition[0])) {
-      pii_data = "{{pii_list_item}}";
-    }
-    {% endfor %}
-
-    var pii_data_split = pii_data.split(",");
-    // var mapping = document.getElementById("mapping");
-    // mapping.innerHTML = "";
-    mapping_string = "";
-    mapping_d="Disappearance of Pii : \n";
-    mapping_i="Illeagal of uasge : \n";
-    mapping_u="Unwanted modified Pii : \n";
-    {% for item in item_all %}
-    for (i = 1; i < pii_data_split.length; i++) {
-      if ("{{ item.id }}" == pii_data_split[i] && "{{ item.probability }}" == probability) {
-        if ("{{item.evaluation.participant.name}}" != "") {
-          console.log("{{item.evaluation.particpant_id}}")
-          obj = "    流程: " + "{{item.evaluation.process.name}}" + "  個人隱私資料: " + "{{item.evaluation.pii.name}}" + "  人員: " + "{{item.evaluation.participant.name}}\n" + "    描述: " + "{{item.description}}\n";
-          // mapping_string = mapping_string.concat(obj);
-        } else {
-          obj = "    流程: " + "{{item.evaluation.process.name}}" + "  個人隱私資料: " + "{{item.evaluation.pii.name}}" + "  系統: " + "{{item.evaluation.system.name}}\n" + "    描述: " + "{{item.description}}\n";
-          // mapping_string = mapping_string.concat(obj);
-        }
-        if ("{{item.risk}}" == "Disappearance of Pii"){
-          mapping_d = mapping_d.concat(obj);
-
-        }else if("{{item.risk}}" == "Illeagal of uasge"){
-          mapping_i = mapping_i.concat(obj);
-        }else{
-          mapping_u = mapping_u.concat(obj);
-        }
-
-      }
-    }
-    {% endfor %}
-    if (mapping_d!="Disappearance of Pii : \n"){
-      mapping_string = mapping_string .concat(mapping_d);
-    }
-    if (mapping_i!="Illeagal of uasge : \n"){
-      mapping_string = mapping_string .concat(mapping_i);
-    }
-    if (mapping_u!="Unwanted modified Pii : \n"){
-      mapping_string = mapping_string .concat(mapping_u);
-    }
-    // mapping_string = mapping_string.replace(/ /g, '\u00a0');
-    // mapping.innerHTML = mapping_string;
-    alert(mapping_string);
-
-
-  }
-        //   function show_alert() {
-        //     alert("Hello! I am an alert box!");
-        // }
-</script>
-</head>
-<body style="background-color:#F5F5F5;">
-<!-- <div style="border-color:blue; border-style:solid;text-align:center;background-color:#DDDDDD;"> -->
-  <div style="width:80%;margin: 0 auto;background-color:#FFFFFF;text-align:center;box-shadow:3px 3px 12px gray;padding:3px;font-family:Microsoft JhengHei">
-<!--   <table class = "table" font-family: "Microsoft JhengHei" > -->
-  <h1 style="color:#191970;font-family:Microsoft JhengHei;" align="center">專案基本資料</h1>
-  <hr width="60%" align=center style="border-bottom:#191970 3px solid;border-left:#191970 3px solid;border-top:#191970 3px solid;border-right:#191970 3px solid;">
-	<h2>專案名稱</h2>
-	<h4>{{ activity.name }}</h4>
-	<h2>PIA負責人姓名</h2>
-	<h4>{{ activity.pia_manager_name }}</h4>
-	<h2>PIA負責人信箱</h2>
-	<h4>{{ activity.pia_manager_email }}</h4>
-	<h2>專案負責人姓名</h2>
-	<h4>{{ activity.activity_manager_name }}</h4>
-	<h2>專案負責人信箱</h2>
-	<h4>{{ activity.activity_manager_email }}</h4>
-	<h2>專案簡述</h2>
-	<h4>{{ activity.description }}</h4>
-	<h2>專案建立日期</h2>
-	<h4>{{ activity.date }}</h4>
-  <br>
-	<h1 style="color:#191970">專案GDPR適法性評估</h1>
-  <hr width="60%" align=center style="border-bottom:#191970 3px solid;border-left:#191970 3px solid;border-top:#191970 3px solid;border-right:#191970 3px solid;">
-	{% for question in question_1 %}
-	{% for answer in answer_all %}
-	{% if answer.question.id == question.id %}
-	<h2>{{ question.description }}</h2>
-	<h4>{{ answer.context }}</h4>
-	{% endif %}
-	{% endfor %}
-	{% endfor %}
-  <br>
-  <br>
-
-<div>
-	<h1 style="color:#191970">專案參與的利益相關者</h1>
-  <hr width="60%" align=center style="border-bottom:#191970 3px solid;border-left:#191970 3px solid;border-top:#191970 3px solid;border-right:#191970 3px solid;">
-  <br>
-	<table table align="center" class="stakeholder">
-		<tr class="stakeholder">
-			<th class="stakeholder">姓名</th>
-			<th class="stakeholder">角色</th>
-			<th class="stakeholder">信箱</th>
-			<th class="stakeholder">參與專案部分</th>
-			<th class="stakeholder">回饋</th>
-		</tr>
-		{% for stakeholder in stakeholder_all %}
-
-		<tr class="stakeholder">
-			<td class="stakeholder">{{ stakeholder.name }}</td>
-			<td class="stakeholder">{{ stakeholder.role }}</td>
-			<td class="stakeholder">{{ stakeholder.email }}</td>
-			<td class="stakeholder">{{ stakeholder.part }}</td>
-			<td class="stakeholder">{{ stakeholder.feedback }}</td>
-		</tr>
-		{% endfor %}
-	</table>
-<br>
-  <br>
-
-	<h1 style="color:#191970">Dataflow</h1>
-  <hr width="60%" align=center style="border-bottom:#191970 3px solid;border-left:#191970 3px solid;border-top:#191970 3px solid;border-right:#191970 3px solid;">
-  <br>
-	<div>{{ swimlane.svg | safe }}</div>
-
-
-
-<br>
-  <br>
-
-	<h1 style="color:#191970">適用評估之項目</h1>
-  <hr width="60%" align=center style="border-bottom:#191970 3px solid;border-left:#191970 3px solid;border-top:#191970 3px solid;border-right:#191970 3px solid;">
-  <br>
-	<table table align="center" class="stakeholder">
-	  <tr>
-        <th  class="stakeholder" align="center"><span style="font-size:20px;">流程</th> 
-        <th  class="stakeholder" align="center"><span style="font-size:20px;">個人隱私資料</th>
-        <th  class="stakeholder" align="center"><span style="font-size:20px;">嚴重性</th>
-        <th  class="stakeholder" align="center"><span style="font-size:20px;">人員/系統</th>
-        <th  class="stakeholder" align="center"><span style="font-size:20px;">風險</th>
-        <th  class="stakeholder" align="center"><span style="font-size:20px;">可能性</th>
-        <th  class="stakeholder" align="center"><span style="font-size:20px;">描述</th>
-      </tr>
-      {% for item in item_all %}
-      <tr>
-        <td align="center" rowspan="1"  class="stakeholder">{{ item.evaluation.process.name }}</td>
-        <td align="center" rowspan="1"  class="stakeholder">{{ item.evaluation.pii.name }}</td>
-        <td align="center" rowspan="1"  class="stakeholder">{{ item.evaluation.pii.value }}</td>
-
-        {% if item.evaluation.participant_id is None %}
-        <td  align="center" rowspan="1"  class="stakeholder">{{ item.evaluation.system.name }}</td>
-        {% else %}
-        <td align="center" rowspan="1"  class="stakeholder">{{ item.evaluation.participant.name }}</td>
-        {% endif %}
-        <td  class="stakeholder">{{ item.risk }}</td>  
-        <td  class="stakeholder">{{ item.probability }}</td>
-        <td  class="stakeholder">{{ item.description }}</td>
-       
-      </tr>  
-      {% endfor %}
-	</table>
-  <br>
-  <br>
-
-  <h1 style="color:#191970">風險圖</h1>
-<hr width="60%" align=center style="border-bottom:#191970 3px solid;border-left:#191970 3px solid;border-top:#191970 3px solid;border-right:#191970 3px solid;">
-  <div>
-    <div align="center" style="display: inline-block; width: 700px;">
-      {% for pii in pii_all %}
+      var pii_list = Array.from("{{ pii_list }}");
+      var pii_data;
 
       {% for pii_list_item in pii_list %}
+      if ("{{pii_list_item}}".includes(pii_poisition[0])) {
+        pii_data = "{{pii_list_item}}";
+      }
+      {% endfor %}
 
-      {% if "," in pii_list_item and pii.name in pii_list_item %}
-
-      <table table align="center">
-
-        <caption id="{{ pii.id }}caption"></caption>
-
-        <tr>
-          <td colspan="2" valign="bottom">Level of impact
-          </td>
-          <td colspan="3" valign="bottom"></td>
-        </tr>
-        <tr>
-          <td>4.Maximum
-          </td>
-          <td class="graph" bgcolor="#e88866"><a href='javascript: show_risk("{{ pii.name }},4,1")'style="color:black;text-decoration: none;">
-              <div id="{{ pii.id }}41" class="risk_mapping_text"></div>
-            </a>
-          </td>
-          <td class="graph" bgcolor="#ea5f2c"><a href='javascript: show_risk("{{ pii.name }},4,2")'style="color:black;text-decoration: none;">
-              <div id="{{ pii.id }}42" class="risk_mapping_text"></div>
-            </a>
-          </td>
-          <td class="graph" bgcolor="#dd4040"><a href='javascript: show_risk("{{ pii.name }},4,3")'style="color:black;text-decoration: none;">
-              <div id="{{ pii.id }}43" class="risk_mapping_text"></div>
-            </a>
-          </td>
-          <td class="graph" bgcolor="#ad1d1d"><a href='javascript: show_risk("{{ pii.name }},4,4")'style="color:black;text-decoration: none;">
-              <div id="{{ pii.id }}44" class="risk_mapping_text"></div>
-            </a>
-          </td>
-        </tr>
-        <tr>
-          <td>3.Significant
-          </td>
-          <td class="graph" bgcolor="#d8d517"><a href='javascript: show_risk("{{ pii.name }},3,1")'style="color:black;text-decoration: none;">
-              <div id="{{ pii.id }}31" class="risk_mapping_text"></div>
-            </a>
-          </td>
-          <td class="graph" bgcolor="#e88866"><a href='javascript: show_risk("{{ pii.name }},3,2")'style="color:black;text-decoration: none;">
-              <div id="{{ pii.id }}32" class="risk_mapping_text"></div>
-            </a>
-          </td>
-          <td class="graph" bgcolor="#ea5f2c"><a href='javascript: show_risk("{{ pii.name }},3,3")'style="color:black;text-decoration: none;">
-              <div id="{{ pii.id }}33" class="risk_mapping_text"></div>
-            </a>
-          </td>
-          <td class="graph" bgcolor="#dd4040"><a href='javascript: show_risk("{{ pii.name }},3,4")'style="color:black;text-decoration: none;">
-              <div id="{{ pii.id }}34" class="risk_mapping_text"></div>
-            </a>
-          </td>
-        </tr>
-        <tr>
-          <td>2.Limited
-          </td>
-          <td class="graph" bgcolor="#f7f588"><a href='javascript: show_risk("{{ pii.name }},2,1")'style="color:black;text-decoration: none;">
-              <div id="{{ pii.id }}21" class="risk_mapping_text"></div>
-            </a></td>
-          <td class="graph" bgcolor="#d8d517"><a href='javascript: show_risk("{{ pii.name }},2,2")'style="color:black;text-decoration: none;">
-              <div id="{{ pii.id }}22" class="risk_mapping_text"></div>
-            </a>
-          </td>
-          <td class="graph" bgcolor="#e88866"><a href='javascript: show_risk("{{ pii.name }},2,3")'style="color:black;text-decoration: none;">
-              <div id="{{ pii.id }}23" class="risk_mapping_text"></div>
-            </a>
-          </td>
-          <td class="graph" bgcolor="#ea5f2c"><a href='javascript: show_risk("{{ pii.name }},2,4")'style="color:black;text-decoration: none;">
-              <div id="{{ pii.id }}24" class="risk_mapping_text"></div>
-            </a>
-          </td>
-        </tr>
-        <tr>
-          <td>1.Negligible
-          </td>
-          <td class="graph" bgcolor="#b5b8ce"><a href='javascript: show_risk("{{ pii.name }},1,1")'style="color:black;text-decoration: none;">
-              <div id="{{ pii.id }}11" class="risk_mapping_text"></div>
-            </a>
-          </td>
-          <td class="graph" bgcolor="#f7f588"><a href='javascript: show_risk("{{ pii.name }},1,2")' style="color:black;text-decoration: none;">
-              <div id="{{ pii.id }}12" class="risk_mapping_text"></div>
-            </a>
-          </td>
-          <td class="graph" bgcolor="#d8d517"><a href='javascript: show_risk("{{ pii.name }},1,3")'style="color:black;text-decoration: none;">
-              <div id="{{ pii.id }}13" class="risk_mapping_text"></div>
-            </a>
-          </td>
-          <td class="graph" bgcolor="#e88866"><a href='javascript: show_risk("{{ pii.name }},1,4")'style="color:black;text-decoration: none;">
-              <div id="{{ pii.id }}14" class="risk_mapping_text"></div>
-            </a>
-          </td>
-          <td valign="bottom">Likelihood</td>
-          
-        </tr>
-        <tr>
-          <td>
-          </td>
-          <td valign="top">1.Negligible
-          </td>
-          <td valign="top">2.Limited
-          </td>
-          <td valign="top">3.Significant
-          </td>
-          <td valign="top">4.Maximum
-          </td>
-          <td valign="bottom"><font color="gray">※可點擊數字查看內容</font></td>
-        </tr>
-      </table>
-      <script type="text/javascript">
-        p = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]; //to sum up counts of eva_item that applicable=true
-      </script>
+      var pii_data_split = pii_data.split(",");
+      // var mapping = document.getElementById("mapping");
+      // mapping.innerHTML = "";
+      mapping_string = "";
+      mapping_d = "Disappearance of Pii : \n";
+      mapping_i = "Illeagal of uasge : \n";
+      mapping_u = "Unwanted modified Pii : \n";
       {% for item in item_all %}
-      <script type="text/javascript">
-        var pii_element = "{{ pii_list_item }}".split(",");
-        document.getElementById("{{ pii.id }}" + 'caption').innerHTML = "個人隱私資料: " + pii_element[0];
-        for (i = 1; i < pii_element.length; i += 1) {
-          if (pii_element[i] == "{{ item.id }}") {
-            var position = "{{ item.evaluation.pii.value }}" + "{{ item.probability }}";
-            p[parseInt("{{ item.evaluation.pii.value }}") - 1][parseInt("{{ item.probability }}") - 1] += 1
+      for (i = 1; i < pii_data_split.length; i++) {
+        if ("{{ item.id }}" == pii_data_split[i] && "{{ item.probability }}" == probability) {
+          if ("{{item.evaluation.participant.name}}" != "") {
+            console.log("{{item.evaluation.particpant_id}}")
+            obj = "    流程: " + "{{item.evaluation.process.name}}" + "  個人隱私資料: " + "{{item.evaluation.pii.name}}" + "  人員: " + "{{item.evaluation.participant.name}}\n" + "    描述: " + "{{item.description}}\n";
+            // mapping_string = mapping_string.concat(obj);
+          } else {
+            obj = "    流程: " + "{{item.evaluation.process.name}}" + "  個人隱私資料: " + "{{item.evaluation.pii.name}}" + "  系統: " + "{{item.evaluation.system.name}}\n" + "    描述: " + "{{item.description}}\n";
+            // mapping_string = mapping_string.concat(obj);
+          }
+          if ("{{item.risk}}" == "Disappearance of Pii") {
+            mapping_d = mapping_d.concat(obj);
 
-            document.getElementById("{{ pii.id }}" + position).innerHTML = p["{{ item.evaluation.pii.value }}" - 1]["{{ item.probability }}" - 1]
+          } else if ("{{item.risk}}" == "Illeagal of uasge") {
+            mapping_i = mapping_i.concat(obj);
+          } else {
+            mapping_u = mapping_u.concat(obj);
           }
 
         }
-      </script>
+      }
       {% endfor %}
+      if (mapping_d != "Disappearance of Pii : \n") {
+        mapping_string = mapping_string.concat(mapping_d);
+      }
+      if (mapping_i != "Illeagal of uasge : \n") {
+        mapping_string = mapping_string.concat(mapping_i);
+      }
+      if (mapping_u != "Unwanted modified Pii : \n") {
+        mapping_string = mapping_string.concat(mapping_u);
+      }
+      // mapping_string = mapping_string.replace(/ /g, '\u00a0');
+      // mapping.innerHTML = mapping_string;
+      alert(mapping_string);
+
+
+    }
+        //   function show_alert() {
+        //     alert("Hello! I am an alert box!");
+        // }
+  </script>
+</head>
+
+<body style="background-color:#F5F5F5;">
+  <!-- <div style="border-color:blue; border-style:solid;text-align:center;background-color:#DDDDDD;"> -->
+  <div
+    style="width:80%;margin: 0 auto;background-color:#FFFFFF;text-align:center;box-shadow:3px 3px 12px gray;padding:3px;font-family:Microsoft JhengHei">
+    <!--   <table class = "table" font-family: "Microsoft JhengHei" > -->
+    <h1 style="color:#191970;font-family:Microsoft JhengHei;" align="center">專案基本資料</h1>
+    <hr width="60%" align=center
+      style="height:5px; background-color:#191970;">
+    <h2>專案名稱</h2>
+    <h4>{{ activity.name }}</h4>
+    <h2>PIA負責人姓名</h2>
+    <h4>{{ activity.pia_manager_name }}</h4>
+    <h2>PIA負責人信箱</h2>
+    <h4>{{ activity.pia_manager_email }}</h4>
+    <h2>專案負責人姓名</h2>
+    <h4>{{ activity.activity_manager_name }}</h4>
+    <h2>專案負責人信箱</h2>
+    <h4>{{ activity.activity_manager_email }}</h4>
+    <h2>專案簡述</h2>
+    <h4>{{ activity.description }}</h4>
+    <h2>專案建立日期</h2>
+    <h4>{{ activity.date }}</h4>
+    <br>
+    <h1 style="color:#191970">專案GDPR適法性評估</h1>
+    <hr width="60%" align=center
+      style="height:5px; background-color:#191970;"">
+    {% for question in question_1 %}
+    {% for answer in answer_all %}
+    {% if answer.question.id == question.id %}
+    <h2>{{ question.description }}</h2>
+    <h4>{{ answer.context }}</h4>
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
+    <br>
+    <br>
+
+    <div>
+      <h1 style="color:#191970">專案參與的利益相關者</h1>
+      <hr width="60%" align=center
+        style="height:5px; background-color:#191970;">
+      <br>
+      <table table align="center" class="stakeholder">
+        <tr class="stakeholder">
+          <th class="stakeholder">姓名</th>
+          <th class="stakeholder">角色</th>
+          <th class="stakeholder">信箱</th>
+          <th class="stakeholder">參與專案部分</th>
+          <th class="stakeholder">回饋</th>
+        </tr>
+        {% for stakeholder in stakeholder_all %}
+
+        <tr class="stakeholder">
+          <td class="stakeholder">{{ stakeholder.name }}</td>
+          <td class="stakeholder">{{ stakeholder.role }}</td>
+          <td class="stakeholder">{{ stakeholder.email }}</td>
+          <td class="stakeholder">{{ stakeholder.part }}</td>
+          <td class="stakeholder">{{ stakeholder.feedback }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      <br>
+      <br>
+
+      <h1 style="color:#191970">Dataflow</h1>
+      <hr width="60%" align=center
+        style="height:5px; background-color:#191970;">
+      <br>
+      <div>{{ swimlane.svg | safe }}</div>
+
+
 
       <br>
       <br>
-      <hr align="center" width="70%">
+
+      <h1 style="color:#191970">適用評估之項目</h1>
+      <hr width="60%" align=center
+        style="height:5px; background-color:#191970;">
+      <br>
+      <table table align="center" class="stakeholder">
+        <tr>
+          <th class="stakeholder" align="center"><span style="font-size:20px;">流程</th>
+          <th class="stakeholder" align="center"><span style="font-size:20px;">個人隱私資料</th>
+          <th class="stakeholder" align="center"><span style="font-size:20px;">嚴重性</th>
+          <th class="stakeholder" align="center"><span style="font-size:20px;">人員/系統</th>
+          <th class="stakeholder" align="center"><span style="font-size:20px;">風險</th>
+          <th class="stakeholder" align="center"><span style="font-size:20px;">可能性</th>
+          <th class="stakeholder" align="center"><span style="font-size:20px;">描述</th>
+        </tr>
+        {% for item in item_all %}
+        <tr>
+          <td align="center" rowspan="1" class="stakeholder">{{ item.evaluation.process.name }}</td>
+          <td align="center" rowspan="1" class="stakeholder">{{ item.evaluation.pii.name }}</td>
+          <td align="center" rowspan="1" class="stakeholder">{{ item.evaluation.pii.value }}</td>
+
+          {% if item.evaluation.participant_id is None %}
+          <td align="center" rowspan="1" class="stakeholder">{{ item.evaluation.system.name }}</td>
+          {% else %}
+          <td align="center" rowspan="1" class="stakeholder">{{ item.evaluation.participant.name }}</td>
+          {% endif %}
+          <td class="stakeholder">{{ item.risk }}</td>
+          <td class="stakeholder">{{ item.probability }}</td>
+          <td class="stakeholder">{{ item.description }}</td>
+
+        </tr>
+        {% endfor %}
+      </table>
       <br>
       <br>
-      {% endif %}
-      {% endfor %}
-      {% endfor %}
-      <a href="/team/activity_list/"><button>返回</button></a>
-      <br>
-      <br>
+
+      <h1 style="color:#191970">風險圖</h1>
+      <hr width="60%" align=center; style="height:5px; background-color:#191970;">
+      <div>
+        <div align="center" style="display: inline-block; width: 700px;">
+          {% for pii in pii_all %}
+
+          {% for pii_list_item in pii_list %}
+
+          {% if "," in pii_list_item and pii.name in pii_list_item %}
+
+          <table table align="center">
+
+            <caption id="{{ pii.id }}caption"></caption>
+
+            <tr>
+              <td colspan="2" valign="bottom">Level of impact
+              </td>
+              <td colspan="3" valign="bottom"></td>
+            </tr>
+            <tr>
+              <td>4.Maximum
+              </td>
+              <td class="graph" bgcolor="#e88866"><a href='javascript: show_risk("{{ pii.name }},4,1")'
+                  style="color:black;text-decoration: none;">
+                  <div id="{{ pii.id }}41" class="risk_mapping_text"></div>
+                </a>
+              </td>
+              <td class="graph" bgcolor="#ea5f2c"><a href='javascript: show_risk("{{ pii.name }},4,2")'
+                  style="color:black;text-decoration: none;">
+                  <div id="{{ pii.id }}42" class="risk_mapping_text"></div>
+                </a>
+              </td>
+              <td class="graph" bgcolor="#dd4040"><a href='javascript: show_risk("{{ pii.name }},4,3")'
+                  style="color:black;text-decoration: none;">
+                  <div id="{{ pii.id }}43" class="risk_mapping_text"></div>
+                </a>
+              </td>
+              <td class="graph" bgcolor="#ad1d1d"><a href='javascript: show_risk("{{ pii.name }},4,4")'
+                  style="color:black;text-decoration: none;">
+                  <div id="{{ pii.id }}44" class="risk_mapping_text"></div>
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td>3.Significant
+              </td>
+              <td class="graph" bgcolor="#d8d517"><a href='javascript: show_risk("{{ pii.name }},3,1")'
+                  style="color:black;text-decoration: none;">
+                  <div id="{{ pii.id }}31" class="risk_mapping_text"></div>
+                </a>
+              </td>
+              <td class="graph" bgcolor="#e88866"><a href='javascript: show_risk("{{ pii.name }},3,2")'
+                  style="color:black;text-decoration: none;">
+                  <div id="{{ pii.id }}32" class="risk_mapping_text"></div>
+                </a>
+              </td>
+              <td class="graph" bgcolor="#ea5f2c"><a href='javascript: show_risk("{{ pii.name }},3,3")'
+                  style="color:black;text-decoration: none;">
+                  <div id="{{ pii.id }}33" class="risk_mapping_text"></div>
+                </a>
+              </td>
+              <td class="graph" bgcolor="#dd4040"><a href='javascript: show_risk("{{ pii.name }},3,4")'
+                  style="color:black;text-decoration: none;">
+                  <div id="{{ pii.id }}34" class="risk_mapping_text"></div>
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td>2.Limited
+              </td>
+              <td class="graph" bgcolor="#f7f588"><a href='javascript: show_risk("{{ pii.name }},2,1")'
+                  style="color:black;text-decoration: none;">
+                  <div id="{{ pii.id }}21" class="risk_mapping_text"></div>
+                </a></td>
+              <td class="graph" bgcolor="#d8d517"><a href='javascript: show_risk("{{ pii.name }},2,2")'
+                  style="color:black;text-decoration: none;">
+                  <div id="{{ pii.id }}22" class="risk_mapping_text"></div>
+                </a>
+              </td>
+              <td class="graph" bgcolor="#e88866"><a href='javascript: show_risk("{{ pii.name }},2,3")'
+                  style="color:black;text-decoration: none;">
+                  <div id="{{ pii.id }}23" class="risk_mapping_text"></div>
+                </a>
+              </td>
+              <td class="graph" bgcolor="#ea5f2c"><a href='javascript: show_risk("{{ pii.name }},2,4")'
+                  style="color:black;text-decoration: none;">
+                  <div id="{{ pii.id }}24" class="risk_mapping_text"></div>
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td>1.Negligible
+              </td>
+              <td class="graph" bgcolor="#b5b8ce"><a href='javascript: show_risk("{{ pii.name }},1,1")'
+                  style="color:black;text-decoration: none;">
+                  <div id="{{ pii.id }}11" class="risk_mapping_text"></div>
+                </a>
+              </td>
+              <td class="graph" bgcolor="#f7f588"><a href='javascript: show_risk("{{ pii.name }},1,2")'
+                  style="color:black;text-decoration: none;">
+                  <div id="{{ pii.id }}12" class="risk_mapping_text"></div>
+                </a>
+              </td>
+              <td class="graph" bgcolor="#d8d517"><a href='javascript: show_risk("{{ pii.name }},1,3")'
+                  style="color:black;text-decoration: none;">
+                  <div id="{{ pii.id }}13" class="risk_mapping_text"></div>
+                </a>
+              </td>
+              <td class="graph" bgcolor="#e88866"><a href='javascript: show_risk("{{ pii.name }},1,4")'
+                  style="color:black;text-decoration: none;">
+                  <div id="{{ pii.id }}14" class="risk_mapping_text"></div>
+                </a>
+              </td>
+              <td valign="bottom">Likelihood</td>
+
+            </tr>
+            <tr>
+              <td>
+              </td>
+              <td valign="top">1.Negligible
+              </td>
+              <td valign="top">2.Limited
+              </td>
+              <td valign="top">3.Significant
+              </td>
+              <td valign="top">4.Maximum
+              </td>
+              <td valign="bottom">
+                <font color="gray">※可點擊數字查看內容</font>
+              </td>
+            </tr>
+          </table>
+          <script type="text/javascript">
+            p = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]; //to sum up counts of eva_item that applicable=true
+          </script>
+          {% for item in item_all %}
+          <script type="text/javascript">
+            var pii_element = "{{ pii_list_item }}".split(",");
+            document.getElementById("{{ pii.id }}" + 'caption').innerHTML = "個人隱私資料: " + pii_element[0];
+            for (i = 1; i < pii_element.length; i += 1) {
+              if (pii_element[i] == "{{ item.id }}") {
+                var position = "{{ item.evaluation.pii.value }}" + "{{ item.probability }}";
+                p[parseInt("{{ item.evaluation.pii.value }}") - 1][parseInt("{{ item.probability }}") - 1] += 1
+
+                document.getElementById("{{ pii.id }}" + position).innerHTML = p["{{ item.evaluation.pii.value }}" - 1]["{{ item.probability }}" - 1]
+              }
+
+            }
+          </script>
+          {% endfor %}
+
+          <br>
+          <br>
+          <h1 style="color:#191970 ">PIA負責人簽名</h1>
+          <hr width="80%" align=center style="height:5px; background-color:#191970;">
+          <br>
+          <br>
+          <div id="canvasDiv"></div>
+          <div id="signature" style="display:none; width: 80%; margin: 0 auto; text-align: center;">
+            <img id="qmimg" />
+          </div>
+          <br>
+          <button class="button1" id="btn_clear">清除</button>
+
+          <button class="button1" id="btn_submit">提交</button>
+
+
+
+          <br>
+          <br>
+          <hr width="80%" align='center' style="height:5px; background-color:#191970;">
+          <br>
+          <br>
+
+          {% endif %}
+          {% endfor %}
+          {% endfor %}
+          <a class="button1" href="/team/activity_list/">回到檢視列表</a>
+          <br>
+          <br>
+        </div>
+      </div>
+
     </div>
-</div>
 
-</div>
-</div>
-    <!-- <div id="mapping" class="mapping_div" style="display: inline-block;">
+    <script language="javascript">
 
-    </div> -->
 
-<!-- <button><a href="/team/new_pia/">新增PIA</a></button> -->
-<!-- </div> -->
+      var canvasDiv = document.getElementById('canvasDiv');
+      var canvas = document.createElement('canvas');
+      var cd = getComputedStyle(canvasDiv);
+      var canvasWidth = parseInt(cd.getPropertyValue('width'), 10);
+      var canvasHeight = '200px;'
+      document.addEventListener('touchmove', onDocumentTouchMove, false);
+      var point = {};
+      point.notFirst = false;
+      canvas.setAttribute('width', canvasWidth);
+      canvas.setAttribute('height', canvasHeight);
+      canvas.setAttribute('id', 'canvas');
+      canvasDiv.appendChild(canvas);
+      if (typeof G_vmlCanvasManager != 'undefined') {
+        canvas = G_vmlCanvasManager.initElement(canvas);
+      }
+      var context = canvas.getContext("2d");
+      /*var ptrn = context.createPattern(img, 'no-repeat');
+      context.fillStyle = ptrn;
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      */
+      var img = new Image();
+      img.src = "Transparent.png";
+
+      img.onload = function () {
+        var ptrn = context.createPattern(img, 'repeat');
+        context.fillStyle = ptrn;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+      }
+      canvas.addEventListener("touchstart", function (e) {
+        //console.log(e);
+        var mouseX = e.touches[0].pageX - this.offsetLeft;
+        var mouseY = e.touches[0].pageY - this.offsetTop;
+        paint = true;
+        addClick(e.touches[0].pageX - this.offsetLeft, e.touches[0].pageY - this.offsetTop);
+        //console.log(e.touches[0].pageX - this.offsetLeft, e.touches[0].pageY - this.offsetTop);
+        redraw();
+      });
+
+
+
+      canvas.addEventListener("touchend", function (e) {
+        //console.log("touch end");
+        paint = false;
+      });
+
+      canvas.addEventListener("touchmove", function (e) {
+        if (paint) {
+          //console.log("touchmove");
+          addClick(e.touches[0].pageX - this.offsetLeft, e.touches[0].pageY - this.offsetTop, true);
+          //console.log(e.touches[0].pageX - this.offsetLeft, e.touches[0].pageY - this.offsetTop);
+          redraw();
+        }
+
+      });
+
+      canvas.addEventListener("mousedown", function (e) {
+        var mouseX = e.pageX - this.offsetLeft;
+        var mouseY = e.pageY - this.offsetTop;
+        paint = true;
+        addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
+        redraw();
+      });
+      canvas.addEventListener("mousemove", function (e) {
+        if (paint) {
+          addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
+          redraw();
+        }
+      });
+      canvas.addEventListener("mouseup", function (e) {
+        paint = false;
+      });
+      canvas.addEventListener("mouseleave", function (e) {
+        paint = false;
+      });
+      document.getElementById("btn_clear").addEventListener("click", function () {
+        canvas.width = canvas.width;
+      });
+      document.getElementById("btn_submit").addEventListener("click", function () {
+        document.getElementById('signature').style.display = 'block';
+        $("#qmimg").attr("src", canvas.toDataURL("image/png"));
+        document.getElementById('canvasDiv').style.display = 'none';
+        document.getElementById('btn_clear').style.display = 'none';
+        document.getElementById('btn_submit').style.display = 'none';
+      });
+
+
+      function onDocumentTouchStart(event) {
+        if (event.touches.length == 1) {
+          event.preventDefault();
+          // Faking double click for touch devices
+          var now = new Date().getTime();
+          if (now - timeOfLastTouch < 250) {
+            reset();
+            return;
+          }
+          timeOfLastTouch = now;
+          mouseX = event.touches[0].pageX;
+          mouseY = event.touches[0].pageY;
+          isMouseDown = true;
+
+        }
+
+      }
+
+
+
+      function onDocumentTouchMove(event) {
+
+        if (event.touches.length == 1) {
+          event.preventDefault();
+          mouseX = event.touches[0].pageX;
+          mouseY = event.touches[0].pageY;
+        }
+      }
+
+
+
+      function onDocumentTouchEnd(event) {
+        if (event.touches.length == 0) {
+          event.preventDefault();
+          isMouseDown = false;
+        }
+      }
+
+
+      var clickX = new Array();
+      var clickY = new Array();
+      var clickDrag = new Array();
+      var paint;
+
+      function addClick(x, y, dragging) {
+        clickX.push(x);
+        clickY.push(y);
+        clickDrag.push(dragging);
+      }
+
+
+
+      function redraw() {
+
+        //canvas.width = canvas.width; // Clears the canvas
+        context.strokeStyle = "#df4b26";
+        context.lineJoin = "round";
+        context.lineWidth = 2;
+        while (clickX.length > 0) {
+          point.bx = point.x;
+          point.by = point.y;
+          point.x = clickX.pop();
+          point.y = clickY.pop();
+          point.drag = clickDrag.pop();
+          context.beginPath();
+          if (point.drag && point.notFirst) {
+            context.moveTo(point.bx, point.by);
+          } else {
+            point.notFirst = true;
+            context.moveTo(point.x - 1, point.y);
+          }
+          context.lineTo(point.x, point.y);
+          context.closePath();
+          context.stroke();
+        }
+
+
+      }
+    </script>
+
+
+  </div>
+
 </body>
+
 </html>
