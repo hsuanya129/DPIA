@@ -555,7 +555,7 @@ def pia_examine(request):
     stakeholder_all = Stakeholder.objects.filter(activity_id=pk)
     answer_all = Answer.objects.filter(activity_id=pk)
     evaluation_all = Evaluation.objects.filter(activity_id=pk)
-    evaluation_item_all = EvaluationItem.objects.filter(applicable=True)
+    # evaluation_item_all = EvaluationItem.objects.filter(applicable=True)
     swimlane = Swimlane.objects.get(activity_id=pk)
     pii_all = Pii.objects.filter(activity_id=pk)
     pii_list = pii_list
