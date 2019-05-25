@@ -135,7 +135,7 @@ body, h1,h2,h3,h4,h5,h6 {font-family: "Microsoft JhengHei"}
 @media only screen and (max-width: 600px) {#main {margin-left: 0}}
     .text2{
     /*  width:100px;*/
-/*      text-align: center;*/
+     text-align: center;
       color:white;
     }
     .text2:hover .hover{
@@ -230,7 +230,7 @@ body, h1,h2,h3,h4,h5,h6 {font-family: "Microsoft JhengHei"}
         
         <td><!-- {{ item.risk }} -->
           {% if item.risk == "Disappearance of Pii" %}
-          <div class="text2"><span><a>Disappearance of Pii</a></span>
+          <div class="text2"><span><a>個資消失</a></span>
             <div class="hover">
               <div class="belosee">
                     例如:洪水、火、自然磨損造成的損壞、存儲設備故障等。
@@ -238,7 +238,7 @@ body, h1,h2,h3,h4,h5,h6 {font-family: "Microsoft JhengHei"}
             </div>
         </div>
           {% elif item.risk == "Illeagal of uasge" %}
-          <div class="text2"><span><a>Illeagal of uasge</a></span>
+          <div class="text2"><span><a>非法使用</a></span>
             <div class="hover">
               <div class="belosee">
                     例如:從酒店房間盜竊筆記型電腦、通過扒手竊取專業手機、丟失電子存儲設備等。
@@ -246,7 +246,7 @@ body, h1,h2,h3,h4,h5,h6 {font-family: "Microsoft JhengHei"}
             </div>
         </div>
           {% else %}
-          <div class="text2"><span><a>Unwanted modified Pii</a></span>
+          <div class="text2"><span><a>非預期的修改</a></span>
             <div class="hover">
               <div class="belosee">
                     例如:添加不兼容的硬件導致故障、刪除對應用程序正常運行至關重要的組件等。
