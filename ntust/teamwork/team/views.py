@@ -176,6 +176,17 @@ def dataflow_saveLane(request):
     return render(request, 'team/dataflow.html')
 
 
+def saveSignature(request):
+    pk = activityID
+    activity_object = Activity.objects.get(id = pk)
+    get_signature = request.POST.get('img')
+    print(get_signature)
+    get_signature = json.loads(get_signature)
+    activity_object.signature = get_signature
+    activity_object.save()
+    return render(request, 'team/pia_examine.html')
+
+
 def dataflow_get(request):
     pk = activityID
     swimlane_object_get = Swimlane.objects.get(activity_id=pk)
@@ -407,6 +418,7 @@ def renameNode(saveTemp, pk):
 def addValue(saveTemp, pk):
     pii = Pii.objects.get(activity_id=pk, name=saveTemp["name"])
     pii.value = saveTemp["value"]
+    print(saveTemp["value"])
     pii.save()
 
 

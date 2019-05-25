@@ -18,7 +18,7 @@ class Activity(models.Model):
     activity_manager_email = models.TextField()
     description = models.TextField()
     date = models.DateTimeField(default=timezone.now)
-
+    signature = models.TextField()
     def __str__(self):
         return self.name
 

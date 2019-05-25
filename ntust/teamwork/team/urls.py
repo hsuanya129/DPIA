@@ -19,4 +19,6 @@ urlpatterns = [
 	url(r'^pia_examine/',views.pia_examine, name='pia_examine'),
 	url(r'^choose_pia/',views.choose_pia, name='choose_pia'),
 	url(r'^activity_list/',views.activity_list, name='activity_list'),
+    url(r'^save_Signature/', views.saveSignature, name='saveSignature'),
+
 ]
