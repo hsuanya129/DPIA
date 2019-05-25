@@ -498,7 +498,7 @@ def evaluation(request):
 
 def risk_mapping(request):
     pk = activityID
-    # pk=166
+    # pk=223
     i = 0
     # 用來存pii中，有evaluation適用的, pii_list[i]表示為在第i個pii中，有applicable的evaluation_item的id
     pii_list = list()
