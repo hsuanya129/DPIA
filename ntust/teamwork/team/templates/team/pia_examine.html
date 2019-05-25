@@ -5,7 +5,7 @@
   <title>Pia detail</title>
   <style type="text/css">
     #canvasDiv {
-      width: 80%;
+      width: 500px;
       margin: 0 auto;
       text-align: center;
       border: 2px solid gray;
@@ -152,28 +152,7 @@
       })
     })
   </script>
-  <script>
-    window.onload = function () {
-      let signature = "{{ activity.signature }}"
-      if (signature == "") {
-        document.getElementById('signaturePad').style.display = 'none';
-        document.getElementById('canvasDiv').style.display = 'block'
-        document.getElementById('btn_clear').style.display = 'block';
-        document.getElementById('btn_submit').style.display = 'block';
-        console.log("no signature");
-      } else {
-        console.log("signed");
-        console.log(signature)
-        document.getElementById('signaturePad').style.display = 'block';
 
-        var sign_img =document.getElementById('sign_img');
-        sign_img.setAttribute("src","data:image/png;base64, "+ signature);
-        document.getElementById('canvasDiv').style.display = 'none';
-        document.getElementById('btn_clear').style.display = 'none';
-        document.getElementById('btn_submit').style.display = 'none';
-      }
-    }
-  </script>
   <script type="text/javascript">
     window.show_risk = function (data) {
       var pii_poisition = data.split(",");
@@ -241,7 +220,7 @@
   </script>
 </head>
 
-<body style="background-color:#F5F5F5;">
+<body  onload="whether_signed()";style="background-color:#F5F5F5;">
   <!-- <div style="border-color:blue; border-style:solid;text-align:center;background-color:#DDDDDD;"> -->
   <div
     style="width:80%;margin: 0 auto;background-color:#FFFFFF;text-align:center;box-shadow:3px 3px 12px gray;padding:3px;font-family:Microsoft JhengHei">
@@ -496,29 +475,28 @@
           }
         </script>
         {% endfor %}
-
-        <br>
-        <br>
-
-
         {% endif %}
         {% endfor %}
         {% endfor %}
+        <br>
+        <br>
         <h1 style="color:#191970 ">PIA負責人簽名</h1>
         <h1 id="signed"></h1>
 
         <hr width="80%" align=center style="height:5px; background-color:#191970;">
         <br>
         <br>
+        <!-- 繪圖div -->
         <div id="canvasDiv" style="display:none"></div>
+        <!-- 簽名div4 -->
         <div id="signaturePad" style="display:none; width: 80%; margin: 0 auto; text-align: center;">
 
           <img id="sign_img" />
         </div>
-        <br>
-        <button class="button1" id="btn_clear"style="display:none">清除</button>
+        
+        <button class="button1" id="btn_clear" style="display:none">清除</button>
 
-        <button class="button1" id="btn_submit"style="display:none">提交</button>
+        <button class="button1" id="btn_submit" style="display:none">提交</button>
 
 
 
@@ -537,11 +515,10 @@
 
   <script language="javascript">
 
-
     var canvasDiv = document.getElementById('canvasDiv');
     var canvas = document.createElement('canvas');
     var cd = getComputedStyle(canvasDiv);
-    var canvasWidth = parseInt(cd.getPropertyValue('width'));
+    var canvasWidth = parseInt(cd.getPropertyValue('width'), 10);
     var canvasHeight = '200px;'
     document.addEventListener('touchmove', onDocumentTouchMove, false);
     var point = {};
@@ -622,37 +599,21 @@
 
       $("#sign_img").attr("src", canvas.toDataURL("image/png"));
       var dataURL = canvas.toDataURL("image/png");
+      var returnedData = null;
       dataURL = dataURL.replace(/^data:image\/(png|jpg);base64,/, "")
-      console.log(dataURL);
       jQuery.ajax({
         type: "POST",
         url: '../save_Signature/',
         data: { img: JSON.stringify(dataURL) }
-      }).done(function (msg) {
+      }).done(function (data) {
+        returnedData = JSON.parse(data);
         alert("已上傳簽名");
-        
-      });
-      
-        let signature = "{{ activity.signature }}"
-        if (signature == "") {
-          document.getElementById('signaturePad').style.display = 'none';
-          document.getElementById('canvasDiv').style.display = 'block'
-          document.getElementById('btn_clear').style.display = 'block';
-          document.getElementById('btn_submit').style.display = 'block';
-          console.log("no signature");
-        } else {
-          console.log("signed");
-          console.log(signature)
-          document.getElementById('signaturePad').style.display = 'block';
 
-          var sign_img = document.getElementById('sign_img');
-          sign_img.setAttribute("src", "data:image/png;base64, " + signature);
-          document.getElementById('canvasDiv').style.display = 'none';
-          document.getElementById('btn_clear').style.display = 'none';
-          document.getElementById('btn_submit').style.display = 'none';
-        }
-      
-      
+      });
+      document.getElementById('canvasDiv').style.display = 'none';
+      document.getElementById('btn_clear').style.display = 'none';
+      document.getElementById('btn_submit').style.display = 'none';
+
     });
 
 
@@ -735,10 +696,33 @@
 
     }
   </script>
+  <script>
+    function whether_signed() {
+      let signature = "{{ activity.signature }}"
+      if (signature == "") {
+        document.getElementById('canvasDiv').style.display = 'block'
+        document.getElementById('btn_clear').style.display = 'inline';
+        document.getElementById('btn_submit').style.display = 'inline';
+        console.log("no signature");
+      } else {
+        console.log("signed");
+        console.log(signature)
+        document.getElementById('canvasDiv').style.display = 'none';
+
+        document.getElementById('signaturePad').style.display = 'block';
+        var sign_img = document.getElementById('sign_img');
+        sign_img.setAttribute("src", "data:image/png;base64, " + signature);
+        document.getElementById('btn_clear').style.display = 'none';
+        document.getElementById('btn_submit').style.display = 'none';
+      }
+    }
+  </script>
+
 
 
   </div>
 
 </body>
+
 
 </html>
