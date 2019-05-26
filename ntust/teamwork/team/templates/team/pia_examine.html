@@ -488,7 +488,9 @@
         <br>
         <!-- 繪圖div -->
         <div id="canvasDiv" style="display:none"></div>
-        <!-- 簽名div4 -->
+        <!-- 用來判斷是否為空 -->
+
+        <!-- 簽名div -->
         <div id="signaturePad" style="display:none; width: 80%; margin: 0 auto; text-align: center;">
 
           <img id="sign_img" />
@@ -514,7 +516,7 @@
   </div>
 
   <script language="javascript">
-
+    var sign_count=0;
     var canvasDiv = document.getElementById('canvasDiv');
     var canvas = document.createElement('canvas');
     var cd = getComputedStyle(canvasDiv);
@@ -573,6 +575,7 @@
     });
 
     canvas.addEventListener("mousedown", function (e) {
+      sign_count +=1;
       var mouseX = e.pageX - this.offsetLeft;
       var mouseY = e.pageY - this.offsetTop;
       paint = true;
@@ -593,26 +596,33 @@
     });
     document.getElementById("btn_clear").addEventListener("click", function () {
       canvas.width = canvas.width;
+      sign_count = 0;
     });
     document.getElementById("btn_submit").addEventListener("click", function () {
-      document.getElementById('signaturePad').style.display = 'block';
+      
+      if ( sign_count == 0 ) {
+        alert("您尚未簽署簽名");
+      } else {
+        document.getElementById('signaturePad').style.display = 'block';
 
-      $("#sign_img").attr("src", canvas.toDataURL("image/png"));
-      var dataURL = canvas.toDataURL("image/png");
-      dataURL = dataURL.replace(/^data:image\/(png|jpg);base64,/, "")
-      jQuery.ajax({
-        type: "POST",
-        url: '../save_Signature/',
-        data: { img: JSON.stringify(dataURL) },
-        
-      }).done(function (msg) {
-        alert("已上傳簽名");
+        $("#sign_img").attr("src", canvas.toDataURL("image/png"));
+        var dataURL = canvas.toDataURL("image/png");
+        dataURL = dataURL.replace(/^data:image\/(png|jpg);base64,/, "")
+        jQuery.ajax({
+          type: "POST",
+          url: '../save_Signature/',
+          data: { img: JSON.stringify(dataURL) },
 
-      });
-          document.getElementById('signed').innerHTML="PIA檢核者簽名(已簽核)"
-          document.getElementById('canvasDiv').style.display = 'none';
-          document.getElementById('btn_clear').style.display = 'none';
-          document.getElementById('btn_submit').style.display = 'none';
+        }).done(function (msg) {
+          alert("已上傳簽名");
+
+        });
+        document.getElementById('signed').innerHTML = "PIA檢核者簽名(已簽核)"
+        document.getElementById('canvasDiv').style.display = 'none';
+        document.getElementById('btn_clear').style.display = 'none';
+        document.getElementById('btn_submit').style.display = 'none';
+      }
+
 
     });
 
