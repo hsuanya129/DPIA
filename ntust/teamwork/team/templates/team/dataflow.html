@@ -5,7 +5,7 @@
   <title>Dataflow</title>
   <style type="text/css">
     /* CSS for the traditional context menu */
-    .button {
+    .button6 {
 		    
 		    padding: 12px 19px;
 		    border: 1px solid #d1cfd1;
@@ -23,8 +23,8 @@
 		    color: #5c5c5c;
 		    text-decoration: none;
 		}
-		.button:hover,
-		.button:focus {
+		.button6:hover,
+		.button6:focus {
 		    background: #ffffff;
 		    background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#ffffff));
 		    background: -moz-linear-gradient(top, #ffffff, #ffffff);
@@ -32,7 +32,7 @@
 		    color: #5c5c5c;
 		    text-decoration: none;
 		}
-		.button:active {
+		.button6:active {
 		    background: #999999;
 		    background: -webkit-gradient(linear, left top, left bottom, from(#999999), to(#e0e0e0));
 		    background: -moz-linear-gradient(top, #999999, #e0e0e0);
@@ -43,7 +43,7 @@
       width: 250px;
       padding: 10px;
       margin: 10px;
-      border: 3px dashed #ccc;
+      border: 3px dashed #191970;
       float: left;
     }
 
@@ -973,13 +973,13 @@
   </script>
 </head>
 
-<body onload="init()">
+<body onload="init()" style="background-color: #F5F5F5">
   <div>
     <h1 style="color:#191970; font-family: Microsoft JhengHei; " align="center">資料流</h1>
     <p style="font-family: Microsoft JhengHei;" align="center">1.右鍵點擊在Process中的節點可新增節點至其他程序<br>
       2.節點雙擊兩下可編輯文字<br>
       3.右鍵點擊Input及Output的節點可新增該資料的Level of Impact</p>
-    <div id="myDiagramDiv" style="border: solid 2px gray; width:100%; height:600px;"></div>
+    <div id="myDiagramDiv" style="border: solid 2px #191970; width:100%; height:600px;"></div>
     <div id="contextMenu">
       <ul>
 
@@ -1001,7 +1001,7 @@
 
   </div>
   <div class="popup"
-    style="position:absolute;top:0;left:1;width:18vw;height:10vh;z-index: 999;background-color:white;display: none;border-width:3px;border-style:solid;border-color:black;padding:5px;"
+    style="position:fixed;top:0;left:1;width:18vw;height:10vh;z-index: 999;background-color:white;display: none;border-width:3px;border-style:solid;border-color:#191970;padding:5px;"
     id="popup">
     <!-- <form id="db"> -->
     Level Of Impact:
@@ -1011,14 +1011,14 @@
       <option name="postValue" value="3">3</option>
       <option name="postValue" value="4">4</option>
     </select>
-    <button id="close"
+    <button class="buttonn"
       onclick="getNodeValue(getElementById('postValue').value),getElementById('popup').style.display='none'">確定</button>
     <!-- </form> -->
   </div>
 
   <div style="border:2px">
     <div style="border:2px">
-      <a href="/team/evaluation/"><button class="button" id="svgButton" onclick="save()"
+      <a href="/team/evaluation/"><button class="button6" id="svgButton" onclick="save()"
           style="display:inline;float:right;">下一步</button></a>
     </div>
 
