@@ -115,11 +115,11 @@
 		var pii_data;
 
 		{% for pii_list_item in pii_list %}
-		if ("{{pii_list_item}}".includes(pii_poisition[0])) {
+		if ("{{pii_list_item|safe}}".includes("'"+pii_poisition[0]+",")) {
 			pii_data = "{{pii_list_item}}";
 		}
 		{% endfor %}
-
+		console.log(pii_data);
 		var pii_data_split = pii_data.split(",");
 		// var mapping = document.getElementById("mapping");
 		// mapping.innerHTML = "";
@@ -178,7 +178,7 @@
 
 			{% for pii_list_item in pii_list %}
 
-			{% if "," in pii_list_item and pii.name in pii_list_item %}
+			{% if "," in pii_list_item and "'"|add:pii.name|add:"," in pii_list_item %}
 
 			<table table align="center">
 
@@ -289,8 +289,10 @@
 			</script>
 			{% for item in item_all %}
 			<script type="text/javascript">
-				var pii_element = "{{ pii_list_item }}".split(",");
-				document.getElementById("{{ pii.id }}" + 'caption').innerHTML = "個人隱私資料: " + pii_element[0];
+				var pii_element = "{{ pii_list_item|safe }}".split(",");
+				pii_name = pii_element[0].substring(1);
+				console.log("294"+pii_name);
+				document.getElementById("{{ pii.id }}" + 'caption').innerHTML = "個人隱私資料: " + pii_name;
 				for (i = 1; i < pii_element.length; i += 1) {
 					if (pii_element[i] == "{{ item.id }}") {
 						var position = "{{ item.evaluation.pii.value }}" + "{{ item.probability }}";
