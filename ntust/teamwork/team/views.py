@@ -515,7 +515,7 @@ def risk_mapping(request):
     # 用來存pii中，有evaluation適用的, pii_list[i]表示為在第i個pii中，有applicable的evaluation_item的id
     pii_list = list()
     for pii in Pii.objects.filter(activity_id=pk):
-        pii_list.append(pii.name)
+        pii_list.append("'"+pii.name)
         for evaluation in Evaluation.objects.filter(activity_id=pk):
             for item in EvaluationItem.objects.filter(evaluation_id=evaluation.id):
                 if (item.evaluation.pii.id == pii.id and item.applicable == True):
@@ -549,17 +549,18 @@ def pia_examine(request):
     pk = activityID
 
     # for risk_mapping
-    i=0
-    pii_list=list()#用來存pii中，有evaluation適用的, pii_list[i]表示為在第i個pii中，有applicable的evaluation_item的id
+    i = 0
+    # 用來存pii中，有evaluation適用的, pii_list[i]表示為在第i個pii中，有applicable的evaluation_item的id
+    pii_list = list()
     for pii in Pii.objects.filter(activity_id=pk):
-        pii_list.append(pii.name)
+        pii_list.append("'"+pii.name)
         for evaluation in Evaluation.objects.filter(activity_id=pk):
             for item in EvaluationItem.objects.filter(evaluation_id=evaluation.id):
-                if (item.evaluation.pii.id == pii.id and item.applicable== True):
-                    pii_list[i]=pii_list[i]+","+str(item.id)
+                if (item.evaluation.pii.id == pii.id and item.applicable == True):
+                    pii_list[i] = pii_list[i]+","+str(item.id)
 
         print(pii_list[i])
-        i+=1
+        i += 1
     # for risk_mapping
     
     activity = Activity.objects.get(id=pk)

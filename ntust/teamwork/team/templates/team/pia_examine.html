@@ -154,70 +154,68 @@
   </script>
 
   <script type="text/javascript">
-    window.show_risk = function (data) {
-      var pii_poisition = data.split(",");
-      var pii = pii_poisition[0];
-      var serverity = pii_poisition[1];
-      var probability = pii_poisition[2];
+  window.show_risk = function (data) {
+    var pii_poisition = data.split(",");
+    var pii = pii_poisition[0];
+    var serverity = pii_poisition[1];
+    var probability = pii_poisition[2];
 
-      var pii_list = Array.from("{{ pii_list }}");
-      var pii_data;
+    var pii_list = Array.from("{{ pii_list }}");
+    var pii_data;
 
-      {% for pii_list_item in pii_list %}
-      if ("{{pii_list_item}}".includes(pii_poisition[0])) {
-        pii_data = "{{pii_list_item}}";
-      }
-      {% endfor %}
-
-      var pii_data_split = pii_data.split(",");
-      // var mapping = document.getElementById("mapping");
-      // mapping.innerHTML = "";
-      mapping_string = "";
-      mapping_d = "Disappearance of Pii : \n";
-      mapping_i = "Illeagal of uasge : \n";
-      mapping_u = "Unwanted modified Pii : \n";
-      {% for item in item_all %}
-      for (i = 1; i < pii_data_split.length; i++) {
-        if ("{{ item.id }}" == pii_data_split[i] && "{{ item.probability }}" == probability) {
-          if ("{{item.evaluation.participant.name}}" != "") {
-            console.log("{{item.evaluation.particpant_id}}")
-            obj = "    流程: " + "{{item.evaluation.process.name}}" + "  個人隱私資料: " + "{{item.evaluation.pii.name}}" + "  人員: " + "{{item.evaluation.participant.name}}\n" + "    描述: " + "{{item.description}}\n";
-            // mapping_string = mapping_string.concat(obj);
-          } else {
-            obj = "    流程: " + "{{item.evaluation.process.name}}" + "  個人隱私資料: " + "{{item.evaluation.pii.name}}" + "  系統: " + "{{item.evaluation.system.name}}\n" + "    描述: " + "{{item.description}}\n";
-            // mapping_string = mapping_string.concat(obj);
-          }
-          if ("{{item.risk}}" == "Disappearance of Pii") {
-            mapping_d = mapping_d.concat(obj);
-
-          } else if ("{{item.risk}}" == "Illeagal of uasge") {
-            mapping_i = mapping_i.concat(obj);
-          } else {
-            mapping_u = mapping_u.concat(obj);
-          }
-
-        }
-      }
-      {% endfor %}
-      if (mapping_d != "Disappearance of Pii : \n") {
-        mapping_string = mapping_string.concat(mapping_d);
-      }
-      if (mapping_i != "Illeagal of uasge : \n") {
-        mapping_string = mapping_string.concat(mapping_i);
-      }
-      if (mapping_u != "Unwanted modified Pii : \n") {
-        mapping_string = mapping_string.concat(mapping_u);
-      }
-      // mapping_string = mapping_string.replace(/ /g, '\u00a0');
-      // mapping.innerHTML = mapping_string;
-      alert(mapping_string);
-
-
+    {% for pii_list_item in pii_list %}
+    if ("{{pii_list_item|safe}}".includes("'"+pii_poisition[0]+",")) {
+      pii_data = "{{pii_list_item}}";
     }
-        //   function show_alert() {
-        //     alert("Hello! I am an alert box!");
-        // }
-  </script>
+    {% endfor %}
+    console.log(pii_data);
+    var pii_data_split = pii_data.split(",");
+    // var mapping = document.getElementById("mapping");
+    // mapping.innerHTML = "";
+    mapping_string = "";
+    mapping_d="Disappearance of Pii : \n";
+    mapping_i="Illeagal of uasge : \n";
+    mapping_u="Unwanted modified Pii : \n";
+    {% for item in item_all %}
+    for (i = 1; i < pii_data_split.length; i++) {
+      if ("{{ item.id }}" == pii_data_split[i] && "{{ item.probability }}" == probability) {
+        if ("{{item.evaluation.participant.name}}" != "") {
+          console.log("{{item.evaluation.particpant_id}}")
+          obj = "    ◆流程: " + "{{item.evaluation.process.name}}" + "  個人隱私資料: " + "{{item.evaluation.pii.name}}" + "  人員: " + "{{item.evaluation.participant.name}}\n" + "      描述: " + "{{item.description}}\n";
+          // mapping_string = mapping_string.concat(obj);
+        } else {
+          obj = "    ◆流程: " + "{{item.evaluation.process.name}}" + "  個人隱私資料: " + "{{item.evaluation.pii.name}}" + "  系統: " + "{{item.evaluation.system.name}}\n" + "      描述: " + "{{item.description}}\n";
+          // mapping_string = mapping_string.concat(obj);
+        }
+        if ("{{item.risk}}" == "Disappearance of Pii"){
+          mapping_d = mapping_d.concat(obj);
+
+        }else if("{{item.risk}}" == "Illeagal of uasge"){
+          mapping_i = mapping_i.concat(obj);
+        }else{
+          mapping_u = mapping_u.concat(obj);
+        }
+
+      }
+    }
+    {% endfor %}
+    if (mapping_d!="Disappearance of Pii : \n"){
+      mapping_string = mapping_string .concat(mapping_d);
+    }
+    if (mapping_i!="Illeagal of uasge : \n"){
+      mapping_string = mapping_string .concat(mapping_i);
+    }
+    if (mapping_u!="Unwanted modified Pii : \n"){
+      mapping_string = mapping_string .concat(mapping_u);
+    }
+    // mapping_string = mapping_string.replace(/ /g, '\u00a0');
+    // mapping.innerHTML = mapping_string;
+    alert(mapping_string);
+
+
+
+  }
+</script>
 </head>
 
 <body onload="whether_signed()" ;style="background-color:#F5F5F5;">
@@ -335,7 +333,7 @@
 
         {% for pii_list_item in pii_list %}
 
-        {% if "," in pii_list_item and pii.name in pii_list_item %}
+        {% if "," in pii_list_item and "'"|add:pii.name|add:"," in pii_list_item %}
 
         <table table align="center">
 
@@ -464,18 +462,20 @@
         </script>
         {% for item in item_all %}
         <script type="text/javascript">
-          var pii_element = "{{ pii_list_item }}".split(",");
-          document.getElementById("{{ pii.id }}" + 'caption').innerHTML = "個人隱私資料: " + pii_element[0];
-          for (i = 1; i < pii_element.length; i += 1) {
-            if (pii_element[i] == "{{ item.id }}") {
-              var position = "{{ item.evaluation.pii.value }}" + "{{ item.probability }}";
-              p[parseInt("{{ item.evaluation.pii.value }}") - 1][parseInt("{{ item.probability }}") - 1] += 1
+        var pii_element = "{{ pii_list_item|safe }}".split(",");
+        pii_name = pii_element[0].substring(1);
+        console.log("294"+pii_name);
+        document.getElementById("{{ pii.id }}" + 'caption').innerHTML = "個人隱私資料: " + pii_name;
+        for (i = 1; i < pii_element.length; i += 1) {
+          if (pii_element[i] == "{{ item.id }}") {
+            var position = "{{ item.evaluation.pii.value }}" + "{{ item.probability }}";
+            p[parseInt("{{ item.evaluation.pii.value }}") - 1][parseInt("{{ item.probability }}") - 1] += 1
 
-              document.getElementById("{{ pii.id }}" + position).innerHTML = p["{{ item.evaluation.pii.value }}" - 1]["{{ item.probability }}" - 1]
-            }
-
+            document.getElementById("{{ pii.id }}" + position).innerHTML = p["{{ item.evaluation.pii.value }}" - 1]["{{ item.probability }}" - 1]
           }
-        </script>
+
+        }
+      </script>
         {% endfor %}
         {% endif %}
         {% endfor %}
