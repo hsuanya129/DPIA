@@ -220,15 +220,18 @@
   </script>
 </head>
 
-<body  onload="whether_signed()";style="background-color:#F5F5F5;">
+<body onload="whether_signed()" ;style="background-color:#F5F5F5;">
   <!-- <div style="border-color:blue; border-style:solid;text-align:center;background-color:#DDDDDD;"> -->
   <div
     style="width:80%;margin: 0 auto;background-color:#FFFFFF;text-align:center;box-shadow:3px 3px 12px gray;padding:3px;font-family:Microsoft JhengHei">
     <!--   <table class = "table" font-family: "Microsoft JhengHei" > -->
     <h1 style="color:#191970;font-family:Microsoft JhengHei;" align="center">專案基本資料</h1>
     <hr width="60%" align=center style="height:5px; background-color:#191970;">
+    <h2>專案建立日期</h2>
+    <h4>{{ activity.date }}</h4>
     <h2>專案名稱</h2>
     <h4>{{ activity.name }}</h4>
+
     <h2>PIA負責人姓名</h2>
     <h4>{{ activity.pia_manager_name }}</h4>
     <h2>PIA負責人信箱</h2>
@@ -239,8 +242,7 @@
     <h4>{{ activity.activity_manager_email }}</h4>
     <h2>專案簡述</h2>
     <h4>{{ activity.description }}</h4>
-    <h2>專案建立日期</h2>
-    <h4>{{ activity.date }}</h4>
+
     <br>
     <h1 style="color:#191970">專案GDPR適法性評估</h1>
     <hr width="60%" align=center style="height:5px; background-color:#191970;"">
@@ -480,10 +482,8 @@
         {% endfor %}
         <br>
         <br>
-        <h1 style="color:#191970 ">PIA檢核者簽名</h1>
-        <h1 id="signed"></h1>
-
-        <hr width="80%" align=center style="height:5px; background-color:#191970;">
+        <h1 id="signed" style="color:#191970 ">PIA檢核者簽名</h1>
+        <hr width="100%" align=center style="height:5px; background-color:#191970;">
         <br>
         <br>
         <!-- 繪圖div -->
@@ -493,7 +493,7 @@
 
           <img id="sign_img" />
         </div>
-        
+        <br>
         <button class="button1" id="btn_clear" style="display:none">清除</button>
 
         <button class="button1" id="btn_submit" style="display:none">提交</button>
@@ -502,7 +502,7 @@
 
         <br>
         <br>
-        <hr width="80%" align='center' style="height:5px; background-color:#191970;">
+        <hr width="100%" align='center' style="height:5px; background-color:#191970;">
         <br>
         <br>
         <a class="button1" href="/team/activity_list/">回到檢視列表</a>
@@ -599,20 +599,20 @@
 
       $("#sign_img").attr("src", canvas.toDataURL("image/png"));
       var dataURL = canvas.toDataURL("image/png");
-      var returnedData = null;
       dataURL = dataURL.replace(/^data:image\/(png|jpg);base64,/, "")
       jQuery.ajax({
         type: "POST",
         url: '../save_Signature/',
-        data: { img: JSON.stringify(dataURL) }
-      }).done(function (data) {
-        returnedData = JSON.parse(data);
+        data: { img: JSON.stringify(dataURL) },
+        
+      }).done(function (msg) {
         alert("已上傳簽名");
 
       });
-      document.getElementById('canvasDiv').style.display = 'none';
-      document.getElementById('btn_clear').style.display = 'none';
-      document.getElementById('btn_submit').style.display = 'none';
+          document.getElementById('signed').innerHTML="PIA檢核者簽名(已簽核)"
+          document.getElementById('canvasDiv').style.display = 'none';
+          document.getElementById('btn_clear').style.display = 'none';
+          document.getElementById('btn_submit').style.display = 'none';
 
     });
 
@@ -704,6 +704,7 @@
         document.getElementById('btn_clear').style.display = 'inline';
         document.getElementById('btn_submit').style.display = 'inline';
         console.log("no signature");
+        document.getElementById("signed").innerHTML += "(未簽核)";
       } else {
         console.log("signed");
         console.log(signature)
@@ -714,6 +715,8 @@
         sign_img.setAttribute("src", "data:image/png;base64, " + signature);
         document.getElementById('btn_clear').style.display = 'none';
         document.getElementById('btn_submit').style.display = 'none';
+        document.getElementById("signed").innerHTML += "(已簽核)";
+
       }
     }
   </script>

@@ -1,119 +1,138 @@
-
 <!DOCTYPE html>
 <html>
 <title>PIA列表</title>
+
 <head>
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-<link rel="stylesheet" href="/static/css/main.css" />
-<noscript>	<link rel="stylesheet" href="/static/css/noscript.css" /></noscript>
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="/static/css/main.css" />
+	<noscript>
+		<link rel="stylesheet" href="/static/css/noscript.css" /></noscript>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
-<script type="text/javascript">
-	var postdata;
-	function takeValue(obj) {
-	  	var count = obj.name;
-	  	console.log(count);
-	  	var text = document.getElementById(count).innerHTML;
-    	postdata = {
-    		takedValue : text,
-    	};
-	  	console.log(JSON.stringify(postdata));
-    	document.getElementById("data").value = JSON.stringify(postdata);
-	}
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript">
+		var postdata;
+		function takeValue(obj) {
+			var count = obj.name;
+			console.log(count);
+			var text = document.getElementById(count).innerHTML;
+			postdata = {
+				takedValue: text,
+			};
+			console.log(JSON.stringify(postdata));
+			document.getElementById("data").value = JSON.stringify(postdata);
+		}
 
 
-		$(function(){
-		    $("#gotop").click(function(){
-		        jQuery("html,body").animate({
-		            scrollTop:0
-		        },200);
-		    });
+		$(function () {
+			$("#gotop").click(function () {
+				jQuery("html,body").animate({
+					scrollTop: 0
+				}, 200);
+			});
 		});
 
 	</script>
 
 	<style>
-	
-	
-	button tr td {
-  		border: solid grey ;
-		font-family:Microsoft JhengHei;
-	}
-
-	.w3-row-padding img {
-		margin-bottom: 12px
-	}
-
-	/* Set the width of the sidebar to 120px */
-	.w3-sidebar {
-		width: 120px;
-		background: #222;
-	}
-
-	/* Add a left margin to the "page content" that matches the width of the sidebar (120px) */
-	#main {
-		margin-left: 100px
-	}
-
-	/* Remove margins from "page content" on small screens */
-	@media only screen and (max-width: 800px) {
-		#main {
-			margin-left: 0
+		button tr td {
+			border: solid grey;
+			font-family: Microsoft JhengHei;
 		}
-	}
 
-	.gotop{
-        color:#FFF;
-        position:fixed;
-        bottom:5vh;
-        right:23vh;
-        cursor:pointer;
-    }
-</style>
+		.w3-row-padding img {
+			margin-bottom: 12px
+		}
+
+		/* Set the width of the sidebar to 120px */
+		.w3-sidebar {
+			width: 120px;
+			background: #222;
+		}
+
+		/* Add a left margin to the "page content" that matches the width of the sidebar (120px) */
+		#main {
+			margin-left: 100px
+		}
+
+		/* Remove margins from "page content" on small screens */
+		@media only screen and (max-width: 800px) {
+			#main {
+				margin-left: 0
+			}
+		}
+
+		.gotop {
+			color: #FFF;
+			position: fixed;
+			bottom: 5vh;
+			right: 23vh;
+			cursor: pointer;
+		}
+	</style>
 
 </head>
 
 
 
-<body  class="is-preload"  style="font-family:Microsoft JhengHei";>
-	<div class="w3-padding-32 w3-content w3text-light-grey" >
-		<h1>	<span style="font-family:Microsoft JhengHei;">PIA專案列表</span>
-		 <a href="/team/new_pia"><button  style="float: right;">新增PIA</button></a>
-		 </h1>
+<body class="is-preload" style="font-family:Microsoft JhengHei" ;>
+	<div class="w3-padding-32 w3-content w3text-light-grey">
+
 		<form action="/team/choose_pia/" method="post" id="ch_form">
 
 
+			<div style="width:100%; margin:20px">
+				<table id="mytable">
+					<tr>
+						<caption>
+							<div>
+								<h1 style=" float:center">PIA專案列表</h1>
+							</div>
+							<a href="/team/new_pia"><button type="button" style="float: right; margin-bottom:12px">新增PIA</button></a>
 
-			<table id="mytable">
-				<tr>
-						<td width=100px align="center"><span style="font-size:20px;">專案ID</span></td>
-						<td width=150px align="center"><span style="font-size:20px;">專案名稱</span></td>
-						<td width=150px align="center"><span style="font-size:20px;">PIA負責人</span></td>
-						<td width=300px align="center"><span style="font-size:20px;">專案簡述</span></td>
-						<td width=250px align="center"><span style="font-size:20px;">建立時間</span></td>
+						</caption>
+						<td width=0%; align="center" style="display: none;"><span style="font-size:20px; ">專案ID</span>
+						</td>
+						<td width=15%; align="center"><span style="font-size:20px;">專案名稱</span></td>
+						<td width=15%; align="center"><span style="font-size:20px;">PIA負責人</span></td>
+						<td width=20%; align="center"><span style="font-size:20px;">專案簡述</span></td>
+						<td width=30%; align="center"><span style="font-size:20px;">建立時間</span></td>
+						<td width=20%; align="center"><span style="font-size:20px;">是否簽核</span></td>
+
+
 						<td></td>
 					</tr>
 
 					{% for userHasActivity in user_has_activity %}
 					<tr>
-						<td align="center" id={{ forloop.counter }} class="nr">{{ userHasActivity.activity.id }}</td>
-						<td align="center" >{{ userHasActivity.activity.name }}</td>
+						<td align="center" id={{ forloop.counter }} class="nr" style="display: none;">
+							{{ userHasActivity.activity.id }}</td>
+						<td align="center">{{ userHasActivity.activity.name }}</td>
 						<td align="center">{{ userHasActivity.activity.pia_manager_name }}</td>
 						<td align="center">{{ userHasActivity.activity.description }}</td>
 						<td align="center">{{ userHasActivity.activity.date }}</td>
-						<td align="center"><input name={{ forloop.counter }} type="button" class="choose" onclick="takeValue(this),form.submit()" value="檢視"></td>
+						{% if userHasActivity.activity.signature == "" %}
+						<td align="center">✘</td>
+						<td align="center"><input name={{ forloop.counter }} type="button" class="choose"
+								onclick="takeValue(this),form.submit()" value="簽核"></td>
+						{% else %}
+						<td align="center">✔</td>
+						<td align="center"><input name={{ forloop.counter }} type="button" class="choose"
+								onclick="takeValue(this),form.submit()" value="檢視"></td>
+						{% endif %}
+
 					</tr>
 					{% endfor %}
-					<input type="hidden" id="data" name="data" >
-			</table>
+					<input type="hidden" id="data" name="data">
+				</table>
 		</form>
-
-<div class="gotop" id="gotop">
-   			 <i class="fa fa-arrow-circle-up fa-3x" ></i>
-		</div>
+	</div>
+	<div class="gotop" id="gotop">
+		<i class="fa fa-arrow-circle-up fa-3x"></i>
+	</div>
 
 	</div>
 </body>
+
 </html>
