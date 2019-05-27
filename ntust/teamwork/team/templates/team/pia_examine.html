@@ -96,7 +96,24 @@
       border: 2px solid black;
       border-collapse: collapse;
     }
+    th.stakeholder {
+      padding: 10px;
+      border: 1px solid black;
+      border-collapse: collapse;
+      font-weight: bold;
+    }
 
+    td.stakeholder {
+      padding: 5px;
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+
+    table.stakeholder {
+      padding: 10px;
+      border: 2px solid black;
+      border-collapse: collapse;
+    }
     .risk_mapping_text {
       font-family: "Microsoft JhengHei", Arial, serif;
       font-size: 60px;
@@ -139,6 +156,19 @@
       background: -webkit-gradient(linear, left top, left bottom, from(#999999), to(#e0e0e0));
       background: -moz-linear-gradient(top, #999999, #e0e0e0);
       background: linear-gradient(to bottom, #999999, #e0e0e0);
+    }
+    div .hhh{
+    width:60%;
+    float:left;
+    text-align:center;
+    font-size: 2em;
+    margin-block-start: 0.67em;
+    margin-block-end: 0.67em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+    color: #191970;
+    font-family: Microsoft JhengHei;"
     }
   </style>
   <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -221,60 +251,74 @@
 <body onload="whether_signed()" ;style="background-color:#F5F5F5;">
   <!-- <div style="border-color:blue; border-style:solid;text-align:center;background-color:#DDDDDD;"> -->
   <div
-    style="width:80%;margin: 0 auto;background-color:#FFFFFF;text-align:center;box-shadow:3px 3px 12px gray;padding:3px;font-family:Microsoft JhengHei">
+    style="width:80%;margin: 0 auto;background-color:#FFFFFF;border-color:green;border-style: solid; text-align:center;box-shadow:3px 3px 12px gray;padding:3px;float:center; font-family:Microsoft JhengHei">
     <!--   <table class = "table" font-family: "Microsoft JhengHei" > -->
     <h1 style="color:#191970;font-family:Microsoft JhengHei;" align="center">專案基本資料</h1>
     <hr width="60%" align=center style="height:5px; background-color:#191970;">
+    <div id="menu" style="height:700px;width:20%;float:left;">
+    </div>
+    <div style="width:60%;float:left;text-align:left;">
     <h2>專案建立日期</h2>
-    <h4>{{ activity.date }}</h4>
+    <h4><blockquote>{{ activity.date }}</blockquote></h4>
     <h2>專案名稱</h2>
-    <h4>{{ activity.name }}</h4>
-
+    <h4><blockquote>{{ activity.name }}</blockquote></h4>
     <h2>PIA負責人姓名</h2>
-    <h4>{{ activity.pia_manager_name }}</h4>
+    <h4><blockquote>{{ activity.pia_manager_name }}</blockquote></h4>
     <h2>PIA負責人信箱</h2>
-    <h4>{{ activity.pia_manager_email }}</h4>
+    <h4><blockquote>{{ activity.pia_manager_email }}</blockquote></h4>
     <h2>專案負責人姓名</h2>
-    <h4>{{ activity.activity_manager_name }}</h4>
+    <h4><blockquote>{{ activity.activity_manager_name }}</blockquote></h4>
     <h2>專案負責人信箱</h2>
-    <h4>{{ activity.activity_manager_email }}</h4>
+    <h4><blockquote>{{ activity.activity_manager_email }}</blockquote></h4>
     <h2>專案簡述</h2>
-    <h4>{{ activity.description }}</h4>
-
+    <h4><blockquote>{{ activity.description }}</blockquote></h4>
+    </div>
     <br>
-    <h1 style="color:#191970">專案GDPR適法性評估</h1>
+    <div id="menu" style="height:700px;width:20%;float:left;">
+    </div>
+    <div id="menu" style="height:40px;width:20%;float:left;">
+    </div>
+    <!-- <h1 style="color:#191970;font-family:Microsoft JhengHei;" align="center">專案GDPR適法性評估</h1> -->
+    <div  class="hhh">專案GDPR適法性評估</div>
     <hr width="60%" align=center style="height:5px; background-color:#191970;"">
+    <div id="menu" style="height:700px;width:20%;float:left;">
+    </div>
+    <div style="width:60%;float:left;text-align:left;">
     {% for question in question_1 %}
     {% for answer in answer_all %}
     {% if answer.question.id == question.id %}
     <h2>{{ question.description }}</h2>
-    <h4>{{ answer.context }}</h4>
+    <h4><blockquote>{{ answer.context }}</blockquote></h4>
     {% endif %}
     {% endfor %}
     {% endfor %}
     <br>
-    <br>
-
+    </div>
+    <div id="menu" style="height:850px;width:20%;float:left;">
+    </div>
+    <div id="menu" style="height:40px;width:20%;float:left;">
+    </div>
     <div>
-      <h1 style=" color:#191970">專案參與的利益相關者</h1>
+      <div class="hhh">專案參與的利益相關者</div>
     <hr width="60%" align=center style="height:5px; background-color:#191970;">
     <br>
+    <div align="center" style="float:center;">
     <table table align="center" class="stakeholder">
-      <tr class="stakeholder">
-        <th class="stakeholder">姓名</th>
-        <th class="stakeholder">角色</th>
-        <th class="stakeholder">信箱</th>
-        <th class="stakeholder">參與專案部分</th>
-        <th class="stakeholder">回饋</th>
+      <tr>
+        <th class="stakeholder" align="center"><span style="font-size:20px;">姓名</th>
+        <th class="stakeholder" align="center"><span style="font-size:20px;">角色</th>
+        <th class="stakeholder" align="center"><span style="font-size:20px;">信箱</th>
+        <th class="stakeholder" align="center"><span style="font-size:20px;">參與專案部分</th>
+        <th class="stakeholder" align="center"><span style="font-size:20px;">回饋</th>
       </tr>
       {% for stakeholder in stakeholder_all %}
 
-      <tr class="stakeholder">
-        <td class="stakeholder">{{ stakeholder.name }}</td>
-        <td class="stakeholder">{{ stakeholder.role }}</td>
-        <td class="stakeholder">{{ stakeholder.email }}</td>
-        <td class="stakeholder">{{ stakeholder.part }}</td>
-        <td class="stakeholder">{{ stakeholder.feedback }}</td>
+      <tr>
+        <td align="center" rowspan="1" class="stakeholder">{{ stakeholder.name }}</td>
+        <td align="center" rowspan="1" class="stakeholder">{{ stakeholder.role }}</td>
+        <td align="center" rowspan="1" class="stakeholder">{{ stakeholder.email }}</td>
+        <td align="center" rowspan="1" class="stakeholder">{{ stakeholder.part }}</td>
+        <td align="center" rowspan="1" class="stakeholder">{{ stakeholder.feedback }}</td>
       </tr>
       {% endfor %}
     </table>
@@ -294,7 +338,7 @@
     <h1 style="color:#191970">適用評估之項目</h1>
     <hr width="60%" align=center style="height:5px; background-color:#191970;">
     <br>
-    <table table align="center" class="stakeholder">
+    <table table align="center" class="stakeholder" style="margin-left:20px;margin-right:20px">
       <tr>
         <th class="stakeholder" align="center"><span style="font-size:20px;">流程</th>
         <th class="stakeholder" align="center"><span style="font-size:20px;">個人隱私資料</th>
@@ -323,12 +367,12 @@
       {% endfor %}
     </table>
     <br>
-    <br>
 
     <h1 style="color:#191970">風險圖</h1>
     <hr width="60%" align=center; style="height:5px; background-color:#191970;">
-    <div>
-      <div align="center" style="display: inline-block; width: 700px;">
+    <br>
+    <div align="center">
+      <div align="center" style="display: inline-block; width: 700px;float:center;">
         {% for pii in pii_all %}
 
         {% for pii_list_item in pii_list %}
@@ -457,6 +501,8 @@
             </td>
           </tr>
         </table>
+        </div>
+        </div>
         <script type="text/javascript">
           p = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]; //to sum up counts of eva_item that applicable=true
         </script>
@@ -482,8 +528,8 @@
         {% endfor %}
         <br>
         <br>
-        <h1 id="signed" style="color:#191970 ">PIA檢核者簽名</h1>
-        <hr width="100%" align=center style="height:5px; background-color:#191970;">
+        <h1 id="signed" style="color:#191970 ">資料保護長簽名</h1>
+        <hr width="60%" align=center style="height:5px; background-color:#191970;">
         <br>
         <br>
         <!-- 繪圖div -->
@@ -504,7 +550,7 @@
 
         <br>
         <br>
-        <hr width="100%" align='center' style="height:5px; background-color:#191970;">
+        <hr width="60%" align=center style="height:5px; background-color:#191970;">
         <br>
         <br>
         <a class="button1" href="/team/activity_list/">回到檢視列表</a>
@@ -601,7 +647,7 @@
     document.getElementById("btn_submit").addEventListener("click", function () {
       
       if ( sign_count == 0 ) {
-        alert("PIA檢核者尚未簽署簽名");
+        alert("資料保護長尚未簽署簽名");
       } else {
         document.getElementById('signaturePad').style.display = 'block';
 
@@ -617,7 +663,7 @@
           alert("已上傳簽名");
 
         });
-        document.getElementById('signed').innerHTML = "PIA檢核者簽名(已簽核)"
+        document.getElementById('signed').innerHTML = "資料保護長簽名(已簽核)"
         document.getElementById('canvasDiv').style.display = 'none';
         document.getElementById('btn_clear').style.display = 'none';
         document.getElementById('btn_submit').style.display = 'none';

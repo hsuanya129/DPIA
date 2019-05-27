@@ -281,7 +281,7 @@
             </div>
           </div>的方針：</span>
         </div>
-        {% else %}
+        {% elif unit.id == 7%}
         <div class="text" style="display:inline">
             <span>柒、因應GDPR中 <div class="text2" style="display:inline;"><a href="https://gdpr-info.eu/art-21-gdpr/">被拒絕權</a>
             <div class="hover">
@@ -291,6 +291,14 @@
               </div>
             </div>
           </div>的方針：</span>
+        </div>
+        {% else %}
+        <div class="text" style="display:inline">
+            <span>捌、GDPR中規範 <div class="text2" style="display:inline;"><a href="https://gdpr-info.eu/art-33-gdpr/">個人數據遭洩</a>
+            <div class="hover">
+              <div class="belosed">發現個人資料侵害後，處理者應通報控管者，不得無故遲延。
+            </div>
+          </div>時應機構均應於72小時內通報監管機關，是否有相對應的呈報流程?</span>
         </div>
         {% endif %}
 			{% if qn_type.id != 3 %}
