@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from . import models
@@ -7,6 +7,9 @@ import pdb
 from django.urls import reverse
 import datetime
 import json
+from django.contrib import messages
+
+
 
 base_url = "http://127.0.0.1:8000/"
 activityID = 0
@@ -147,9 +150,12 @@ def sign(request):
         name = request.POST.get('name', '')
         account = request.POST.get('account', '')
         password = request.POST.get('password', '')
-        user = User.objects.create(
-            name=name, account=account, password=password, permission_level=1)
-        return HttpResponseRedirect('/team/')
+        if len(User.objects.filter(account=account))==0:
+            user = User.objects.create(name=name, account=account, password=password, permission_level=1)
+            return HttpResponseRedirect('/team/')
+        else:
+            message = "帳號已被註冊"
+            return render(request, 'team/sign.html',locals())
     return HttpResponseRedirect('/team/')
 
 
